@@ -100,6 +100,7 @@ public class MainWindow extends Window{
 		jpanel_FriendsList.setOpaque(false);
 //		jpanel_FriendsList.setLayout(arg0);
 		
+		//东西南北布局, 中间可以用列表布局, jpanel + jlabel
 		
 		
 		JPanel jpanel_UserSystem = new JPanel();
@@ -131,7 +132,7 @@ public class MainWindow extends Window{
 		container_JPanel.add(jpanel_UserSystem);
 		System.out.println("L:"+_height);
 		
-		this.setJPanelsetBackGroundImage("E:\\img\\5.jpg");
+		this.setJPanelBackGroundImage("./resources/image/backGround_mainWindow-2.png");
 		this.setVisible(true);
 	}
 	
@@ -139,7 +140,7 @@ public class MainWindow extends Window{
 	public void paint(Graphics arg0) {
 		super.paint(arg0);
 		arg0.setColor(new Color(132,112,255));
-		arg0.draw3DRect(0, 0, _widht - 1, _height - 1, true);
+//		arg0.draw3DRect(0, 0, _widht - 1, _height - 1, true);
 	}
 	
 	private void mainWindowInFo() {
@@ -176,7 +177,7 @@ public class MainWindow extends Window{
 		
 		//参数为所占比例的分子
 		this.set_widht(240);
-		this.set_height(750);
+		this.set_height(900);
 		this.set_x(960);
 		this.set_y(40);
 		

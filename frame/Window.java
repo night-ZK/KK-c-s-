@@ -47,9 +47,14 @@ public class Window extends JFrame{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
 		_screenWidht = screenSize.width;
 		_screenHeight = screenSize.height;
+//		URL url = Window.class.getResource(".").getPath();
+//		System.out.println("url:"+Window.class.getResource("../resources/image/1.png").getPath());
+//		System.out.println("path:" + new File(uri).getAbsolutePath());
+//		_closeJButton_Ago = new ImageIcon(Window.class.getResource("../resources/image/2.png"));
+//		_closeJButton_After = new ImageIcon(Window.class.getResource("../resources/image/1.png"));
 		
-		_closeJButton_Ago = new ImageIcon("E:\\img\\7.png");
-		_closeJButton_After = new ImageIcon("E:\\img\\6.png");
+		_closeJButton_Ago = new ImageIcon("./resources/image/close_button-1.png");
+		_closeJButton_After = new ImageIcon("./resources/image/close_button-2.png");
 	}
 	
 	protected Window(String userName, String passWord){
@@ -79,7 +84,7 @@ public class Window extends JFrame{
 		return moveJLable;
 	}
 	
-	protected void setJPanelsetBackGroundImage(final String path) {
+	protected void setJPanelBackGroundImage(final String path) {
 		JPanel jpanel_BackGroundImage = getJpanelImage(path);
 		jpanel_BackGroundImage.setBounds(0, 0, _widht, _height);
 		this.getLayeredPane().add(jpanel_BackGroundImage, new Integer(Integer.MIN_VALUE));
