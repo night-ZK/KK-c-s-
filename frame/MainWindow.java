@@ -186,7 +186,6 @@ public class MainWindow extends Window{
 		this.setLayout(null);
 		this.setUndecorated(true);
 		
-		
 		System.out.println(",TW:" + this._widht + ",Th:" + this._height);
 	}
 	
