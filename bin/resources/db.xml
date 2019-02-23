@@ -1,0 +1,18 @@
+<root>
+	<db-connection id="001">
+		<mysql-version>8.0.15</mysql-version>
+		<driver>com.mysql.cj.jdbc.Driver</driver>
+		<url>jdbc:mysql://localhost:3306/db_zxk?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;zeroDateTimeBehavior=CONVERT_TO_NULL</url>
+		<name>name</name>
+		<password>zk</password>
+	</db-connection>
+	
+	<db-connection id="002">
+		<mysql-version>8.0.15</mysql-version>
+		<driver>com.mysql.cj.jdbc.Driver</driver>
+		<url>jdbc:mysql://localhost:3306/db_zk?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;zeroDateTimeBehavior=CONVERT_TO_NULL</url>
+		<name>name</name>
+		<password>zk</password>
+	</db-connection>
+	
+</root>
