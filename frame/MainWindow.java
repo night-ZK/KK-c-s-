@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import db.EvenProcess;
 import frame.Window;
@@ -115,23 +118,34 @@ public class MainWindow extends Window{
 		jpanel_Friend.setBounds(10, 10, jpanel_FriendsList.getWidth() - 20, jpanel_FriendsList.getHeight());
 //		jpanel_Friend.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
 		jpanel_Friend.setBackground(new Color(205, 205, 193));
-		jpanel_Friend.setLayout(null);
+		jpanel_Friend.setLayout(new BorderLayout(0, 0));
 		
-		//我的好友JButton
-		JButton jButton_MyFriends = this.getFriendListButton("+ myFriends (" + _findSum + ")", "0");
-		jButton_MyFriends.setSize(jpanel_Friend.getWidth(), 20);
+//		//我的好友JButton
+//		JButton jButton_MyFriends = this.getFriendListButton("+ myFriends (" + _findSum + ")", "0");
+//		jButton_MyFriends.setSize(jpanel_Friend.getWidth(), 20);
+//		
+//		//陌生人JButton
+//		JButton jButton_Stranger = this.getFriendListButton("+ stranger (" + 0 + ")", "1");
+//		jButton_Stranger.setBounds(0, Integer.valueOf(jButton_Stranger.getName()) * 20, jpanel_Friend.getWidth(), 20);
+//		
+//		//黑名单JButton
+//		JButton jButton_BlackList = this.getFriendListButton("+ blackList (" + 0 + ")", "2");
+//		jButton_BlackList.setBounds(0, Integer.valueOf(jButton_BlackList.getName()) * 20, jpanel_Friend.getWidth(), 20);
+//		
+//		jpanel_Friend.add(jButton_MyFriends);
+//		jpanel_Friend.add(jButton_Stranger);
+//		jpanel_Friend.add(jButton_BlackList);
+//		jpanel_FriendsList.add(jpanel_Friend);
 		
-		//陌生人JButton
-		JButton jButton_Stranger = this.getFriendListButton("+ stranger (" + 0 + ")", "1");
-		jButton_Stranger.setBounds(0, Integer.valueOf(jButton_Stranger.getName()) * 20, jpanel_Friend.getWidth(), 20);
+		JScrollPane friendJScrollPane = new JScrollPane(); 
 		
-		//黑名单JButton
-		JButton jButton_BlackList = this.getFriendListButton("+ blackList (" + 0 + ")", "2");
-		jButton_BlackList.setBounds(0, Integer.valueOf(jButton_BlackList.getName()) * 20, jpanel_Friend.getWidth(), 20);
+		DefaultMutableTreeNode OnlineFriend_DMTNode = new DefaultMutableTreeNode("+myfriends");
+		DefaultMutableTreeNode onefriendTest = new DefaultMutableTreeNode("friend-one");
+		OnlineFriend_DMTNode.add(onefriendTest);
+		JTree friendListTreeRoot = new JTree(OnlineFriend_DMTNode);
+		friendJScrollPane.setViewportView(friendListTreeRoot);
 		
-		jpanel_Friend.add(jButton_MyFriends);
-		jpanel_Friend.add(jButton_Stranger);
-		jpanel_Friend.add(jButton_BlackList);
+		jpanel_Friend.add(friendJScrollPane);
 		jpanel_FriendsList.add(jpanel_Friend);
 		
 		JPanel jpanel_UserSystem = new JPanel();
