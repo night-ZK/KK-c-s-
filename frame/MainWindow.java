@@ -1,6 +1,9 @@
 package frame;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Label;
 import java.util.ArrayList;
@@ -21,6 +24,9 @@ public class MainWindow extends Window{
 	private static final long serialVersionUID = 1L;
 	
 	private static MainWindow _mainWindow = null;
+	
+	//好友列表下标 TODO
+//	private static int _friendListCount = 1;
 	
 	private MainWindow(String userName, String passWord){
 		super(userName, passWord);
@@ -101,13 +107,39 @@ public class MainWindow extends Window{
 //		jpanel_FriendsList.setLayout(arg0);
 		
 		//东西南北布局, 中间可以用列表布局, jpanel + jlabel
+		jpanel_FriendsList.setLayout(null);
 		
+		//显示好友的JPanel
+		JPanel jpanel_Friend = new JPanel();
+//		jpanel_Friend.setOpaque(false);
+		jpanel_Friend.setBounds(10, 10, jpanel_FriendsList.getWidth() - 20, jpanel_FriendsList.getHeight());
+//		jpanel_Friend.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
+		jpanel_Friend.setBackground(new Color(205, 205, 193));
+		jpanel_Friend.setLayout(null);
+		
+		//我的好友JButton
+		JButton jButton_MyFriends = this.getFriendListButton("+ myFriends (" + _findSum + ")", "0");
+		jButton_MyFriends.setSize(jpanel_Friend.getWidth(), 20);
+		
+		//陌生人JButton
+		JButton jButton_Stranger = this.getFriendListButton("+ stranger (" + 0 + ")", "1");
+		jButton_Stranger.setBounds(0, Integer.valueOf(jButton_Stranger.getName()) * 20, jpanel_Friend.getWidth(), 20);
+		
+		//黑名单JButton
+		JButton jButton_BlackList = this.getFriendListButton("+ blackList (" + 0 + ")", "2");
+		jButton_BlackList.setBounds(0, Integer.valueOf(jButton_BlackList.getName()) * 20, jpanel_Friend.getWidth(), 20);
+		
+		jpanel_Friend.add(jButton_MyFriends);
+		jpanel_Friend.add(jButton_Stranger);
+		jpanel_Friend.add(jButton_BlackList);
+		jpanel_FriendsList.add(jpanel_Friend);
 		
 		JPanel jpanel_UserSystem = new JPanel();
 		int jpanel_UserSystem_y = jpanel_FriendsList_y + jpanel_FriendsList.getHeight();
 		int jpanel_UserSystem_w = _height - jpanel_UserSystem_y;
 		jpanel_UserSystem.setBounds(0, jpanel_UserSystem_y, _widht, jpanel_UserSystem_w);
-		jpanel_UserSystem.setBackground(new Color(255, 181, 197));
+//		jpanel_UserSystem.setBackground(new Color(255, 181, 197));
+		jpanel_UserSystem.setOpaque(false);
 		
 		
 //		GraphicsDevice[] gDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
@@ -130,7 +162,6 @@ public class MainWindow extends Window{
 		container_JPanel.add(jpanel_UserInformation);
 		container_JPanel.add(jpanel_FriendsList);
 		container_JPanel.add(jpanel_UserSystem);
-		System.out.println("L:"+_height);
 		
 		this.setJPanelBackGroundImage("./resources/image/backGround_mainWindow-2.png");
 		this.setVisible(true);
@@ -172,6 +203,7 @@ public class MainWindow extends Window{
 		this._nickName = user.getUserNick();
 		this._path = user.getUserImagepath();
 		this._personLabel = user.getPersonLabel();
+		this._findSum = user.getFiendSum();
 		
 		System.out.println(",W:" + _screenWidht + ",h:" + _screenHeight);
 		

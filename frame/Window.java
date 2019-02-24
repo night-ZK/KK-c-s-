@@ -84,6 +84,22 @@ public class Window extends JFrame{
 		return moveJLable;
 	}
 	
+	/**
+	 * 获得好友列表形式的JButton
+	 * @param text 显示文字
+	 * @param nameToIndex 使用那么属性作为下标
+	 * @return
+	 */
+	protected JButton getFriendListButton(String text, String nameToIndex) {
+		JButton friendListButton = new JButton(text);
+		//TODO 使用系统设置字体
+		friendListButton.setFont(new Font("", Font.BOLD, 12));
+//		jButton_MyFriends.setForeground(Color.RED);
+		friendListButton.setHorizontalAlignment(JButton.LEFT);
+		friendListButton.setName(nameToIndex);
+		return friendListButton;
+	}
+	
 	protected void setJPanelBackGroundImage(final String path) {
 		JPanel jpanel_BackGroundImage = getJpanelImage(path);
 		jpanel_BackGroundImage.setBounds(0, 0, _widht, _height);
@@ -96,6 +112,7 @@ public class Window extends JFrame{
 			@Override
 			protected void paintComponent(java.awt.Graphics arg0) {
 				super.paintComponent(arg0);
+				System.out.println("path:"+ path);
 				ImageIcon userIcon = new ImageIcon(path);
 				arg0.drawImage(userIcon.getImage(), 0, 0, getWidth(), getHeight(), userIcon.getImageObserver());
 			}
