@@ -4,6 +4,10 @@ import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class FriendsListTree extends DefaultMutableTreeNode{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected String _nickname;
 	protected String _state;
 	protected ImageIcon _imageIcon;
@@ -14,6 +18,12 @@ public class FriendsListTree extends DefaultMutableTreeNode{
 		super();
 	}
 
+	public FriendsListTree(String userName, String state) {
+		super();
+		this._nickname = userName;
+		this._state = state;
+	}
+	
 	public FriendsListTree(String _nickname, String _state, ImageIcon _imageIcon, String _personLabel,
 			String _userAccount) {
 		super();
