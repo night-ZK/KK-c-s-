@@ -20,7 +20,7 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 
 	private String _textLis = "";
 	private TextField _evenLis = null;
-	private String _textField_name = "";
+	private String _componentName = "";
 	private Window _win;
 	
 	private Point _move_Ago;
@@ -32,13 +32,14 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	public FieldListener(String text, Component comp, String textField_name) {
 		_textLis = text;
 		_evenLis = (TextField)comp;
-		_textField_name = textField_name;
+		_componentName = textField_name;
 	}
 	 public FieldListener() {
 		
 	}
-	 public FieldListener(Window window){
+	 public FieldListener(Window window, String componentName){
 		 _win = window;
+		 _componentName = componentName;
 	 }
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -57,8 +58,12 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		if (arg0.getX() >= 30 && arg0.getX() <= 270 && arg0.getY() <= 10) {
-			_move_Ago = arg0.getLocationOnScreen();			
+//		if (arg0.getX() >= 30 && arg0.getX() <= 270) {
+//		}
+		//通过_componentName变量来判断绑定事件源是否属于需要监听的移动组件
+		if (_componentName.equals("move")) {
+			
+			_move_Ago = arg0.getLocationOnScreen();	
 		}
 	}
 
@@ -94,20 +99,18 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 
 		if (_evenLis.getText().equals("")) {
 			_evenLis.setText(_textLis);					
-		}else if (_textField_name.equals("textfield0")) {
+		}else if (_componentName.equals("textfield0")) {
 			_user = _evenLis.getText();
 		}
 	}
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		System.out.println("pressed..");
 	}
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		System.out.println("released.."+",_evenLis.getText():"+_evenLis.getText());
 		
 		//
-		if (_textField_name.equals("textfield1")) {
+		if (_componentName.equals("textfield1")) {
 			
 			//获得密码框内的字符串, 转换为字符数组
 			char[] pasChar = _evenLis.getText().trim().toCharArray();
@@ -129,7 +132,7 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			
 		}
 		if (arg0.getKeyChar() == '\n') {
-			if (_textField_name.equals("textfield0")) {
+			if (_componentName.equals("textfield0")) {
 				_user = _evenLis.getText();
 			}
 			
@@ -139,7 +142,7 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		char keyChar = arg0.getKeyChar();
-		if (_textField_name.equals("textfield1")) {
+		if (_componentName.equals("textfield1")) {
 			//密码只允许字母和数字
 			if (String.valueOf(keyChar).matches("[a-zA-Z0-9+]")) {
 				_pas = _pas.concat(String.valueOf(keyChar));

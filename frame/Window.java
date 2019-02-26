@@ -79,8 +79,9 @@ public class Window extends JFrame{
 	
 	protected JLabel getMoveJLabel(int retainWidth){
 		JLabel moveJLable = new JLabel();
-		moveJLable.setBounds(retainWidth, 0, this._widht - 2*retainWidth, 10);
-		moveJLable.addMouseListener(new FieldListener(this));
+		moveJLable.setBounds(retainWidth, 0, this._widht - 2*retainWidth, 30);
+		moveJLable.setName("move");
+		moveJLable.addMouseListener(new FieldListener(this, moveJLable.getName()));
 		return moveJLable;
 	}
 	

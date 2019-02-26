@@ -3,8 +3,6 @@ package frame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Label;
 import java.util.ArrayList;
@@ -15,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import db.EvenProcess;
 import frame.Window;
@@ -106,6 +103,18 @@ public class MainWindow extends Window{
 		jpanel_UserInformation.add(genderLabel);
 		jpanel_UserInformation.add(personLabel);
 		
+		Label label_Division = new Label();
+		StringBuffer divisionText = new StringBuffer();
+		for (int i = 0; i < 50; i++) {
+			divisionText.append(" I ");
+		}
+		int jlabel_Division_X = jpanel_UserImage.getX();
+		int jlabel_Division_Y = jpanel_UserInformation.getHeight() + jpanel_UserInformation.getY() + 2;
+		label_Division.setBounds(jlabel_Division_X, jlabel_Division_Y
+				, jpanel_UserInformation.getWidth() - 2 * jlabel_Division_X
+				, 2);
+		label_Division.setText(divisionText.toString());
+		container_JPanel.add(label_Division);
 		
 		JPanel jpanel_FriendsList = new JPanel();
 		int jpanel_FriendsList_y = jpanel_UserInformation.getHeight() + jpanel_UserInformation.getY();
@@ -113,13 +122,12 @@ public class MainWindow extends Window{
 		jpanel_FriendsList.setOpaque(false);
 //		jpanel_FriendsList.setLayout(arg0);
 		
-		//东西南北布局, 中间可以用列表布局, jpanel + jlabel
 		jpanel_FriendsList.setLayout(null);
 		
 		//显示好友的JPanel
 		JPanel jpanel_Friend = new JPanel();
 //		jpanel_Friend.setOpaque(false);
-		jpanel_Friend.setBounds(10, 10, jpanel_FriendsList.getWidth() - 20, jpanel_FriendsList.getHeight());
+		jpanel_Friend.setBounds(10, 10, jpanel_FriendsList.getWidth() - 20, jpanel_FriendsList.getHeight() - 10);
 //		jpanel_Friend.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
 		jpanel_Friend.setBackground(new Color(205, 205, 193));
 		jpanel_Friend.setLayout(new BorderLayout(0, 0));
@@ -188,9 +196,16 @@ public class MainWindow extends Window{
 		int jpanel_UserSystem_y = jpanel_FriendsList_y + jpanel_FriendsList.getHeight();
 		int jpanel_UserSystem_w = _height - jpanel_UserSystem_y;
 		jpanel_UserSystem.setBounds(0, jpanel_UserSystem_y, _widht, jpanel_UserSystem_w);
-//		jpanel_UserSystem.setBackground(new Color(255, 181, 197));
 		jpanel_UserSystem.setOpaque(false);
+		jpanel_UserSystem.setLayout(null);
 		
+		JPanel jpanel_SystemConfig = new JPanel();
+		int JSC_X = (jpanel_UserSystem.getWidth() / 2 - jpanel_Friend.getWidth() / 2);
+		int JSC_Y = (jpanel_UserSystem.getHeight() / 2 - 25);
+		jpanel_SystemConfig.setBounds(JSC_X, JSC_Y, jpanel_Friend.getWidth(), 50);
+		jpanel_SystemConfig.setBackground(new Color(207, 207, 207));
+		
+		jpanel_UserSystem.add(jpanel_SystemConfig);
 		
 //		GraphicsDevice[] gDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 //		try {
