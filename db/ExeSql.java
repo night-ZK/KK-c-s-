@@ -15,7 +15,7 @@ import parsefile.ParseXML;
 public class ExeSql {
 	private static Connection _conn = null;
 	private static ExeSql _exeSql = null;
-	private static String _dbID = "002";
+	private static String _dbID = "001";
 	
 	public static String get_dbID() {
 		return _dbID;

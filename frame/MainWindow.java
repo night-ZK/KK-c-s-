@@ -2,7 +2,6 @@ package frame;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Label;
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class MainWindow extends Window{
 		container_JPanel.add(moveJLable);
 		
 		JPanel jpanel_UserInformation = new JPanel();
-		jpanel_UserInformation.setBounds(0, 30, _widht, _height/6);
+		jpanel_UserInformation.setBounds(0, 30, _widht, _height/7);
 	
 		JPanel jpanel_UserImage = getJpanelImage(_path);
 		jpanel_UserImage.setBounds(10, 10, 100, 100);
@@ -108,17 +107,18 @@ public class MainWindow extends Window{
 		for (int i = 0; i < 50; i++) {
 			divisionText.append(" I ");
 		}
-		int jlabel_Division_X = jpanel_UserImage.getX();
-		int jlabel_Division_Y = jpanel_UserInformation.getHeight() + jpanel_UserInformation.getY() + 2;
-		label_Division.setBounds(jlabel_Division_X, jlabel_Division_Y
-				, jpanel_UserInformation.getWidth() - 2 * jlabel_Division_X
-				, 2);
+		int label_Division_X = jpanel_UserImage.getX();
+		int label_Division_Y = jpanel_UserImage.getHeight() + jpanel_UserImage.getY() + 5;
+		label_Division.setBounds(label_Division_X, label_Division_Y
+				, jpanel_UserInformation.getWidth() - 2 * label_Division_X
+				, 3);
 		label_Division.setText(divisionText.toString());
-		container_JPanel.add(label_Division);
+		jpanel_UserInformation.add(label_Division);
+//		container_JPanel.add(label_Division);
 		
 		JPanel jpanel_FriendsList = new JPanel();
 		int jpanel_FriendsList_y = jpanel_UserInformation.getHeight() + jpanel_UserInformation.getY();
-		jpanel_FriendsList.setBounds(0, jpanel_FriendsList_y, _widht, _height*4/6);
+		jpanel_FriendsList.setBounds(0, jpanel_FriendsList_y, _widht, _height*5/7);
 		jpanel_FriendsList.setOpaque(false);
 //		jpanel_FriendsList.setLayout(arg0);
 		
@@ -132,17 +132,17 @@ public class MainWindow extends Window{
 		jpanel_Friend.setBackground(new Color(205, 205, 193));
 		jpanel_Friend.setLayout(new BorderLayout(0, 0));
 		
-		//我的好友JButton
-		JButton jButton_MyFriends = this.getFriendListButton("+ myFriends (" + _findSum + ")", "0");
-		jButton_MyFriends.setPreferredSize(new Dimension(jpanel_Friend.getWidth(), 16));
+//		//我的好友JButton
+//		JButton jButton_MyFriends = this.getFriendListButton("+ myFriends (" + _findSum + ")", "0");
+//		jButton_MyFriends.setPreferredSize(new Dimension(jpanel_Friend.getWidth(), 16));
 //		
-		//陌生人JButton
-		JButton jButton_Stranger = this.getFriendListButton("+ stranger (" + 0 + ")", "1");
-		jButton_Stranger.setBounds(0, Integer.valueOf(jButton_Stranger.getName()) * 20, jpanel_Friend.getWidth(), 20);
-		
-		//黑名单JButton
-		JButton jButton_BlackList = this.getFriendListButton("+ blackList (" + 0 + ")", "2");
-		jButton_BlackList.setBounds(0, Integer.valueOf(jButton_BlackList.getName()) * 20, jpanel_Friend.getWidth(), 20);
+//		//陌生人JButton
+//		JButton jButton_Stranger = this.getFriendListButton("+ stranger (" + 0 + ")", "1");
+//		jButton_Stranger.setBounds(0, Integer.valueOf(jButton_Stranger.getName()) * 20, jpanel_Friend.getWidth(), 20);
+//		
+//		//黑名单JButton
+//		JButton jButton_BlackList = this.getFriendListButton("+ blackList (" + 0 + ")", "2");
+//		jButton_BlackList.setBounds(0, Integer.valueOf(jButton_BlackList.getName()) * 20, jpanel_Friend.getWidth(), 20);
 		
 //		jpanel_Friend.add(jButton_MyFriends, BorderLayout.NORTH);
 //		jpanel_Friend.add(jButton_Stranger, BorderLayout.SOUTH);
@@ -185,7 +185,7 @@ public class MainWindow extends Window{
 		friendListTreeRoot.setRowHeight(60);
 		friendListTreeRoot.setCellRenderer(new FriendNodeRenderer());
 		
-		friendJScrollPane.add(jButton_MyFriends);
+//		friendJScrollPane.add(jButton_MyFriends);
 		friendJScrollPane.setViewportView(friendListTreeRoot);
 //		friendJScrollPane.set
 //		friendJScrollPane.setBounds(x, y, width, height);
@@ -201,9 +201,37 @@ public class MainWindow extends Window{
 		
 		JPanel jpanel_SystemConfig = new JPanel();
 		int JSC_X = (jpanel_UserSystem.getWidth() / 2 - jpanel_Friend.getWidth() / 2);
-		int JSC_Y = (jpanel_UserSystem.getHeight() / 2 - 25);
-		jpanel_SystemConfig.setBounds(JSC_X, JSC_Y, jpanel_Friend.getWidth(), 50);
+		int JSC_Y = (jpanel_UserSystem.getHeight() / 2 - 30);
+		jpanel_SystemConfig.setBounds(JSC_X, JSC_Y, jpanel_Friend.getWidth(), 60);
 		jpanel_SystemConfig.setBackground(new Color(207, 207, 207));
+		jpanel_SystemConfig.setLayout(null);
+		
+		//TODO 此处代码可简化(使用数组或集合， 添加合适的方法)
+		//添加好友按钮
+		int systemConfigButtonHeight = 30;
+		JButton jbutton_AddFriend = getSystemConfigButton(jpanel_SystemConfig.getWidth()
+				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 0, 10);
+		jbutton_AddFriend.setText("addfriend");
+		
+		//查找好友按钮
+		JButton jbutton_FindFriend = getSystemConfigButton(jpanel_SystemConfig.getWidth()
+				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 1, 10);
+		jbutton_FindFriend.setText("findfriend");
+		
+		//显示个人信息按钮
+		JButton jbutton_UserInfo = getSystemConfigButton(jpanel_SystemConfig.getWidth()
+				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 2, 10);
+		jbutton_UserInfo.setText("userinfo");
+		
+		//配置个人信息按钮
+		JButton jbutton_InfoConfig = getSystemConfigButton(jpanel_SystemConfig.getWidth()
+				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 3, 10);
+		jbutton_InfoConfig.setText("infoconfig");
+		
+		jpanel_SystemConfig.add(jbutton_AddFriend);
+		jpanel_SystemConfig.add(jbutton_FindFriend);
+		jpanel_SystemConfig.add(jbutton_UserInfo);
+		jpanel_SystemConfig.add(jbutton_InfoConfig);
 		
 		jpanel_UserSystem.add(jpanel_SystemConfig);
 		
@@ -230,6 +258,25 @@ public class MainWindow extends Window{
 		
 		this.setJPanelBackGroundImage("./resources/image/backGround_mainWindow-2.png");
 		this.setVisible(true);
+	}
+	
+	
+	/**
+	 * 获得设置系统配置的JButton, 所占位置为父容器的中间位置
+	 * @param parentWidth 父容器的宽度
+	 * @param parentHeight 父容器的高度
+	 * @param buttonHeight 自身的高度
+	 * @param number 父容器中设置的总个数
+	 * @param index 自身所在位置下标
+	 * @param spacing 水平间距
+	 * @return
+	 */
+	protected JButton getSystemConfigButton(int parentWidth, int parentHeight, int buttonHeight, int number, int index, int spacing) {
+		JButton jbutton_SystemConfig = new JButton();
+		int jbutton_SystemConfig_Width = (parentWidth - (spacing * (number + 1))) / number;
+		int jbutton_SystemConfig_Y = parentHeight / 2 - buttonHeight / 2;
+		jbutton_SystemConfig.setBounds(spacing * (index + 1) + jbutton_SystemConfig_Width * index, jbutton_SystemConfig_Y, jbutton_SystemConfig_Width, buttonHeight);
+		return jbutton_SystemConfig;
 	}
 	
 	@Override
@@ -274,7 +321,7 @@ public class MainWindow extends Window{
 		
 		//参数为所占比例的分子
 		this.set_widht(240);
-		this.set_height(900);
+		this.set_height(850);
 		this.set_x(960);
 		this.set_y(40);
 		
@@ -298,6 +345,6 @@ public class MainWindow extends Window{
 		return _mainWindow;
 	}
 	public static void main(String[] args) {
-		MainWindow.createMainWindow("user", "pas");
+		MainWindow.createMainWindow("zxk", "zk001");
 	}
 }
