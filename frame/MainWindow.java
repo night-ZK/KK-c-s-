@@ -1,8 +1,6 @@
 package frame;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Label;
 import java.util.ArrayList;
 
@@ -21,133 +19,104 @@ import tablebeans.User;
 
 public class MainWindow extends Window{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private static MainWindow _mainWindow = null;
-	
-	//好友列表下标 TODO
-//	private static int _friendListCount = 1;
-	
+
 	private MainWindow(String userName, String passWord){
 		super(userName, passWord);
-		mainWindowInFo();
+		initMainWindow();
 		
 		JPanel container_JPanel = (JPanel)this.getContentPane();
 		container_JPanel.setOpaque(false);
 		
+		//关闭按钮
 		JButton jButton = getCloseJButton();
 	
+		//绑定移动事件的的JLable
 		JLabel moveJLable = getMoveJLabel(jButton.getWidth());
 
+		//欢迎JLable
 		JLabel jLabel = new JLabel("welcome to use this software..");
 		jLabel.setBounds(10, 10, 200, 15);
 		
-//		Graphics graphics = container_JPanel.getGraphics();
-//		graphics.drawString("welcome to use this software..", 10, 10);
+		//用于显示用户信息的JPanel
+		JPanel jpanel_UserInformation = new JPanel(); 		
+		//初始化用户信息JPanel
+		initUserInformationJPanel(jpanel_UserInformation);
+		
+		//用于显示好友类别的JPanel
+		JPanel jpanel_FriendsList = new JPanel();
+		//初始化好友列表
+		initFriendsListJPanel(jpanel_FriendsList);
+		
+		//用于显示设置系统信息, 用户信息的JPanel
+		JPanel jpanel_InformationManagement = new JPanel();
+		//初始化信息管理界面
+		initInformationManagementJPanel(jpanel_InformationManagement);
 		
 		container_JPanel.add(jButton);
 		container_JPanel.add(jLabel);
 		container_JPanel.add(moveJLable);
 		
-		JPanel jpanel_UserInformation = new JPanel();
-		jpanel_UserInformation.setBounds(0, 30, _widht, _height/7);
+		container_JPanel.add(jpanel_UserInformation);
+		container_JPanel.add(jpanel_FriendsList);
+		container_JPanel.add(jpanel_InformationManagement);
+		
+		
+		this.setVisible(true);
+	}
 	
-		JPanel jpanel_UserImage = getJpanelImage(_path);
-		jpanel_UserImage.setBounds(10, 10, 100, 100);
+	/**
+	 * 初始化信息管理JPanel
+	 * @param jpanel_InformationManagement
+	 */
+	private void initInformationManagementJPanel(JPanel jpanel_InformationManagement) {
 		
-		jpanel_UserInformation.setLayout(null);
-		jpanel_UserInformation.setOpaque(false);
-		jpanel_UserInformation.add(jpanel_UserImage);
+		jpanel_InformationManagement.setBounds(0, 585, _widht, 40);
+		jpanel_InformationManagement.setOpaque(false);
+		jpanel_InformationManagement.setLayout(null);
 		
-		Label nickNameLabel = new Label("nickName:  " + this._nickName);
-		nickNameLabel.setBounds(20 + jpanel_UserImage.getWidth()
-				, 10, jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30
-				, 16);
+		//添加好友按钮
+		JButton jbutton_AddFriend = getSystemConfigButton(0);
+		jbutton_AddFriend.setText("addfriend");
 		
-		Label stateLabel = new Label("state:  " + this._loginState);
-		stateLabel.setBounds(20 + jpanel_UserImage.getWidth()
-				, 10 + nickNameLabel.getY() + nickNameLabel.getHeight()
-				, jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30
-				, 16);
+		//查找好友按钮
+		JButton jbutton_FindFriend = getSystemConfigButton(1);
+		jbutton_FindFriend.setText("findfriend");
 		
-		Label genderLabel = new Label("gender:  " + this._gender);
-		genderLabel.setBounds(20 + jpanel_UserImage.getWidth()
-				, 10 + stateLabel.getY() + stateLabel.getHeight()
-				, jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30
-				, 16);
+		//显示个人信息按钮
+		JButton jbutton_UserInfo = getSystemConfigButton(2);
+		jbutton_UserInfo.setText("userinfo");
 		
-		Label personLabel = new Label("personality label:  " + this._personLabel);
-		personLabel.setBounds(20 + jpanel_UserImage.getWidth()
-				, 10 + genderLabel.getY() + genderLabel.getHeight()
-				, jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30
-				, 16);
+		//配置个人信息按钮
+		JButton jbutton_InfoConfig = getSystemConfigButton(3);
+		jbutton_InfoConfig.setText("infoconfig");
 		
-//		personLabel.setVisible(true);
-//		Graphics graphics = personLabel.getGraphics();
-//		FontMetrics fontMetrics = graphics.getFontMetrics();
-//		fontMetrics.getAscent();
-//		int personFintMet = fontMetrics.stringWidth("personality label:  " + this._personLabel);
-//		int boundMet = jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30;
-//		if (personFintMet > boundMet) {
-//			graphics.drawLine(20 + jpanel_UserImage.getWidth()
-//					, 3 + genderLabel.getY() + genderLabel.getHeight()
-//					, boundMet, 30);
-//		}
+		jpanel_InformationManagement.add(jbutton_AddFriend);
+		jpanel_InformationManagement.add(jbutton_FindFriend);
+		jpanel_InformationManagement.add(jbutton_UserInfo);
+		jpanel_InformationManagement.add(jbutton_InfoConfig);
 		
-		jpanel_UserInformation.add(nickNameLabel);
-		jpanel_UserInformation.add(stateLabel);
-		jpanel_UserInformation.add(genderLabel);
-		jpanel_UserInformation.add(personLabel);
+	}
+
+	/**
+	 * 初始化好友列表
+	 * @param jpanel_FriendsList
+	 */
+	private void initFriendsListJPanel(JPanel jpanel_FriendsList) {
 		
-		Label label_Division = new Label();
-		StringBuffer divisionText = new StringBuffer();
-		for (int i = 0; i < 50; i++) {
-			divisionText.append(" I ");
-		}
-		int label_Division_X = jpanel_UserImage.getX();
-		int label_Division_Y = jpanel_UserImage.getHeight() + jpanel_UserImage.getY() + 5;
-		label_Division.setBounds(label_Division_X, label_Division_Y
-				, jpanel_UserInformation.getWidth() - 2 * label_Division_X
-				, 3);
-		label_Division.setText(divisionText.toString());
-		jpanel_UserInformation.add(label_Division);
-//		container_JPanel.add(label_Division);
-		
-		JPanel jpanel_FriendsList = new JPanel();
-		int jpanel_FriendsList_y = jpanel_UserInformation.getHeight() + jpanel_UserInformation.getY();
-		jpanel_FriendsList.setBounds(0, jpanel_FriendsList_y, _widht, _height*5/7);
+		jpanel_FriendsList.setBounds(0, 155, _widht, 430);
 		jpanel_FriendsList.setOpaque(false);
-//		jpanel_FriendsList.setLayout(arg0);
 		
 		jpanel_FriendsList.setLayout(null);
 		
 		//显示好友的JPanel
 		JPanel jpanel_Friend = new JPanel();
-//		jpanel_Friend.setOpaque(false);
-		jpanel_Friend.setBounds(10, 10, jpanel_FriendsList.getWidth() - 20, jpanel_FriendsList.getHeight() - 10);
-//		jpanel_Friend.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 5));
-		jpanel_Friend.setBackground(new Color(205, 205, 193));
+		jpanel_Friend.setBounds(10, 10
+				, jpanel_FriendsList.getWidth() - 20
+				, jpanel_FriendsList.getHeight() - 10);
 		jpanel_Friend.setLayout(new BorderLayout(0, 0));
-		
-//		//我的好友JButton
-//		JButton jButton_MyFriends = this.getFriendListButton("+ myFriends (" + _findSum + ")", "0");
-//		jButton_MyFriends.setPreferredSize(new Dimension(jpanel_Friend.getWidth(), 16));
-//		
-//		//陌生人JButton
-//		JButton jButton_Stranger = this.getFriendListButton("+ stranger (" + 0 + ")", "1");
-//		jButton_Stranger.setBounds(0, Integer.valueOf(jButton_Stranger.getName()) * 20, jpanel_Friend.getWidth(), 20);
-//		
-//		//黑名单JButton
-//		JButton jButton_BlackList = this.getFriendListButton("+ blackList (" + 0 + ")", "2");
-//		jButton_BlackList.setBounds(0, Integer.valueOf(jButton_BlackList.getName()) * 20, jpanel_Friend.getWidth(), 20);
-		
-//		jpanel_Friend.add(jButton_MyFriends, BorderLayout.NORTH);
-//		jpanel_Friend.add(jButton_Stranger, BorderLayout.SOUTH);
-//		jpanel_Friend.add(jButton_BlackList, BorderLayout.SOUTH, 2);
-//		jpanel_FriendsList.add(jpanel_Friend);
 		
 		JScrollPane friendJScrollPane = new JScrollPane(); 
 		
@@ -185,81 +154,138 @@ public class MainWindow extends Window{
 		friendListTreeRoot.setRowHeight(60);
 		friendListTreeRoot.setCellRenderer(new FriendNodeRenderer());
 		
-//		friendJScrollPane.add(jButton_MyFriends);
 		friendJScrollPane.setViewportView(friendListTreeRoot);
-//		friendJScrollPane.set
-//		friendJScrollPane.setBounds(x, y, width, height);
+		
 		jpanel_Friend.add(friendJScrollPane, BorderLayout.CENTER);
 		jpanel_FriendsList.add(jpanel_Friend);
-		
-		JPanel jpanel_UserSystem = new JPanel();
-		int jpanel_UserSystem_y = jpanel_FriendsList_y + jpanel_FriendsList.getHeight();
-		int jpanel_UserSystem_w = _height - jpanel_UserSystem_y;
-		jpanel_UserSystem.setBounds(0, jpanel_UserSystem_y, _widht, jpanel_UserSystem_w);
-		jpanel_UserSystem.setOpaque(false);
-		jpanel_UserSystem.setLayout(null);
-		
-		JPanel jpanel_SystemConfig = new JPanel();
-		int JSC_X = (jpanel_UserSystem.getWidth() / 2 - jpanel_Friend.getWidth() / 2);
-		int JSC_Y = (jpanel_UserSystem.getHeight() / 2 - 30);
-		jpanel_SystemConfig.setBounds(JSC_X, JSC_Y, jpanel_Friend.getWidth(), 60);
-		jpanel_SystemConfig.setBackground(new Color(207, 207, 207));
-		jpanel_SystemConfig.setLayout(null);
-		
-		//TODO 此处代码可简化(使用数组或集合， 添加合适的方法)
-		//添加好友按钮
-		int systemConfigButtonHeight = 30;
-		JButton jbutton_AddFriend = getSystemConfigButton(jpanel_SystemConfig.getWidth()
-				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 0, 10);
-		jbutton_AddFriend.setText("addfriend");
-		
-		//查找好友按钮
-		JButton jbutton_FindFriend = getSystemConfigButton(jpanel_SystemConfig.getWidth()
-				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 1, 10);
-		jbutton_FindFriend.setText("findfriend");
-		
-		//显示个人信息按钮
-		JButton jbutton_UserInfo = getSystemConfigButton(jpanel_SystemConfig.getWidth()
-				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 2, 10);
-		jbutton_UserInfo.setText("userinfo");
-		
-		//配置个人信息按钮
-		JButton jbutton_InfoConfig = getSystemConfigButton(jpanel_SystemConfig.getWidth()
-				, jpanel_SystemConfig.getHeight(), systemConfigButtonHeight, 4, 3, 10);
-		jbutton_InfoConfig.setText("infoconfig");
-		
-		jpanel_SystemConfig.add(jbutton_AddFriend);
-		jpanel_SystemConfig.add(jbutton_FindFriend);
-		jpanel_SystemConfig.add(jbutton_UserInfo);
-		jpanel_SystemConfig.add(jbutton_InfoConfig);
-		
-		jpanel_UserSystem.add(jpanel_SystemConfig);
-		
-//		GraphicsDevice[] gDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-//		try {
-//			Robot robot = new Robot(gDevice[0]);
-//			BufferedImage bi = robot.createScreenCapture(new Rectangle(_screenWidht, _screenHeight));
-//			ImageIO.write(bi, "png", new File("E:\\img\\4.png"));
-//			System.out.println("success..");
-//		}
-//		catch (AWTException e) {
-//			e.printStackTrace();
-//		}
-//		catch (IOException e) {
-//			System.out.println("faild..");
-//			e.printStackTrace();
-//		}
-		
+	}
 
-//		this.getLayeredPane().add(jpanel_BackGroundImage, new Integer(Integer.MIN_VALUE));
-		container_JPanel.add(jpanel_UserInformation);
-		container_JPanel.add(jpanel_FriendsList);
-		container_JPanel.add(jpanel_UserSystem);
+	/**
+	 * 初始化用于显示用户信息的JPanel
+	 */
+	private void initUserInformationJPanel(JPanel jpanel_UserInformation) {
+
+		jpanel_UserInformation.setBounds(0, 30, _widht, 155);
+		jpanel_UserInformation.setLayout(null);
+		jpanel_UserInformation.setOpaque(false);
+//		jpanel_UserInformation.setBackground(new Color(255, 52, 179));
+
+		JPanel jpanel_UserImage = getJpanelImage(_path);
+		jpanel_UserImage.setBounds(10, 10, 80, 80);
 		
-		this.setJPanelBackGroundImage("./resources/image/backGround_mainWindow-2.png");
-		this.setVisible(true);
+		//用户昵称
+		Label nickNameLabel = new Label("nickName:  " + this._nickName);
+		nickNameLabel.setBounds(20 + jpanel_UserImage.getWidth()
+				, 10, jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30
+				, 16);
+		
+		//用户状态
+		Label stateLabel = new Label("state:  " + this._loginState);
+		stateLabel.setBounds(20 + jpanel_UserImage.getWidth()
+				, 16 + nickNameLabel.getY() + nickNameLabel.getHeight()
+				, jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30
+				, 16);
+		
+		//性别
+		Label genderLabel = new Label("gender:  " + this._gender);
+		genderLabel.setBounds(20 + jpanel_UserImage.getWidth()
+				, 16 + stateLabel.getY() + stateLabel.getHeight()
+				, jpanel_UserInformation.getWidth() - jpanel_UserImage.getWidth() - 30
+				, 16);
+		
+		//个性签名
+		Label personLabel = new Label("personality label:  " + this._personLabel);
+		personLabel.setBounds(jpanel_UserImage.getX()
+				, 10 + jpanel_UserImage.getY() + jpanel_UserImage.getHeight()
+				, jpanel_UserInformation.getWidth() - 20
+				, 16);
+				
+		//分割线
+		Label label_Division = getDIvision();
+//		int label_Division_X = jpanel_UserImage.getX();
+		int label_Division_Y = personLabel.getHeight() 
+				+ personLabel.getY() + 5;
+		label_Division.setBounds(0, label_Division_Y
+				, jpanel_UserInformation.getWidth()
+				, 3);
+		
+		jpanel_UserInformation.add(jpanel_UserImage);
+		jpanel_UserInformation.add(nickNameLabel);
+		jpanel_UserInformation.add(stateLabel);
+		jpanel_UserInformation.add(genderLabel);
+		jpanel_UserInformation.add(personLabel);
+		jpanel_UserInformation.add(label_Division);
+		
+	}
+
+
+	/**
+	 * 获得显示为分割线的label
+	 * @return 显示为分割线的label
+	 */
+	public Label getDIvision() {
+		Label divisionLabel = new Label();
+		StringBuffer divisionText = new StringBuffer();
+		for (int i = 0; i < 50; i++) {
+			divisionText.append(" I ");
+		}
+		divisionLabel.setText(divisionText.toString());
+		return divisionLabel;
+	}
+
+	/**
+	 * 获得设置系统配置的JButton
+	 * @param index 自身所在位置下标
+	 * @return
+	 */
+	protected JButton getSystemConfigButton(int index) {
+		JButton jButtons_SystemConfig = new JButton();
+		int jbutton_SystemConfig_Width = (_widht - (10 * (4 + 1))) / 4;//数量是4，间距是10
+//		int jbutton_SystemConfig_Y = 40 / 2 - 30 / 2;
+		jButtons_SystemConfig.setBounds(
+				10 * (index + 1) + jbutton_SystemConfig_Width * index
+				, 5, jbutton_SystemConfig_Width, 30);
+		
+		return jButtons_SystemConfig;
 	}
 	
+	/**
+	 * 获得设置系统配置的JButton
+	 * @param number 父容器中设置的总个数
+	 * @param index 自身所在位置下标
+	 * @param spacing 水平间距
+	 * @return
+	 */
+	protected JButton getSystemConfigButton(int number, int index, int spacing) {
+		JButton jButtons_SystemConfig = new JButton();
+		int jbutton_SystemConfig_Width = (_widht - (spacing * (number + 1))) / number;
+//		int jbutton_SystemConfig_Y = 40 / 2 - 30 / 2;
+		jButtons_SystemConfig.setBounds(
+				spacing * (index + 1) + jbutton_SystemConfig_Width * index
+				, 5, jbutton_SystemConfig_Width, 30);
+		
+		return jButtons_SystemConfig;
+	}
+	
+	
+	/**
+	 * 获得设置系统配置的JButton数组
+	 * @param number 父容器中设置的总个数
+	 * @param spacing 水平间距
+	 * @return
+	 */
+	protected JButton[] getSystemConfigButton(int number, int spacing) {
+		JButton[] jButtons_SystemConfigArray = new JButton[number];
+		int jbutton_SystemConfig_Width = (_widht - (spacing * (number + 1))) / number;
+//		int jbutton_SystemConfig_Y = 40 / 2 - 30 / 2;
+		for (int i = 0; i < jButtons_SystemConfigArray.length; i++) {
+			jButtons_SystemConfigArray[i] = new JButton();
+			jButtons_SystemConfigArray[i].setBounds(
+					spacing * (i + 1) + jbutton_SystemConfig_Width * i
+					, 5, jbutton_SystemConfig_Width, 30);
+		}
+		return jButtons_SystemConfigArray;
+	}
 	
 	/**
 	 * 获得设置系统配置的JButton, 所占位置为父容器的中间位置
@@ -279,44 +305,11 @@ public class MainWindow extends Window{
 		return jbutton_SystemConfig;
 	}
 	
-	@Override
-	public void paint(Graphics arg0) {
-		super.paint(arg0);
-		arg0.setColor(new Color(132,112,255));
-//		arg0.draw3DRect(0, 0, _widht - 1, _height - 1, true);
-	}
-	
-	private void mainWindowInFo() {
-		ArrayList<User> userList = EvenProcess.getUserInfo(get_saveUserName());
-		User user = userList.get(0);
-		switch (user.getUserState()) {
-			case "0":				
-				this._loginState = "OnLine";
-				break;
-			case "1":				
-				this._loginState = "Invisibilit";
-				break;
-			case "2":				
-				this._loginState = "OutLogin";
-				break;
-			default:
-				break;
-		}
-		switch (user.getGender().intValue()) {
-			case 0:
-				this._gender = "man";
-				break;
-			case 1:
-				this._gender = "woman";
-				break;
-			default:
-				break;
-		}
-		this._nickName = user.getUserNick();
-		this._path = user.getUserImagepath();
-		this._personLabel = user.getPersonLabel();
-		this._findSum = user.getFiendSum();
-		
+	/**
+	 * 初始化主窗体 , 设置相关信息
+	 */
+	private void initMainWindow() {
+		initUserInformation();
 		System.out.println(",W:" + _screenWidht + ",h:" + _screenHeight);
 		
 		//参数为所占比例的分子
@@ -330,10 +323,60 @@ public class MainWindow extends Window{
 		this.setLocation((int)_x, (int)_y);
 		this.setLayout(null);
 		this.setUndecorated(true);
-		
+
+		this.setJPanelBackGroundImage(
+				"./resources/image/backGround_mainWindow-2.png");
 		System.out.println(",TW:" + this._widht + ",Th:" + this._height);
 	}
 	
+	
+	/**
+	 * 初始化用户相关信息
+	 */
+	private void initUserInformation() {
+		
+		ArrayList<User> userList = EvenProcess.getUserInfo(get_saveUserName());
+		User user = userList.get(0);
+		
+		//初始化用户状态
+		switch (user.getUserState()) {
+			case "0":				
+				this._loginState = "OnLine";
+				break;
+			case "1":				
+				this._loginState = "Invisibilit";
+				break;
+			case "2":				
+				this._loginState = "OutLogin";
+				break;
+			default:
+				break;
+		}
+		
+		//初始化用户性别
+		switch (user.getGender().intValue()) {
+			case 0:
+				this._gender = "man";
+				break;
+			case 1:
+				this._gender = "woman";
+				break;
+			default:
+				break;
+		}
+		
+		this._nickName = user.getUserNick();
+		this._path = user.getUserImagepath();
+		this._personLabel = user.getPersonLabel();
+		this._findSum = user.getFiendSum();
+	}
+
+	/**
+	 * 单例模式, 创建主窗口对象
+	 * @param username 用户名
+	 * @param password 密码
+	 * @return
+	 */
 	public static MainWindow createMainWindow(String username, String password){
 		if (_mainWindow == null) {
 			
@@ -344,6 +387,7 @@ public class MainWindow extends Window{
 		}
 		return _mainWindow;
 	}
+	
 	public static void main(String[] args) {
 		MainWindow.createMainWindow("zxk", "zk001");
 	}
