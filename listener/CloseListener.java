@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JPanel;
 
 import frame.Window;
 
@@ -14,6 +15,7 @@ public class CloseListener implements MouseListener{
 	private JButton _jButton;
 	private ImageIcon _closeJButton_Ago;
 	private ImageIcon _closeJButton_After;
+	private JPanel _jPanel;
 	
 	public CloseListener(Window winSelf) {
 		_win = winSelf;
@@ -22,6 +24,13 @@ public class CloseListener implements MouseListener{
 	public CloseListener(Window winSelf, JButton jButton, ImageIcon agoIcon, ImageIcon afterIcon) {
 		_win = winSelf;
 		_jButton = jButton;
+		_closeJButton_Ago = agoIcon;
+		_closeJButton_After = afterIcon;
+	}
+	
+	public CloseListener(Window winSelf, JPanel jPanel, ImageIcon agoIcon, ImageIcon afterIcon) {
+		_win = winSelf;
+		_jPanel = jPanel;
 		_closeJButton_Ago = agoIcon;
 		_closeJButton_After = afterIcon;
 	}

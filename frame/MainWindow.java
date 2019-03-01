@@ -1,9 +1,11 @@
 package frame;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Label;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -29,6 +31,7 @@ public class MainWindow extends Window{
 		
 		JPanel container_JPanel = (JPanel)this.getContentPane();
 		container_JPanel.setOpaque(false);
+		container_JPanel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 2, true));
 		
 		//¹Ø±Õ°´Å¥
 		JButton jButton = getCloseJButton();
@@ -73,7 +76,7 @@ public class MainWindow extends Window{
 	 */
 	private void initInformationManagementJPanel(JPanel jpanel_InformationManagement) {
 		
-		jpanel_InformationManagement.setBounds(0, 585, _widht, 40);
+		jpanel_InformationManagement.setBounds(0, 588, _widht, 40);
 		jpanel_InformationManagement.setOpaque(false);
 		jpanel_InformationManagement.setLayout(null);
 		

@@ -67,11 +67,27 @@ public class Window extends JFrame{
 		_savePassWord = null;
 	}
 	
+//	protected JPanel getCloseJButton(){
+//		
+//		JPanel jButton = new JPanel();
+//		jButton.setBounds(this._widht - 31, 1, 30, 30);
+//		
+//		jButton.setBorder(null);
+//		jButton.setIcon(_closeJButton_Ago);
+//		jButton.addMouseListener(new CloseListener(this, jButton, _closeJButton_Ago, _closeJButton_After));
+//		return JPanel;
+//	}
+	
+	/**
+	 * 获得关闭按钮
+	 * @return
+	 */
 	protected JButton getCloseJButton(){
 		
 		JButton jButton = new JButton();
-		jButton.setBounds(this._widht - 30, 0, 30, 30);
+		jButton.setBounds(this._widht - 31, 1, 30, 30);
 		
+		jButton.setBorder(null);
 		jButton.setIcon(_closeJButton_Ago);
 		jButton.addMouseListener(new CloseListener(this, jButton, _closeJButton_Ago, _closeJButton_After));
 		return jButton;
@@ -107,13 +123,34 @@ public class Window extends JFrame{
 		this.getLayeredPane().add(jpanel_BackGroundImage, new Integer(Integer.MIN_VALUE));
 	}
 	
+	/**
+	 * 获得带有背景图的JPanel
+	 * @param brakground 背景图片
+	 * @return
+	 */
+	protected JPanel getJpanelImage(final ImageIcon brakground){
+		JPanel jpanelImage = new JPanel(){
+			private static final long serialVersionUID = 1L;
+			@Override
+			protected void paintComponent(java.awt.Graphics arg0) {
+				super.paintComponent(arg0);
+				arg0.drawImage(brakground.getImage(), 0, 0, getWidth(), getHeight(), brakground.getImageObserver());
+			}
+		};
+		return jpanelImage;
+	}
+	
+	/**
+	 * 获得带有背景图的JPanel
+	 * @param path 图片路径
+	 * @return
+	 */
 	protected JPanel getJpanelImage(final String path){
 		JPanel jpanelImage = new JPanel(){
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected void paintComponent(java.awt.Graphics arg0) {
 				super.paintComponent(arg0);
-				System.out.println("path:"+ path);
 				ImageIcon userIcon = new ImageIcon(path);
 				arg0.drawImage(userIcon.getImage(), 0, 0, getWidth(), getHeight(), userIcon.getImageObserver());
 			}
@@ -152,7 +189,7 @@ public class Window extends JFrame{
 
 	public void set_height(int proportionMolecule_H) {
 //		this._height = _screenHeight * proportionMolecule_H/_PROPORTIONDENOMINATOR_H;
-		this._height = 650;
+		this._height = 635;
 	}
 
 	public int get_widht() {
