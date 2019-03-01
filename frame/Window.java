@@ -151,7 +151,8 @@ public class Window extends JFrame{
 	}
 
 	public void set_height(int proportionMolecule_H) {
-		this._height = _screenHeight * proportionMolecule_H/_PROPORTIONDENOMINATOR_H;
+//		this._height = _screenHeight * proportionMolecule_H/_PROPORTIONDENOMINATOR_H;
+		this._height = 650;
 	}
 
 	public int get_widht() {
@@ -159,7 +160,8 @@ public class Window extends JFrame{
 	}
 
 	public void set_widht(int proportionMolecule_W) {
-		this._widht = _screenWidht * proportionMolecule_W/_PROPORTIONDENOMINATOR_W;
+//		this._widht = _screenWidht * proportionMolecule_W/_PROPORTIONDENOMINATOR_W;
+		this._widht = 280;
 	}
 	
 }
