@@ -12,9 +12,6 @@ import listener.FieldListener;
 
 public class Window extends JFrame{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	protected final static int _PROPORTIONDENOMINATOR_W = 1280;
@@ -36,6 +33,7 @@ public class Window extends JFrame{
 	protected double _y;
 	protected String _fontRomen;
 	
+	protected Number _id; 
 	protected String _nickName;
 	protected String _loginState;
 	protected String _path;
@@ -46,13 +44,7 @@ public class Window extends JFrame{
 	static{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
 		_screenWidht = screenSize.width;
-		_screenHeight = screenSize.height;
-//		URL url = Window.class.getResource(".").getPath();
-//		System.out.println("url:"+Window.class.getResource("../resources/image/1.png").getPath());
-//		System.out.println("path:" + new File(uri).getAbsolutePath());
-//		_closeJButton_Ago = new ImageIcon(Window.class.getResource("../resources/image/2.png"));
-//		_closeJButton_After = new ImageIcon(Window.class.getResource("../resources/image/1.png"));
-		
+		_screenHeight = screenSize.height;	
 		_closeJButton_Ago = new ImageIcon("./resources/image/close_button-1.png");
 		_closeJButton_After = new ImageIcon("./resources/image/close_button-2.png");
 	}
@@ -66,17 +58,6 @@ public class Window extends JFrame{
 		_saveUserName = null;
 		_savePassWord = null;
 	}
-	
-//	protected JPanel getCloseJButton(){
-//		
-//		JPanel jButton = new JPanel();
-//		jButton.setBounds(this._widht - 31, 1, 30, 30);
-//		
-//		jButton.setBorder(null);
-//		jButton.setIcon(_closeJButton_Ago);
-//		jButton.addMouseListener(new CloseListener(this, jButton, _closeJButton_Ago, _closeJButton_After));
-//		return JPanel;
-//	}
 	
 	/**
 	 * 获得关闭按钮
@@ -93,6 +74,11 @@ public class Window extends JFrame{
 		return jButton;
 	}
 	
+	/**
+	 * 获得移动JLabel
+	 * @param retainWidth
+	 * @return
+	 */
 	protected JLabel getMoveJLabel(int retainWidth){
 		JLabel moveJLable = new JLabel();
 		moveJLable.setBounds(retainWidth, 0, this._widht - 2*retainWidth, 30);
@@ -111,12 +97,15 @@ public class Window extends JFrame{
 		JButton friendListButton = new JButton(text);
 		//TODO 使用系统设置字体
 		friendListButton.setFont(new Font("", Font.BOLD, 12));
-//		jButton_MyFriends.setForeground(Color.RED);
 		friendListButton.setHorizontalAlignment(JButton.LEFT);
 		friendListButton.setName(nameToIndex);
 		return friendListButton;
 	}
 	
+	/**
+	 * 设置背景图片
+	 * @param path 图片路径
+	 */
 	protected void setJPanelBackGroundImage(final String path) {
 		JPanel jpanel_BackGroundImage = getJpanelImage(path);
 		jpanel_BackGroundImage.setBounds(0, 0, _widht, _height);

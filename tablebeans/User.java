@@ -4,6 +4,7 @@ import row.RowSupper;
 
 
 public class User extends RowSupper {
+	private Number id;
 	private String userName;
 	private String passWord;
 	private String userNick;
@@ -14,6 +15,14 @@ public class User extends RowSupper {
 	private String personLabel;
 	
 	public User() {
+	}
+
+	public Number getId() {
+		return id;
+	}
+
+	public void setId(Number id) {
+		this.id = id;
 	}
 
 	public String getUserName() {
@@ -80,13 +89,13 @@ public class User extends RowSupper {
 		this.personLabel = personLabel;
 	}
 
-	
+	@Override
 	public String toString() {
-		return "User [userName=" + userName + ", passWord=" + passWord + ", userNick="
-				+ userNick + ", userImagepath=" + userImagepath + ", userState="
-				+ userState + ", fiendSum=" + fiendSum + ", gender=" + gender
-				+ ", personLabel=" + personLabel + "]";
+		return "User [id=" + id + ", userName=" + userName + ", passWord=" + passWord + ", userNick=" + userNick
+				+ ", userImagepath=" + userImagepath + ", userState=" + userState + ", fiendSum=" + fiendSum
+				+ ", gender=" + gender + ", personLabel=" + personLabel + "]";
 	}
 
+	
 	
 }

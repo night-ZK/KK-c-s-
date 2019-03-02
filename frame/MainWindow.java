@@ -12,11 +12,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.plaf.basic.BasicTreeUI;
+import javax.swing.tree.TreeSelectionModel;
 
 import db.EvenProcess;
 import frame.Window;
 import frame.customjtree.FriendNodeRenderer;
 import frame.customjtree.FriendsListTree;
+import frame.customjtree.GroupListTree;
+import frame.customjtree.GroupNodeRenderer;
+import tablebeans.Friend;
 import tablebeans.User;
 
 public class MainWindow extends Window{
@@ -123,41 +128,68 @@ public class MainWindow extends Window{
 		
 		JScrollPane friendJScrollPane = new JScrollPane(); 
 		
-		FriendsListTree OnlineFriend_DMTNode = new FriendsListTree("+myfriends", "2");
-		FriendsListTree onefriendTest = new FriendsListTree();
-		onefriendTest.set_nickname("zz");		
-		onefriendTest.set_state("0");
-		onefriendTest.set_imageIcon(new ImageIcon("./resources/icon/icon2.png"));
-		onefriendTest.set_personLabel("ww");
-		onefriendTest.set_userAccount("zxl002");
+		FriendsListTree friendsListTree_RootNode = new FriendsListTree();
 		
-		FriendsListTree onefriendTest2 = new FriendsListTree();
-		onefriendTest2.set_nickname("kk");		
-		onefriendTest2.set_state("0");
-		onefriendTest2.set_imageIcon(new ImageIcon("./resources/icon/icon.png"));
-		onefriendTest2.set_personLabel("tt");
-		onefriendTest2.set_userAccount("zxl002");
+		FriendsListTree group_Myfrends = new FriendsListTree();
+		group_Myfrends.set_groupText("myFrends");
 		
-		FriendsListTree[] friendsList = new FriendsListTree[10];
-		for (int i = 0; i < 10; i++) {
-			friendsList[i] = new FriendsListTree();
-			friendsList[i].set_nickname("kk" + i);		
-			friendsList[i].set_state("0");
-			friendsList[i].set_imageIcon(new ImageIcon("./resources/icon/icon.png"));
-			friendsList[i].set_personLabel("tt");
-			friendsList[i].set_userAccount("zxl002");
-			OnlineFriend_DMTNode.add(friendsList[i]);
+		FriendsListTree group_Stranger = new FriendsListTree();;
+		group_Stranger.set_groupText("stranger");
+		
+		ArrayList<Friend> friendsInformationList = EvenProcess.getFriendInfo(_id.intValue());
+		for (Friend friend : friendsInformationList) {
+			User friendUserInfomain = EvenProcess.getUserInfo(friend.getFriend_id().intValue());
+			FriendsListTree friendsNode = new FriendsListTree();
+			friendsNode = new FriendsListTree();
+			friendsNode.set_nickname(friendUserInfomain.getUserNick());		
+			friendsNode.set_imageIcon(new ImageIcon(friendUserInfomain.getUserImagepath()));
+			friendsNode.set_personLabel(friendUserInfomain.getPersonLabel());
+			friendsNode.set_userAccount(friendUserInfomain.getUserName());
+			friendsNode.set_state(friendUserInfomain.getUserState());
+			group_Myfrends.add(friendsNode);
+			
+//			FriendsListTree[] friendsNodeArray = new FriendsListTree[friendsInformationList.size()];
+//			for (int i = 0; i < friendsNodeArray.length; i++) {
+//				friendsNodeArray[i] = new FriendsListTree();
+//				friendsNodeArray[i].set_nickname(friendUserInfomain.getUserNick());		
+//				friendsNodeArray[i].set_imageIcon(new ImageIcon(friendUserInfomain.getUserImagepath()));
+//				friendsNodeArray[i].set_personLabel(friendUserInfomain.getPersonLabel());
+//				friendsNodeArray[i].set_userAccount(friendUserInfomain.getUserName());
+//				friendsNodeArray[i].set_state(friendUserInfomain.getUserState());
+//				group_Myfrends.add(friendsNodeArray[i]);
+//			}
 		}
 		
-		OnlineFriend_DMTNode.add(onefriendTest);
-		OnlineFriend_DMTNode.add(onefriendTest2);
-		JTree friendListTreeRoot = new JTree(OnlineFriend_DMTNode);
-		friendListTreeRoot.setRootVisible(false);
-		friendListTreeRoot.putClientProperty("JTree.lineStyle", "Horizontal");
-		friendListTreeRoot.setRowHeight(60);
-		friendListTreeRoot.setCellRenderer(new FriendNodeRenderer());
+		friendsListTree_RootNode.add(group_Myfrends);
+		friendsListTree_RootNode.add(group_Stranger);
 		
-		friendJScrollPane.setViewportView(friendListTreeRoot);
+		JTree groupListTreeRoot = new JTree(friendsListTree_RootNode);
+		groupListTreeRoot.setRootVisible(false);
+		groupListTreeRoot.putClientProperty("JTree.lineStyle"
+				, "Horizontal");
+		groupListTreeRoot.setToggleClickCount(1);
+		groupListTreeRoot.getSelectionModel()
+		.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		groupListTreeRoot.setCellRenderer(
+				new FriendNodeRenderer(jpanel_Friend.getWidth()));
+		groupListTreeRoot.setUI(new BasicTreeUI() {
+
+			@Override
+			public void setLeftChildIndent(int newAmount) {
+//				super.setLeftChildIndent(newAmount);
+			}
+
+			@Override
+			public void setRightChildIndent(int newAmount) {
+//				super.setRightChildIndent(newAmount);
+			}
+			
+		});
+		friendJScrollPane.setHorizontalScrollBarPolicy(
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		friendJScrollPane.setVerticalScrollBarPolicy(
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		friendJScrollPane.setViewportView(groupListTreeRoot);
 		
 		jpanel_Friend.add(friendJScrollPane, BorderLayout.CENTER);
 		jpanel_FriendsList.add(jpanel_Friend);
@@ -368,6 +400,7 @@ public class MainWindow extends Window{
 				break;
 		}
 		
+		this._id = user.getId();
 		this._nickName = user.getUserNick();
 		this._path = user.getUserImagepath();
 		this._personLabel = user.getPersonLabel();

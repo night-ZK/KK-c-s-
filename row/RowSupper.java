@@ -7,6 +7,11 @@ import java.util.ArrayList;
 
 public abstract class RowSupper implements RowMode{
 
+	/**
+	 * 获得一个表对象中所有字段, 将它们存放在一个list中
+	 * 并返回为String类型的数组
+	 * @return 表对象中的所有字段
+	 */
 	public String[] getColumnPathArray() {
 		ArrayList<String> userColumnArrayList = new ArrayList<String>();
 		String[] fields = getFields(this);
@@ -17,6 +22,11 @@ public abstract class RowSupper implements RowMode{
 		return (String[]) userColumnArrayList.toArray(new String[userColumnArrayList.size()]);
 	}
 	
+	/**
+	 * 参数为表对象中的字段名, 获得该字段的数据类型, 并返回
+	 * @param fieldName 字段名 
+	 * @return 字段的类型
+	 */
 	public String getDataType(String fieldName) {
 		String[] fields = getFields(this);
 		for (String field : fields) {
@@ -28,6 +38,11 @@ public abstract class RowSupper implements RowMode{
 		return null;
 	}
 	
+	/**
+	 * 利用反射将数据通过set方法设置到表对象的相应字段中
+	 * @param columnName 表对象的字段名
+	 * @param value 从数据库中查出来的数据
+	 */
 	public void setValue(String columnName, Object value) {
 		try {
 			String[] columnArray = this.getColumnPathArray();
@@ -63,6 +78,11 @@ public abstract class RowSupper implements RowMode{
 		}
 	}
 
+	/**
+	 * 获得表对象中的所有字段, 通过“,”拆分, 并返回一个String类型的数组
+	 * @param row 表对象
+	 * @return 字段数组
+	 */
 	public String[] getFields(RowMode row){
 		String rowString = row.toString();
 		String needRowString = rowString.substring(rowString.indexOf("[")+1, rowString.indexOf("]"));
