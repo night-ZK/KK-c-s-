@@ -131,7 +131,7 @@ public class MainWindow extends Window{
 		FriendsListTree friendsListTree_RootNode = new FriendsListTree();
 		
 		FriendsListTree group_Myfrends = new FriendsListTree();
-		group_Myfrends.set_groupText("myFrends");
+		group_Myfrends.set_groupText("myFriends");
 		
 		FriendsListTree group_Stranger = new FriendsListTree();;
 		group_Stranger.set_groupText("stranger");
