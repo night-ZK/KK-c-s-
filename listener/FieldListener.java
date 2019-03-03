@@ -78,7 +78,7 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 				int mainWindowX_after = (int)_move_After.getX() - (int)_move_Ago.getX() + _win.getX();
 				int mainWindowY_after = (int)_move_After.getY() - (int)_move_Ago.getY() + _win.getY(); 				
 				
-				_win.setBounds(mainWindowX_after, mainWindowY_after, _win.get_widht(), _win.get_height());
+				_win.setBounds(mainWindowX_after, mainWindowY_after, _win.get_width(), _win.get_height());
 				_move_Ago = null;
 				_move_After = null;
 			}

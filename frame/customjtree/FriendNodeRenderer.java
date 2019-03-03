@@ -4,13 +4,16 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
+
+import listener.FriendsListJTreeList;
 
 /**
  * 好友节点类
@@ -20,9 +23,6 @@ import javax.swing.tree.TreeCellRenderer;
  */
 public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private static ImageIcon _groupOpenImage;
@@ -50,19 +50,26 @@ public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 				!= tree.getModel().getRoot()) {
 			
 			//从FriendsListTree节点中获得icon
-			ImageIcon friendIcon = new ImageIcon(friendsListTree.get_imageIcon() + "");
+			ImageIcon friendIcon = new ImageIcon(friendsListTree.get_friendUserInfo().getUserImagepath());
 			//设置图片缩放比例
 			friendIcon = imageIconFilter(friendIcon, 60, 60);
 			String userNickAndpersonlabel = "";
-			if (friendsListTree.get_personLabel() != null) {
-				userNickAndpersonlabel = "<html>" + friendsListTree.get_nickname() 
-				+ "<br/>" + friendsListTree.get_personLabel() + "<html/>";
+			if (friendsListTree.get_friendUserInfo().getPersonLabel() != null) {
+				
+				userNickAndpersonlabel = "<html>" + friendsListTree.get_friendUserInfo().getUserNick() 
+						+ "<br/>" + friendsListTree
+							.get_friendUserInfo().getPersonLabel() + "<html/>";
 			}else {
-				userNickAndpersonlabel = friendsListTree.get_nickname();
+				
+				userNickAndpersonlabel = friendsListTree.get_friendUserInfo()
+						.getUserNick();
 			}
 			
 			setIcon(friendIcon);
-			if (!friendsListTree.get_state().equals("0")) {
+			
+			if (!friendsListTree.get_friendUserInfo()
+					.getUserState().equals("0")) {
+				
 				setEnabled(false);
 			}
 			
@@ -70,6 +77,9 @@ public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 			setIconTextGap(10);
 			setPreferredSize(new Dimension(_subparentWidth - 20, 65));
 //			setBorder(null);
+//			//添加鼠标双击事件
+//			addMouseListener(new FriendsListJTreeList(
+//					friendsListTree.get_friendUserInfo()));
 		}else {
 			if (expanded) {
 				setPreferredSize(new Dimension(_subparentWidth - 20, 20));
@@ -83,6 +93,7 @@ public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 			setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 1));
 			setIconTextGap(5);
 		}
+	
 		return this;
 	}
 	

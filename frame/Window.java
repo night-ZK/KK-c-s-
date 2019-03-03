@@ -28,7 +28,7 @@ public class Window extends JFrame{
 	private final String _savePassWord;
 	
 	protected int _height;
-	protected int _widht;
+	protected int _width;
 	protected double _x;
 	protected double _y;
 	protected String _fontRomen;
@@ -66,7 +66,7 @@ public class Window extends JFrame{
 	protected JButton getCloseJButton(){
 		
 		JButton jButton = new JButton();
-		jButton.setBounds(this._widht - 31, 1, 30, 30);
+		jButton.setBounds(this._width - 31, 1, 30, 30);
 		
 		jButton.setBorder(null);
 		jButton.setIcon(_closeJButton_Ago);
@@ -76,12 +76,12 @@ public class Window extends JFrame{
 	
 	/**
 	 * 获得移动JLabel
-	 * @param retainWidth
+	 * @param retainWidth 前后的间距
 	 * @return
 	 */
 	protected JLabel getMoveJLabel(int retainWidth){
 		JLabel moveJLable = new JLabel();
-		moveJLable.setBounds(retainWidth, 0, this._widht - 2*retainWidth, 30);
+		moveJLable.setBounds(retainWidth, 0, this._width - 2*retainWidth, 30);
 		moveJLable.setName("move");
 		moveJLable.addMouseListener(new FieldListener(this, moveJLable.getName()));
 		return moveJLable;
@@ -108,7 +108,7 @@ public class Window extends JFrame{
 	 */
 	protected void setJPanelBackGroundImage(final String path) {
 		JPanel jpanel_BackGroundImage = getJpanelImage(path);
-		jpanel_BackGroundImage.setBounds(0, 0, _widht, _height);
+		jpanel_BackGroundImage.setBounds(0, 0, _width, _height);
 		this.getLayeredPane().add(jpanel_BackGroundImage, new Integer(Integer.MIN_VALUE));
 	}
 	
@@ -176,18 +176,39 @@ public class Window extends JFrame{
 		return _height;
 	}
 
+	/**
+	 * 设置height值
+	 * @param proportionMolecule_H 屏占比的分子
+	 */
 	public void set_height(int proportionMolecule_H) {
 //		this._height = _screenHeight * proportionMolecule_H/_PROPORTIONDENOMINATOR_H;
 		this._height = 635;
 	}
+	
+	/**
+	 * 设置height的值
+	 * @param height 实际需要的height
+	 */
+	public void _height(int height) {
+		this._height = height;
+	}
+	
 
-	public int get_widht() {
-		return _widht;
+	/**
+	 * 设置width值
+	 * @param width 实际需要的width
+	 */
+	public void _width(int width) {
+		this._width = width;
+	}
+	
+	public int get_width() {
+		return _width;
 	}
 
-	public void set_widht(int proportionMolecule_W) {
+	public void set_width(int proportionMolecule_W) {
 //		this._widht = _screenWidht * proportionMolecule_W/_PROPORTIONDENOMINATOR_W;
-		this._widht = 280;
+		this._width = 280;
 	}
 	
 }

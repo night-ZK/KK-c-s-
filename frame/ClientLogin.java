@@ -59,8 +59,8 @@ public class ClientLogin extends Window{
 		
 		JLabel userLabel = new JLabel();
 		JLabel pasLabel = new JLabel();
-		userLabel.setBounds(_widht/9, _height/3, 80, 20);
-		pasLabel.setBounds(_widht/9, userLabel.getY() + 30, 80, 20);
+		userLabel.setBounds(_width/9, _height/3, 80, 20);
+		pasLabel.setBounds(_width/9, userLabel.getY() + 30, 80, 20);
 		userLabel.setText(_userL);
 		pasLabel.setText(_pasL);
 		
@@ -73,8 +73,8 @@ public class ClientLogin extends Window{
 		FieldListener userFieldLis = new FieldListener(_tipText_User, userText, "textfield0");
 		FieldListener pasFieldLis = new FieldListener(_tipText_Pas, pasText, "textfield1");
 		
-		userText.setBounds(_widht/3 + 25, _height/3, 150, 20);
-		pasText.setBounds(_widht/3 + 25, userText.getY() + 30, 150, 20);
+		userText.setBounds(_width/3 + 25, _height/3, 150, 20);
+		pasText.setBounds(_width/3 + 25, userText.getY() + 30, 150, 20);
 		userText.setText(_tipText_User);
 		pasText.setText(_tipText_Pas);
 		userText.setFont(enterFont);
@@ -89,7 +89,7 @@ public class ClientLogin extends Window{
 		
 		Button loginButton = new Button();
 		Button closeButton = new Button();
-		loginButton.setBounds(_widht/5, _height*2/3, 80, 20);
+		loginButton.setBounds(_width/5, _height*2/3, 80, 20);
 		closeButton.setBounds(loginButton.getX() + loginButton.getWidth() + 20, _height*2/3, 80, 20);
 		loginButton.setLabel(_butLabel_Log);
 		closeButton.setLabel(_butLabel_Close);
@@ -110,7 +110,7 @@ public class ClientLogin extends Window{
 		JPanel backGroundJPanel = new JPanel();
 		Color color = new Color(240,255,240);
 		backGroundJPanel.setBackground(color);
-		backGroundJPanel.setBounds(0, 0, _widht, _height);
+		backGroundJPanel.setBounds(0, 0, _width, _height);
 		
 		container_JPanel.add(close_JButton);
 		container_JPanel.add(move_Lable);
@@ -135,15 +135,18 @@ public class ClientLogin extends Window{
 	public void paint(Graphics arg0) {
 		super.paint(arg0);
 		arg0.setColor(new Color(132,112,255));
-		arg0.draw3DRect(0, 0, _widht - 1, _height - 1, true);
+		arg0.draw3DRect(0, 0, _width - 1, _height - 1, true);
 	}
 
 	private void clientLoginInFo(){
 		
-		this.set_widht(330);
-		this.set_height(220);
+//		this.set_widht(330);
+//		this.set_height(220);
+//		this.setSize(_widht, _height);
 		
-		this.setSize(_widht, _height);
+		this._width(330);
+		this._height(220);
+		this.setSize(_width, _height);
 		
 		this.setResizable(false);
 		this.setUndecorated(true);

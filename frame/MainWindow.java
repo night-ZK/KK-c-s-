@@ -19,8 +19,7 @@ import db.EvenProcess;
 import frame.Window;
 import frame.customjtree.FriendNodeRenderer;
 import frame.customjtree.FriendsListTree;
-import frame.customjtree.GroupListTree;
-import frame.customjtree.GroupNodeRenderer;
+import listener.FriendsListJTreeList;
 import tablebeans.Friend;
 import tablebeans.User;
 
@@ -81,7 +80,7 @@ public class MainWindow extends Window{
 	 */
 	private void initInformationManagementJPanel(JPanel jpanel_InformationManagement) {
 		
-		jpanel_InformationManagement.setBounds(0, 588, _widht, 40);
+		jpanel_InformationManagement.setBounds(0, 588, _width, 40);
 		jpanel_InformationManagement.setOpaque(false);
 		jpanel_InformationManagement.setLayout(null);
 		
@@ -114,7 +113,7 @@ public class MainWindow extends Window{
 	 */
 	private void initFriendsListJPanel(JPanel jpanel_FriendsList) {
 		
-		jpanel_FriendsList.setBounds(0, 155, _widht, 430);
+		jpanel_FriendsList.setBounds(0, 155, _width, 430);
 		jpanel_FriendsList.setOpaque(false);
 		
 		jpanel_FriendsList.setLayout(null);
@@ -138,14 +137,10 @@ public class MainWindow extends Window{
 		
 		ArrayList<Friend> friendsInformationList = EvenProcess.getFriendInfo(_id.intValue());
 		for (Friend friend : friendsInformationList) {
-			User friendUserInfomain = EvenProcess.getUserInfo(friend.getFriend_id().intValue());
+			User friendUserInformation = EvenProcess.getUserInfo(friend.getFriend_id().intValue());
 			FriendsListTree friendsNode = new FriendsListTree();
 			friendsNode = new FriendsListTree();
-			friendsNode.set_nickname(friendUserInfomain.getUserNick());		
-			friendsNode.set_imageIcon(new ImageIcon(friendUserInfomain.getUserImagepath()));
-			friendsNode.set_personLabel(friendUserInfomain.getPersonLabel());
-			friendsNode.set_userAccount(friendUserInfomain.getUserName());
-			friendsNode.set_state(friendUserInfomain.getUserState());
+			friendsNode.set_friendUserInfo(friendUserInformation);
 			group_Myfrends.add(friendsNode);
 			
 //			FriendsListTree[] friendsNodeArray = new FriendsListTree[friendsInformationList.size()];
@@ -172,6 +167,8 @@ public class MainWindow extends Window{
 		.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		groupListTreeRoot.setCellRenderer(
 				new FriendNodeRenderer(jpanel_Friend.getWidth()));
+		//添加鼠标双击事件
+		groupListTreeRoot.addMouseListener(new FriendsListJTreeList());
 		groupListTreeRoot.setUI(new BasicTreeUI() {
 
 			@Override
@@ -200,7 +197,7 @@ public class MainWindow extends Window{
 	 */
 	private void initUserInformationJPanel(JPanel jpanel_UserInformation) {
 
-		jpanel_UserInformation.setBounds(0, 30, _widht, 155);
+		jpanel_UserInformation.setBounds(0, 30, _width, 155);
 		jpanel_UserInformation.setLayout(null);
 		jpanel_UserInformation.setOpaque(false);
 //		jpanel_UserInformation.setBackground(new Color(255, 52, 179));
@@ -275,7 +272,7 @@ public class MainWindow extends Window{
 	 */
 	protected JButton getSystemConfigButton(int index) {
 		JButton jButtons_SystemConfig = new JButton();
-		int jbutton_SystemConfig_Width = (_widht - (10 * (4 + 1))) / 4;//数量是4，间距是10
+		int jbutton_SystemConfig_Width = (_width - (10 * (4 + 1))) / 4;//数量是4，间距是10
 //		int jbutton_SystemConfig_Y = 40 / 2 - 30 / 2;
 		jButtons_SystemConfig.setBounds(
 				10 * (index + 1) + jbutton_SystemConfig_Width * index
@@ -293,7 +290,7 @@ public class MainWindow extends Window{
 	 */
 	protected JButton getSystemConfigButton(int number, int index, int spacing) {
 		JButton jButtons_SystemConfig = new JButton();
-		int jbutton_SystemConfig_Width = (_widht - (spacing * (number + 1))) / number;
+		int jbutton_SystemConfig_Width = (_width - (spacing * (number + 1))) / number;
 //		int jbutton_SystemConfig_Y = 40 / 2 - 30 / 2;
 		jButtons_SystemConfig.setBounds(
 				spacing * (index + 1) + jbutton_SystemConfig_Width * index
@@ -311,7 +308,7 @@ public class MainWindow extends Window{
 	 */
 	protected JButton[] getSystemConfigButton(int number, int spacing) {
 		JButton[] jButtons_SystemConfigArray = new JButton[number];
-		int jbutton_SystemConfig_Width = (_widht - (spacing * (number + 1))) / number;
+		int jbutton_SystemConfig_Width = (_width - (spacing * (number + 1))) / number;
 //		int jbutton_SystemConfig_Y = 40 / 2 - 30 / 2;
 		for (int i = 0; i < jButtons_SystemConfigArray.length; i++) {
 			jButtons_SystemConfigArray[i] = new JButton();
@@ -348,12 +345,12 @@ public class MainWindow extends Window{
 		System.out.println(",W:" + _screenWidht + ",h:" + _screenHeight);
 		
 		//参数为所占比例的分子
-		this.set_widht(240);
+		this.set_width(240);
 		this.set_height(850);
 		this.set_x(960);
 		this.set_y(40);
 		
-		this.setSize(_widht, _height);
+		this.setSize(_width, _height);
 		this.setResizable(false);
 		this.setLocation((int)_x, (int)_y);
 		this.setLayout(null);
@@ -361,7 +358,7 @@ public class MainWindow extends Window{
 
 		this.setJPanelBackGroundImage(
 				"./resources/image/backGround_mainWindow-2.png");
-		System.out.println(",TW:" + this._widht + ",Th:" + this._height);
+		System.out.println(",TW:" + this._width + ",Th:" + this._height);
 	}
 	
 	
