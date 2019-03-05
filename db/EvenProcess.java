@@ -111,7 +111,7 @@ public class EvenProcess {
 				arrList.add(friend);
 			}
 		}catch (SQLException e) {
-			System.out.println("sql exception..");
+//			throw new SQLException("sql exception..");
 			e.printStackTrace();
 		}
 		return arrList;

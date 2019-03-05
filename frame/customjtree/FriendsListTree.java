@@ -156,6 +156,9 @@ public class FriendsListTree implements TreeNode{
 		return parent;
 	}
 
+	/**
+	 * 获得当前节点下标
+	 */
 	@Override
 	public int getIndex(TreeNode node) {
 		if (node == null) {

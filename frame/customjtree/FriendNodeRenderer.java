@@ -76,12 +76,10 @@ public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 			setText(userNickAndpersonlabel);
 			setIconTextGap(10);
 			setPreferredSize(new Dimension(_subparentWidth - 20, 65));
-//			setBorder(null);
-//			//添加鼠标双击事件
-//			addMouseListener(new FriendsListJTreeList(
-//					friendsListTree.get_friendUserInfo()));
 		}else {
 			if (expanded) {
+				//属于可展开的节点
+				//设置最佳位置
 				setPreferredSize(new Dimension(_subparentWidth - 20, 20));
 				setText("- " + friendsListTree.get_groupText());
 				setIcon(_groupOpenImage);

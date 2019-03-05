@@ -1,7 +1,8 @@
 package frame;
 
 import java.awt.Color;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,30 +20,37 @@ public class ChatWindow extends Window{
 	private static final long serialVersionUID = 1L;
 	
 	//用于存放好友信息的List
-	private static ArrayList<User> $friendUserInfo;
-	//存放在List中的下标, 用于标识该类对象
+	private static HashMap<Number, User> $friendUserInfoHashMap;
+	//用于标识窗体个数
 	private static int $index;
+	//记录聊天对象id, 用于标识窗口对象
+	private Number _index;
 	
 	static {
-		$friendUserInfo = new ArrayList<User>();
+		$friendUserInfoHashMap = new HashMap<Number, User>();
 		$index = 0;
 	}
 	
 	/**
 	 * 构造方法
 	 * @param friendUserInfo 好友的用户信息
-	 * @param index 存放在List中的下标, 用于标识该类对象
+	 * @param _index 存放在List中的下标, 用于标识该类对象
 	 */
 	private ChatWindow(User friendUserInfo) {
 		initCharWindow();
-		$friendUserInfo.add(friendUserInfo);
+		//记录聊天对象id, 用于标识窗口对象
+		_index = friendUserInfo.getId();
+		//用户ID为key
+		$friendUserInfoHashMap.put(_index, friendUserInfo);
+		//窗体个数加1
+		$index++;
 		
 		JPanel container_JPanel = (JPanel)this.getContentPane();
 		
 		JButton close_JButton = getCloseJButton();
 		JLabel move_JLabel = getMoveJLabel(close_JButton.getWidth());
-//		JLabel chatObject_JLabel = new JLabel("chatting with " + friendUserInfo.getUserNick() + ".. ");
-		JLabel chatObject_JLabel = new JLabel("chatting with " + ".. ");
+		JLabel chatObject_JLabel = new JLabel("chatting with " 
+				+ friendUserInfo.getUserNick() + ".. ");
 		chatObject_JLabel.setBounds(10, 10, 200, 15);
 
 		container_JPanel.add(close_JButton);
@@ -86,26 +94,61 @@ public class ChatWindow extends Window{
 		this._width(600);
 		this._height(500);
 		this.setSize(_width, _height);
-		this.setLocationRelativeTo(null);
+//		this.setLocationRelativeTo(null);
+		this.set_X($index * 20);
+		this.set_y($index * 20);
+		this.setLocation((int)_x, (int)_y);
 		this.setUndecorated(true);
 		this.setLayout(null);
 	}
 	
+	/**
+	 * 
+	 * @param friendUserInfo
+	 * @return
+	 */
 	public static ChatWindow createChatWindow(User friendUserInfo) {
 		if (friendUserInfo == null) {
 			throw new IllegalArgumentException("argument is null ..");
 		}
-		if ($friendUserInfo.size() > 0) {
-			for (User user : $friendUserInfo) {
-				if (user.getId().equals(friendUserInfo.getId())) {
+		if ($friendUserInfoHashMap.size() > 0) {
+			//Map.Entry遍历map
+			for (Map.Entry<Number, User> entry_element : $friendUserInfoHashMap.entrySet()) {
+				if (entry_element.getKey().equals(
+						friendUserInfo.getId())) {
+					
 					return null;
 				}
 			}
 		}
 		return new ChatWindow(friendUserInfo);
 	}
-	
-	public static void main(String[] args) {
-		ChatWindow.createChatWindow(null);
+
+	/**
+	 * 通过key删除元素
+	 * @param key
+	 */
+	public void removeChatFriendsList(Number key) {
+		$friendUserInfoHashMap.remove(key);
 	}
+	
+	public static int get$index() {
+		return $index;
+	}
+
+	public static void set$index(int $index) {
+		ChatWindow.$index = $index;
+	}
+
+	public Number get_index() {
+		return _index;
+	}
+
+	public void set_index(Number _index) {
+		this._index = _index;
+	}
+
+//	public static void main(String[] args) {
+//		ChatWindow.createChatWindow(null);
+//	}
 }

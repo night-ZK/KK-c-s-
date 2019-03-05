@@ -143,16 +143,6 @@ public class MainWindow extends Window{
 			friendsNode.set_friendUserInfo(friendUserInformation);
 			group_Myfrends.add(friendsNode);
 			
-//			FriendsListTree[] friendsNodeArray = new FriendsListTree[friendsInformationList.size()];
-//			for (int i = 0; i < friendsNodeArray.length; i++) {
-//				friendsNodeArray[i] = new FriendsListTree();
-//				friendsNodeArray[i].set_nickname(friendUserInfomain.getUserNick());		
-//				friendsNodeArray[i].set_imageIcon(new ImageIcon(friendUserInfomain.getUserImagepath()));
-//				friendsNodeArray[i].set_personLabel(friendUserInfomain.getPersonLabel());
-//				friendsNodeArray[i].set_userAccount(friendUserInfomain.getUserName());
-//				friendsNodeArray[i].set_state(friendUserInfomain.getUserState());
-//				group_Myfrends.add(friendsNodeArray[i]);
-//			}
 		}
 		
 		friendsListTree_RootNode.add(group_Myfrends);
@@ -167,7 +157,7 @@ public class MainWindow extends Window{
 		.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		groupListTreeRoot.setCellRenderer(
 				new FriendNodeRenderer(jpanel_Friend.getWidth()));
-		//添加鼠标双击事件
+		//添加树中节点的鼠标双击事件
 		groupListTreeRoot.addMouseListener(new FriendsListJTreeList());
 		groupListTreeRoot.setUI(new BasicTreeUI() {
 

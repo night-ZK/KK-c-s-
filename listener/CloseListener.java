@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import frame.ChatWindow;
 import frame.Window;
 
 public class CloseListener implements MouseListener{
@@ -38,6 +39,11 @@ public class CloseListener implements MouseListener{
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		_win.dispose();
+		if (_win instanceof ChatWindow) {
+			ChatWindow.set$index(ChatWindow.get$index()-1);
+			Number index_Key = ((ChatWindow) _win).get_index();
+			((ChatWindow)_win).removeChatFriendsList(index_Key);
+		}
 	}
 
 	@Override

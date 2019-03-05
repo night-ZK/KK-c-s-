@@ -160,18 +160,45 @@ public class Window extends JFrame{
 		return _x;
 	}
 
+	/**
+	 * 设置组件的x点坐标, 参数为屏占比的分子
+	 * @param proportionMolecule_X
+	 */
 	public void set_x(double proportionMolecule_X) {
 		this._x = _screenWidht * proportionMolecule_X/_PROPORTIONDENOMINATOR_W;
 	}
 
+	/**
+	 * 设置组件的x点坐标, 如果参数为0则, 组件在中间位置;
+	 * 如果参数为10, 则组件的x点坐标为原中间坐标 - 10
+	 * @param Ri_Displacement
+	 */
+	public void set_X(int Ri_Displacement) {
+		this._x = ((_screenWidht / 2) - (this.get_width() / 2)) + Ri_Displacement;
+	}
+	
 	public double get_y() {
 		return _y;
 	}
 
+	/**
+	 * 
+	 * 设置组件的y点坐标, 参数为屏占比的分子
+	 * @param proportionMolecule_Y
+	 */
 	public void set_y(double proportionMolecule_Y) {
 		this._y = _screenHeight * proportionMolecule_Y/_PROPORTIONDENOMINATOR_H;
 	}
 
+	/**
+	 * 设置组件的y点坐标, 如果参数为0则, 组件在中间位置;
+	 * 如果参数为10, 则组件的y点坐标为原中间坐标 - 10
+	 * @param up_Displacement
+	 */
+	public void set_y(int up_Displacement) {
+		this._y = ((_screenHeight / 2) - (this.get_height() / 2)) - up_Displacement;
+	}
+	
 	public int get_height() {
 		return _height;
 	}
