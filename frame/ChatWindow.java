@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,14 +21,17 @@ public class ChatWindow extends Window{
 	private static final long serialVersionUID = 1L;
 	
 	//用于存放好友信息的List
-	private static HashMap<Number, User> $friendUserInfoHashMap;
+	private static HashMap<Number, ChatWindow> $friendUserInfoHashMap;
+//	private static HashMap<Integer, Object[]> $chatWindowLocationMap;
 	//用于标识窗体个数
 	private static int $index;
 	//记录聊天对象id, 用于标识窗口对象
 	private Number _index;
 	
 	static {
-		$friendUserInfoHashMap = new HashMap<Number, User>();
+		$friendUserInfoHashMap = new HashMap<Number, ChatWindow>();
+//		$chatWindowLocationMap = new HashMap<Integer, Object[]>();
+//		$chatWindowLocationMap.put(0, [null, new int[]])
 		$index = 0;
 	}
 	
@@ -41,7 +45,7 @@ public class ChatWindow extends Window{
 		//记录聊天对象id, 用于标识窗口对象
 		_index = friendUserInfo.getId();
 		//用户ID为key
-		$friendUserInfoHashMap.put(_index, friendUserInfo);
+		$friendUserInfoHashMap.put(_index, this);
 		//窗体个数加1
 		$index++;
 		
@@ -66,7 +70,13 @@ public class ChatWindow extends Window{
 		//用于显示聊天消息的JPanel
 		JPanel chatMessage_JPanel = new JPanel();
 		chatMessage_JPanel.setBounds(0, 60, chatwidth_Temp, 310);
-		chatMessage_JPanel.setBackground(new Color(0, 100, 200));
+		chatMessage_JPanel.setLayout(null);
+		chatMessage_JPanel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 1));
+
+		JLabel chatMessage_JLabel = new JLabel();
+		chatMessage_JLabel.setBounds(0, 0, chatMessage_JPanel.getWidth(), chatMessage_JPanel.getHeight());
+//		chatMessage_JLabel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 5, true));
+//		chatMessage_JLabel.set
 		
 		//用于显示聊天工具栏的JPanel
 		JPanel chatTools_JPanel = new JPanel();
@@ -113,15 +123,23 @@ public class ChatWindow extends Window{
 		}
 		if ($friendUserInfoHashMap.size() > 0) {
 			//Map.Entry遍历map
-			for (Map.Entry<Number, User> entry_element : $friendUserInfoHashMap.entrySet()) {
+			for (Map.Entry<Number, ChatWindow> entry_element : $friendUserInfoHashMap.entrySet()) {
 				if (entry_element.getKey().equals(
 						friendUserInfo.getId())) {
-					
+					// 获得焦点
+					entry_element.getValue().requestFocus();
 					return null;
 				}
 			}
 		}
 		return new ChatWindow(friendUserInfo);
+	}
+	
+	/**
+	 * 当双击的聊天对象已有聊天窗口时, 该聊天窗口重新获得焦点
+	 */
+	public void showChatWindow() {
+		this.requestFocus();
 	}
 
 	/**

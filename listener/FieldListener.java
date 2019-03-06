@@ -146,6 +146,8 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			//密码只允许字母和数字
 			if (String.valueOf(keyChar).matches("[a-zA-Z0-9+]")) {
 				_pas = _pas.concat(String.valueOf(keyChar));
+			}else {
+				//TODO 密码只允许字母和数字提示框
 			}
 			
 		}
