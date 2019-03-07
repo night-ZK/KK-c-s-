@@ -1,6 +1,8 @@
 package frame;
 
 import java.awt.Color;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +10,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextPane;
+import javax.swing.table.DefaultTableModel;
 
 import tablebeans.User;
 
@@ -73,10 +79,30 @@ public class ChatWindow extends Window{
 		chatMessage_JPanel.setLayout(null);
 		chatMessage_JPanel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 1));
 
+		JScrollPane chatMessage_JScorllPane = new JScrollPane();
+		chatMessage_JScorllPane.setBounds(0, 0, chatMessage_JPanel.getWidth(), chatMessage_JPanel.getHeight());
+		
+		DefaultTableModel defaultModel = new DefaultTableModel();
+//		defaultModel.addRow(rowData);
 		JLabel chatMessage_JLabel = new JLabel();
-		chatMessage_JLabel.setBounds(0, 0, chatMessage_JPanel.getWidth(), chatMessage_JPanel.getHeight());
+		Date currentTime = new Date();
+		SimpleDateFormat chatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String messageContext = "<html>" + chatDate.format(currentTime) 
+			+ "&nbsp;&nbsp;&nbsp;" + friendUserInfo.getUserNick() + "<br/>"
+				+ "&nbsp;&nbsp;&nbsp;" + "hi~";
+		chatMessage_JLabel.setText(messageContext);
+		chatMessage_JLabel.setBounds(12, 12, chatMessage_JPanel.getWidth(), 60);
+		Color tempColor = new Color(156, 156, 156);
+		chatMessage_JLabel.setBorder(BorderFactory.createLineBorder(tempColor, 1));
+		chatMessage_JPanel.add(chatMessage_JLabel);
+		
+		JTable chatMessage_JTable = new JTable(defaultModel);
+		
+		
+		
 //		chatMessage_JLabel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 5, true));
-//		chatMessage_JLabel.set
+		
+		
 		
 		//用于显示聊天工具栏的JPanel
 		JPanel chatTools_JPanel = new JPanel();
@@ -86,7 +112,15 @@ public class ChatWindow extends Window{
 		//用于显示聊天输入JPanel
 		JPanel messageEntry_JPanel = new JPanel();
 		messageEntry_JPanel.setBounds(0, 400, chatwidth_Temp, this._height - 400);
-		messageEntry_JPanel.setBackground(new Color(40, 200, 200));
+//		messageEntry_JPanel.setBackground(new Color(40, 200, 200));
+		messageEntry_JPanel.setLayout(null);
+		messageEntry_JPanel.setBorder(BorderFactory.createLineBorder(tempColor, 1));
+		
+		JTextPane entry_JTextPane = new JTextPane();
+		entry_JTextPane.setBounds(0, 0, messageEntry_JPanel.getWidth(), messageEntry_JPanel.getHeight() - 40);
+		entry_JTextPane.setAutoscrolls(true);
+		messageEntry_JPanel.add(entry_JTextPane);
+		
 		
 		container_JPanel.add(tools_JPanel);
 		container_JPanel.add(chatMessage_JPanel);
