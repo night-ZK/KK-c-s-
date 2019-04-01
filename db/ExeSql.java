@@ -40,7 +40,7 @@ public class ExeSql {
 //			String password = "zk";
 			
 			//读取db.xml获得dbElement
-			Element dbElement = new ParseXML().getDBXMLElement(_dbID);
+			Element dbElement = ParseXML.createParseXML().getDBXMLElement(_dbID);
 			
 			//通过dbElement动态连接数据库
 			Class.forName(dbElement.elementText("driver"));

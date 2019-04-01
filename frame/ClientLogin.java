@@ -154,7 +154,7 @@ public class ClientLogin extends Window{
 		this.setLayout(null);
 	}
 	
-	public static ClientLogin createClientLogin(){
+	public synchronized static ClientLogin createClientLogin(){
 		if (_clientLogin == null) {
 			_clientLogin = new ClientLogin();
 		}

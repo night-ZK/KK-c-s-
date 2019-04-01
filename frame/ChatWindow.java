@@ -121,11 +121,15 @@ public class ChatWindow extends Window{
 		entry_JTextPane.setAutoscrolls(true);
 		messageEntry_JPanel.add(entry_JTextPane);
 		
+		JButton sendMessage_JButton = new JButton("send");
+		sendMessage_JButton.setBounds(chatwidth_Temp - 90, entry_JTextPane.getHeight() + 5, 80, 20);
+		messageEntry_JPanel.add(sendMessage_JButton);
 		
 		container_JPanel.add(tools_JPanel);
 		container_JPanel.add(chatMessage_JPanel);
 		container_JPanel.add(chatTools_JPanel);
 		container_JPanel.add(messageEntry_JPanel);
+		
 		
 		this.setVisible(true);
 		

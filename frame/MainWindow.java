@@ -395,12 +395,12 @@ public class MainWindow extends Window{
 	}
 
 	/**
-	 * 单例模式, 创建主窗口对象
+	 * singleton model, 创建主窗口对象
 	 * @param username 用户名
 	 * @param password 密码
 	 * @return
 	 */
-	public static MainWindow createMainWindow(String username, String password){
+	public synchronized static MainWindow createMainWindow(String username, String password){
 		if (_mainWindow == null) {
 			
 			if (username == null || password == null) {
