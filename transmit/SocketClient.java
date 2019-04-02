@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import org.dom4j.Element;
 
 import parsefile.ParseXML;
+import threadmangagement.ThreadConsole;
 
 public class SocketClient {
 	private static Socket socket;
@@ -39,7 +40,39 @@ public class SocketClient {
 	 * 保持在线状态
 	 */
 	public void keepLoginState() {
-		//TODO 
+		//
+//		Runnable keepLogin_Runnable = () -> {
+//			try {
+//				while(true) {
+//					os.write("i am login..".getBytes("UTF-8"));
+//					os.flush();
+//					
+//				}
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		};
+		
+		Thread keepLogin_Runnable = new Thread() {
+			@Override
+			public void run() {
+				super.run();
+				//TODO change true
+				while(true) {
+					try {
+						os.write("i am login..".getBytes("UTF-8"));
+						os.flush();
+						Thread.sleep(60000);
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		ThreadConsole.useThreadPool().execute(keepLogin_Runnable);
 	}
 	
 }

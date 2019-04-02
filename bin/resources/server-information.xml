@@ -1,0 +1,12 @@
+<root>
+	<server id="001">
+		<host-address>127.0.0.1</host-address>
+		<port>8898</port>
+	</server>
+	
+	<server id="002">
+		<host-address></host-address>
+		<port></port>
+	</server>
+	
+</root>
