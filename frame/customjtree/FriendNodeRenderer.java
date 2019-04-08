@@ -50,24 +50,24 @@ public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 				!= tree.getModel().getRoot()) {
 			
 			//从FriendsListTree节点中获得icon
-			ImageIcon friendIcon = new ImageIcon(friendsListTree.get_friendUserInfo().getUserImagepath());
+			ImageIcon friendIcon = new ImageIcon(friendsListTree.get_userFriendInfo().getUserImagepath());
 			//设置图片缩放比例
 			friendIcon = imageIconFilter(friendIcon, 60, 60);
 			String userNickAndpersonlabel = "";
-			if (friendsListTree.get_friendUserInfo().getPersonLabel() != null) {
+			if (friendsListTree.get_userFriendInfo().getPersonLabel() != null) {
 				
-				userNickAndpersonlabel = "<html>" + friendsListTree.get_friendUserInfo().getUserNick() 
+				userNickAndpersonlabel = "<html>" + friendsListTree.get_userFriendInfo().getUserNick() 
 						+ "<br/>" + friendsListTree
-							.get_friendUserInfo().getPersonLabel() + "<html/>";
+							.get_userFriendInfo().getPersonLabel() + "<html/>";
 			}else {
 				
-				userNickAndpersonlabel = friendsListTree.get_friendUserInfo()
+				userNickAndpersonlabel = friendsListTree.get_userFriendInfo()
 						.getUserNick();
 			}
 			
 			setIcon(friendIcon);
 			
-			if (!friendsListTree.get_friendUserInfo()
+			if (!friendsListTree.get_userFriendInfo()
 					.getUserState().equals("0")) {
 				
 				setEnabled(false);

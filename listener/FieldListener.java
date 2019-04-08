@@ -15,6 +15,7 @@ import db.EvenProcess;
 import frame.ClientLogin;
 import frame.MainWindow;
 import frame.Window;
+import tablebeans.User;
 
 public class FieldListener implements MouseListener, FocusListener, KeyListener {
 
@@ -158,13 +159,14 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	 * 
 	 */
 	public static void loginMainWindow() {
-		boolean loginResult = EvenProcess.login(_user, _pas);
+		User user = EvenProcess.login(_user, _pas);
+		boolean loginResult = user.getId() != null;
 		System.out.println("user:"+_user+",pas:"+_pas);
 		System.out.println("isLog:"+loginResult);
 		if (loginResult) {
 			//登录成功, 销毁登录窗口
 			ClientLogin.createClientLogin().dispose();
-			MainWindow.createMainWindow(_user, _pas);
+			MainWindow.createMainWindow(user);
 		}
 	}
 	

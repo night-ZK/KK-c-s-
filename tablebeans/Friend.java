@@ -2,7 +2,11 @@ package tablebeans;
 
 import row.RowSupper;
 
-public class Friend extends RowSupper{
+public class Friend extends RowSupper implements BeansInterface{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Number id;
 	private Number user_id;
 	private Number friend_id;

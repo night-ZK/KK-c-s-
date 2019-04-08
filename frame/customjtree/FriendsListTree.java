@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 
 import tablebeans.User;
+import tablejson.UserFriendsInformation;
 
 /**
  * 好友节点类
@@ -24,7 +25,7 @@ public class FriendsListTree implements TreeNode{
 	private String _groupText;
 	private ImageIcon _groupOpenImage;
 	private ImageIcon _groupCloseImage;
-	private User _friendUserInfo;
+	private UserFriendsInformation _userFriendInfo;
 	
 	protected ArrayList<TreeNode> children = null;
 	protected TreeNode parent;
@@ -49,16 +50,17 @@ public class FriendsListTree implements TreeNode{
 //		this._userAccount = _userAccount;
 //	}
 
-	public User get_friendUserInfo() {
-		return _friendUserInfo;
-	}
-
-	public void set_friendUserInfo(User _friendUserInfo) {
-		this._friendUserInfo = _friendUserInfo;
-	}
 
 	public String get_groupText() {
 		return _groupText;
+	}
+
+	public UserFriendsInformation get_userFriendInfo() {
+		return _userFriendInfo;
+	}
+
+	public void set_userFriendInfo(UserFriendsInformation _userFriendInfo) {
+		this._userFriendInfo = _userFriendInfo;
 	}
 
 	public void set_groupText(String _groupText) {

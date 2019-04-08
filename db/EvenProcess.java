@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import row.RowMode;
 import tablebeans.Friend;
 import tablebeans.User;
+import tablejson.JsonInterface;
+import tablejson.UserFriendsInformation;
 
 public class EvenProcess {
 	
@@ -19,24 +21,25 @@ public class EvenProcess {
 	 * @param passWord 密码
 	 * @return
 	 */
-	public static boolean login(String userName, String passWord){
+	public static User login(String userName, String passWord){
 		Connection _conn = ExeSql.createExeSql().getConnection();
 		PreparedStatement prepareStatement = null;
 		ResultSet result = null;
+		User user = new User();
 		try {
 			prepareStatement = _conn.prepareStatement("select * from user z where username = ? and password = ?");
 			prepareStatement.setString(1, userName);
 			prepareStatement.setString(2, passWord);
 			result = prepareStatement.executeQuery();
 			if (result.next()) {
-				return true;
+				user.setRow(result);
 			}
 		}
 		catch (SQLException e) {
 			System.out.println("execute sql error..");
 			e.printStackTrace();
 		}
-		return false;
+		return user;
 	}
 	
 	/**
@@ -45,6 +48,7 @@ public class EvenProcess {
 	 * @return
 	 */
 	public static User getUserInfo(int userID){
+		//TODO privilege management
 		User user = new User();
 		Connection conn = ExeSql.createExeSql().getConnection();
 		PreparedStatement prepareStatement = null;
@@ -54,14 +58,37 @@ public class EvenProcess {
 			prepareStatement.setInt(1, userID);
 			result = prepareStatement.executeQuery();
 			while (result.next()) {
-				setRow(result, user);
-				
+				user.setRow(result);
 			}
 		}catch (SQLException e) {
 			System.out.println("get sql exception..");
 			e.printStackTrace();
 		}
 		return user;
+	}
+	
+	/**
+	 * 通过userID获得当前用户的好友信息
+	 * @param userID
+	 * @return
+	 */
+	public static UserFriendsInformation getUser_FriendInfo(int userID){
+		UserFriendsInformation userFriendsInformation = new UserFriendsInformation();
+		Connection conn = ExeSql.createExeSql().getConnection();
+		PreparedStatement prepareStatement = null;
+		ResultSet result = null;
+		try {
+			prepareStatement = conn.prepareStatement("select * from user z where z.id = ?");
+			prepareStatement.setInt(1, userID);
+			result = prepareStatement.executeQuery();
+			while (result.next()) {
+				userFriendsInformation.setRow(result);
+			}
+		}catch (SQLException e) {
+			System.out.println("get sql exception..");
+			e.printStackTrace();
+		}
+		return userFriendsInformation;
 	}
 	
 	/**
@@ -80,7 +107,7 @@ public class EvenProcess {
 			prepareStatement.setString(1, userName);
 			result = prepareStatement.executeQuery();
 			while (result.next()) {
-				setRow(result, user);
+				user.setRow(result);
 				arrList.add(user);
 			}
 		}catch (SQLException e) {
@@ -107,7 +134,7 @@ public class EvenProcess {
 			while (result.next()) {
 				//arraylistadd元素, 该元素需要时一个新的对象, 否则会产生数据紊乱
 				Friend friend = new Friend();
-				setRow(result, friend);
+				friend.setRow(result);
 				arrList.add(friend);
 			}
 		}catch (SQLException e) {
@@ -116,24 +143,5 @@ public class EvenProcess {
 		}
 		return arrList;
 	}
-	
-	/**
-	 * 将表中一条取出的数据设置到一个表对象中
-	 * @param result 从表中取得的一条数据
-	 * @param row 
-	 */
-	protected static void setRow(ResultSet result, RowMode row){
-		ResultSetMetaData rsmd;
-		try {
-			rsmd = result.getMetaData();
-			int cou = rsmd.getColumnCount();
-			for (int i = 1; i <= cou; i++) {
-				row.setValue(rsmd.getColumnName(i), result.getObject(i));
-			}
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
+
 }

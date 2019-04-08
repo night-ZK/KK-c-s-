@@ -1,5 +1,7 @@
 package row;
 
+import java.sql.ResultSet;
+
 public interface RowMode {
 	/**
 	 * 获得一个表对象中所有字段, 将它们存放在一个list中
@@ -19,4 +21,10 @@ public interface RowMode {
 	 * @param value 从数据库中查出来的数据
 	 */
 	public void setValue(String column, Object value);
+	/**
+	 * 将表中一条取出的数据设置到当前表对象中
+	 * @param result 从表中取得的一条数据
+	 * @param row 
+	 */
+	public void setRow(ResultSet result);
 }

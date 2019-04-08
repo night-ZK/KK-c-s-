@@ -22,6 +22,7 @@ import frame.customjtree.FriendsListTree;
 import listener.FriendsListJTreeList;
 import tablebeans.Friend;
 import tablebeans.User;
+import tablejson.UserFriendsInformation;
 
 public class MainWindow extends Window{
 
@@ -29,8 +30,8 @@ public class MainWindow extends Window{
 	
 	private static MainWindow _mainWindow = null;
 
-	private MainWindow(String userName, String passWord){
-		super(userName, passWord);
+	private MainWindow(User user){
+		super(user);
 		initMainWindow();
 		
 		JPanel container_JPanel = (JPanel)this.getContentPane();
@@ -135,12 +136,13 @@ public class MainWindow extends Window{
 		FriendsListTree group_Stranger = new FriendsListTree();;
 		group_Stranger.set_groupText("stranger");
 		
+		//TODO change to count
 		ArrayList<Friend> friendsInformationList = EvenProcess.getFriendInfo(_id.intValue());
 		for (Friend friend : friendsInformationList) {
-			User friendUserInformation = EvenProcess.getUserInfo(friend.getFriend_id().intValue());
+			UserFriendsInformation userFriendInformation = EvenProcess.getUser_FriendInfo(friend.getFriend_id().intValue());
 			FriendsListTree friendsNode = new FriendsListTree();
 			friendsNode = new FriendsListTree();
-			friendsNode.set_friendUserInfo(friendUserInformation);
+			friendsNode.set_userFriendInfo(userFriendInformation);
 			group_Myfrends.add(friendsNode);
 			
 		}
@@ -357,8 +359,7 @@ public class MainWindow extends Window{
 	 */
 	private void initUserInformation() {
 		
-		ArrayList<User> userList = EvenProcess.getUserInfo(get_saveUserName());
-		User user = userList.get(0);
+		User user = getUserInfo();
 		
 		//初始化用户状态
 		switch (user.getUserState()) {
@@ -400,18 +401,18 @@ public class MainWindow extends Window{
 	 * @param password 密码
 	 * @return
 	 */
-	public synchronized static MainWindow createMainWindow(String username, String password){
+	public synchronized static MainWindow createMainWindow(User user){
 		if (_mainWindow == null) {
 			
-			if (username == null || password == null) {
+			if (user.getUserName() == null || user.getUserName() == null) {
 				return null;
 			}
-			_mainWindow = new MainWindow(username, password);
+			_mainWindow = new MainWindow(user);
 		}
 		return _mainWindow;
 	}
 	
 	public static void main(String[] args) {
-		MainWindow.createMainWindow("zxk", "zk001");
+		MainWindow.createMainWindow(EvenProcess.login("zxk", "zk001"));
 	}
 }

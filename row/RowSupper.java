@@ -3,6 +3,9 @@ package row;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public abstract class RowSupper implements RowMode{
@@ -87,5 +90,25 @@ public abstract class RowSupper implements RowMode{
 		String rowString = row.toString();
 		String needRowString = rowString.substring(rowString.indexOf("[")+1, rowString.indexOf("]"));
 		return needRowString.split(",");
+	}
+	
+	/**
+	 * 将表中一条取出的数据设置到当前表对象中
+	 * @param result 从表中取得的一条数据
+	 * @param row 
+	 */
+	@Override
+	public void setRow(ResultSet result){
+		ResultSetMetaData rsmd;
+		try {
+			rsmd = result.getMetaData();
+			int cou = rsmd.getColumnCount();
+			for (int i = 1; i <= cou; i++) {
+				this.setValue(rsmd.getColumnName(i), result.getObject(i));
+			}
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

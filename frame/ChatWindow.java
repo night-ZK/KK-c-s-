@@ -1,10 +1,13 @@
 package frame;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,7 +18,10 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
+import information.ChatMessages;
+import information.MessageInterface;
 import tablebeans.User;
+import transmit.MessageManagement;
 
 /**
  * 聊天窗口
@@ -27,15 +33,15 @@ public class ChatWindow extends Window{
 	private static final long serialVersionUID = 1L;
 	
 	//用于存放好友信息的List
-	private static HashMap<Number, ChatWindow> $friendUserInfoHashMap;
+	private static HashMap<Integer, ChatWindow> $friendUserInfoHashMap;
 //	private static HashMap<Integer, Object[]> $chatWindowLocationMap;
 	//用于标识窗体个数
 	private static int $index;
 	//记录聊天对象id, 用于标识窗口对象
-	private Number _index;
+	private Integer _index;
 	
 	static {
-		$friendUserInfoHashMap = new HashMap<Number, ChatWindow>();
+		$friendUserInfoHashMap = new HashMap<Integer, ChatWindow>();
 //		$chatWindowLocationMap = new HashMap<Integer, Object[]>();
 //		$chatWindowLocationMap.put(0, [null, new int[]])
 		$index = 0;
@@ -46,10 +52,10 @@ public class ChatWindow extends Window{
 	 * @param friendUserInfo 好友的用户信息
 	 * @param _index 存放在List中的下标, 用于标识该类对象
 	 */
-	private ChatWindow(User friendUserInfo) {
+	private ChatWindow(Integer friendID) {
 		initCharWindow();
 		//记录聊天对象id, 用于标识窗口对象
-		_index = friendUserInfo.getId();
+		_index = friendID.intValue();
 		//用户ID为key
 		$friendUserInfoHashMap.put(_index, this);
 		//窗体个数加1
@@ -117,19 +123,37 @@ public class ChatWindow extends Window{
 		messageEntry_JPanel.setBorder(BorderFactory.createLineBorder(tempColor, 1));
 		
 		JTextPane entry_JTextPane = new JTextPane();
-		entry_JTextPane.setBounds(0, 0, messageEntry_JPanel.getWidth(), messageEntry_JPanel.getHeight() - 40);
+		entry_JTextPane.setBounds(0, 0, messageEntry_JPanel.getWidth() - 1, messageEntry_JPanel.getHeight() - 40);
 		entry_JTextPane.setAutoscrolls(true);
 		messageEntry_JPanel.add(entry_JTextPane);
 		
 		JButton sendMessage_JButton = new JButton("send");
 		sendMessage_JButton.setBounds(chatwidth_Temp - 90, entry_JTextPane.getHeight() + 5, 80, 20);
 		messageEntry_JPanel.add(sendMessage_JButton);
+		sendMessage_JButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				String textPane_Message = entry_JTextPane.getText();
+				System.out.println("textPane_Message: " + textPane_Message);
+				if (!textPane_Message.equals("")) {
+					//需要发送的消息不为空
+					ChatMessages chatMessage = new ChatMessages();
+					chatMessage.setSenderID(MainWindow.getSaveUserID().intValue());
+					chatMessage.setGetterID(_index.intValue());
+					chatMessage.setMessage(textPane_Message);					
+					MessageInterface ms = MessageManagement.sendChatMessage(chatMessage);
+					System.out.println("ms:" + ms);
+					entry_JTextPane.setText("");
+					//TODO handle "ms"
+				}
+			}
+		});
 		
 		container_JPanel.add(tools_JPanel);
 		container_JPanel.add(chatMessage_JPanel);
 		container_JPanel.add(chatTools_JPanel);
 		container_JPanel.add(messageEntry_JPanel);
-		
 		
 		this.setVisible(true);
 		
@@ -155,22 +179,22 @@ public class ChatWindow extends Window{
 	 * @param friendUserInfo
 	 * @return
 	 */
-	public static ChatWindow createChatWindow(User friendUserInfo) {
-		if (friendUserInfo == null) {
+	public static ChatWindow createChatWindow(Integer friendID) {
+		if (friendID == null) {
 			throw new IllegalArgumentException("argument is null ..");
 		}
 		if ($friendUserInfoHashMap.size() > 0) {
 			//Map.Entry遍历map
-			for (Map.Entry<Number, ChatWindow> entry_element : $friendUserInfoHashMap.entrySet()) {
+			for (Entry<Integer, ChatWindow> entry_element : $friendUserInfoHashMap.entrySet()) {
 				if (entry_element.getKey().equals(
-						friendUserInfo.getId())) {
+						friendID)) {
 					// 获得焦点
 					entry_element.getValue().requestFocus();
 					return null;
 				}
 			}
 		}
-		return new ChatWindow(friendUserInfo);
+		return new ChatWindow(friendID);
 	}
 	
 	/**

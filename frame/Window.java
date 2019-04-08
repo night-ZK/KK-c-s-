@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import listener.CloseListener;
 import listener.FieldListener;
+import tablebeans.User;
 
 public class Window extends JFrame{
 	
@@ -24,8 +25,7 @@ public class Window extends JFrame{
 	protected static ImageIcon _closeJButton_Ago;
 	protected static ImageIcon _closeJButton_After;
 	
-	private final String _saveUserName;
-	private final String _savePassWord;
+	private static User _saveUser;
 	
 	protected int _height;
 	protected int _width;
@@ -49,14 +49,11 @@ public class Window extends JFrame{
 		_closeJButton_After = new ImageIcon("./resources/image/close_button-2.png");
 	}
 	
-	protected Window(String userName, String passWord){
-		_saveUserName = userName;
-		_savePassWord = passWord;
+	protected Window(User user){
+		_saveUser = user;
 	}
 
 	protected Window(){
-		_saveUserName = null;
-		_savePassWord = null;
 	}
 	
 	/**
@@ -147,13 +144,25 @@ public class Window extends JFrame{
 		return jpanelImage;
 	}
 	
-	
-	public String get_saveUserName() {
-		return _saveUserName;
+	protected User getUserInfo() {
+		//TODO privilege management
+		return _saveUser;
 	}
-
-	public String get_savePassWord() {
-		return _savePassWord;
+	
+	/**
+	 * 返回当前用户名
+	 * @return 用户名
+	 */
+	public static String getSaveUserName() {
+		return _saveUser.getUserName();
+	}
+	
+	/**
+	 * 用户ID = user表ID
+	 * @return ID
+	 */
+	public static Number getSaveUserID() {
+		return _saveUser.getId();
 	}
 
 	public double get_x() {
