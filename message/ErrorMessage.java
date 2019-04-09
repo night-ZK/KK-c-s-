@@ -1,6 +1,6 @@
-package information;
+package message;
 
-public class ErrerMessage implements MessageInterface{
+public class ErrorMessage implements MessageInterface{
 	/**
 	 * 
 	 */
@@ -8,7 +8,7 @@ public class ErrerMessage implements MessageInterface{
 	private String messageID;
 	private String messageCon;
 	private boolean isSuccess;
-	public ErrerMessage(boolean isSuccess, String messageCon) {
+	public ErrorMessage(boolean isSuccess, String messageCon) {
 		this.isSuccess = isSuccess;
 		this.messageCon = messageCon;
 	}

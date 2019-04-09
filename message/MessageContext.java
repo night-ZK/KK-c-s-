@@ -1,6 +1,6 @@
-package information;
+package message;
 
-public class ChatMessages implements MessageInterface{
+public class MessageContext implements MessageInterface{
 	/**
 	 * 
 	 */
@@ -30,5 +30,4 @@ public class ChatMessages implements MessageInterface{
 	public String toString() {
 		return "ChatMessages [senderID=" + senderID + ", getterID=" + getterID + ", Message=" + Message + "]";
 	}
-	
 }

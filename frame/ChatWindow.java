@@ -18,8 +18,8 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
-import information.ChatMessages;
-import information.MessageInterface;
+import message.ChatMessages;
+import message.MessageInterface;
 import tablebeans.User;
 import transmit.MessageManagement;
 
