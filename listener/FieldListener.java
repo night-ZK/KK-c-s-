@@ -10,12 +10,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
-import db.EvenProcess;
 import frame.ClientLogin;
 import frame.MainWindow;
 import frame.Window;
+import message.ErrorMessage;
+import message.MessageContext;
+import message.MessageInterface;
 import tablebeans.User;
+import transmit.MessageManagement;
 
 public class FieldListener implements MouseListener, FocusListener, KeyListener {
 
@@ -159,15 +163,27 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	 * 
 	 */
 	public static void loginMainWindow() {
-		User user = EvenProcess.login(_user, _pas);
-		boolean loginResult = user.getId() != null;
-		System.out.println("user:"+_user+",pas:"+_pas);
-		System.out.println("isLog:"+loginResult);
-		if (loginResult) {
+		List<MessageInterface> loginResult = MessageManagement.login(_user, _pas);
+		
+		ErrorMessage errorMessage = (ErrorMessage) loginResult.get(0);
+		
+		if (errorMessage.isSuccess()) {
+			System.out.println("user:"+_user+",pas:"+_pas);
+			System.out.println("isLog:"+errorMessage.isSuccess());
+			
 			//登录成功, 销毁登录窗口
 			ClientLogin.createClientLogin().dispose();
-			MainWindow.createMainWindow(user);
+			MessageContext messageContext = (MessageContext) loginResult.get(1);
+			if (messageContext.getObject() instanceof User) {
+				User loginUser = (User) new MessageContext().getObject();
+				MainWindow.createMainWindow(loginUser);
+			}
+			
+		}else {
+			//TODO login fail.. 
+			
 		}
+		
 	}
 	
 }

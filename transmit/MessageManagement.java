@@ -1,20 +1,24 @@
 package transmit;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import frame.ChatWindow;
 import message.ChatMessages;
 import message.ErrorMessage;
 import message.MessageHead;
 import message.MessageInterface;
+import message.MessageModel;
 import tablebeans.User;
+import threadmanagement.ThreadConsole;
 
 public class MessageManagement {
 
 
-	public static ErrorMessage login(String userName, String password) {
+	public static List<MessageInterface> login(String userName, String password) {
+		List<MessageInterface> resultList = new ArrayList<>();
 		ErrorMessage errorMessage = null;
 		MessageHead messageHead = new MessageHead();
 		messageHead.setType(1);
@@ -22,8 +26,27 @@ public class MessageManagement {
 		//TODO encryption
 		String describe = "/login?userName=" + userName + "&" + "password=" + password;
 		messageHead.setRequestDescribe(describe);
-		errorMessage = SendMessage.get(messageHead);
-		return errorMessage;
+		messageHead.setRequestTime(System.currentTimeMillis());
+		messageHead.setReplyTime(0L);
+		messageHead.setReplyRequestResult(false);
+		
+		GetRequest getRequest = new GetRequest(new MessageModel(messageHead, null));
+		MessageModel replyModel = getRequest.getReplyMessageModel();
+		ThreadConsole.useThreadPool().execute(getRequest);
+		
+		MessageHead replyMessageHead = replyModel.getMessageHead();
+		
+		if (replyMessageHead.getReplyRequestResult()) {
+			errorMessage = new ErrorMessage(false, replyMessageHead.getReplyDescribe());
+			resultList.add(errorMessage);
+			return resultList;
+		}
+		
+		errorMessage = new ErrorMessage(true, replyMessageHead.getReplyDescribe());
+		resultList.add(errorMessage);
+		resultList.add(replyModel.getMessageContext());
+		
+		return resultList;
 	}
 	
 	

@@ -6,11 +6,12 @@ public class ErrorMessage implements MessageInterface{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String messageID;
-	private String messageCon;
+	//¥ÌŒÛ√Ë ˆ
+	private String messageDescribe;
 	private boolean isSuccess;
 	public ErrorMessage(boolean isSuccess, String messageCon) {
 		this.isSuccess = isSuccess;
-		this.messageCon = messageCon;
+		this.messageDescribe = messageCon;
 	}
 	
 	public boolean isSuccess() {
@@ -27,16 +28,20 @@ public class ErrorMessage implements MessageInterface{
 	public void setMessageID(String messageID) {
 		this.messageID = messageID;
 	}
-	public String getMessageCon() {
-		return messageCon;
+	
+
+	public String getMessageDescribe() {
+		return messageDescribe;
 	}
-	public void setMessageCon(String messageCon) {
-		this.messageCon = messageCon;
+
+	public void setMessageDescribe(String messageDescribe) {
+		this.messageDescribe = messageDescribe;
 	}
 
 	@Override
 	public String toString() {
-		return "ErrerMessage [messageID=" + messageID + ", messageCon=" + messageCon + ", isSuccess=" + isSuccess + "]";
+		return "ErrorMessage [messageID=" + messageID + ", messageDescribe=" + messageDescribe + ", isSuccess="
+				+ isSuccess + "]";
 	}
 	
 }
