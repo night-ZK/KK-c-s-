@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.rmi.ConnectException;
 import java.util.List;
 
 import frame.ClientLogin;
@@ -18,8 +19,13 @@ import frame.Window;
 import message.ErrorMessage;
 import message.MessageContext;
 import message.MessageInterface;
+import message.MessageModel;
 import tablebeans.User;
+import threadmanagement.ThreadConsole;
+import tools.ObjectTool;
+import transmit.GetRequest;
 import transmit.MessageManagement;
+import transmit.RequestBusiness;
 
 public class FieldListener implements MouseListener, FocusListener, KeyListener {
 
@@ -163,26 +169,78 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	 * 
 	 */
 	public static void loginMainWindow() {
-		List<MessageInterface> loginResult = MessageManagement.login(_user, _pas);
+		MessageModel messageModel = MessageManagement.loginMessageModel(_user, _pas);
 		
-		ErrorMessage errorMessage = (ErrorMessage) loginResult.get(0);
+		GetRequest getRequest = new GetRequest(messageModel);
 		
-		if (errorMessage.isSuccess()) {
-			System.out.println("user:"+_user+",pas:"+_pas);
-			System.out.println("isLog:"+errorMessage.isSuccess());
+		try {
+			Object object = getRequest.sendRequest();
 			
+			System.out.println("login sucess..");
 			//登录成功, 销毁登录窗口
 			ClientLogin.createClientLogin().dispose();
-			MessageContext messageContext = (MessageContext) loginResult.get(1);
-			if (messageContext.getObject() instanceof User) {
-				User loginUser = (User) new MessageContext().getObject();
+			if (object instanceof User) {
+				User loginUser = (User) object;
+				if (ObjectTool.isNull(loginUser.getId())) {
+					System.out.println("user or password error..");
+					//TODO
+					
+					
+					return;
+				}
 				MainWindow.createMainWindow(loginUser);
+			}else {
+				//TODO
+				System.out.println("data type error..");
 			}
 			
-		}else {
-			//TODO login fail.. 
-			
+		} catch (ConnectException e) {
+			//TODO
+			e.printStackTrace();
 		}
+		
+//		RequestBusiness requestBusiness = new RequestBusiness(messageModel);
+//		Thread loginThread = new Thread(requestBusiness);
+//		ThreadConsole.useThreadPool().execute(loginThread);
+//		
+//		Thread loginwaitThread = new Thread() {
+//			@Override
+//			public void run() {
+//				//TODO wait frame
+//				while(true) {					
+//					System.out.println("login...");
+//				}
+//			}
+//		};
+//		
+//		ThreadConsole.useThreadPool().execute(loginwaitThread);
+//		
+//		try {
+//			loginThread.join();
+//			loginwaitThread.interrupt();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		List<MessageInterface> loginResult = requestBusiness.login();
+//		
+//		ErrorMessage errorMessage = (ErrorMessage) loginResult.get(0);
+//		
+//		System.out.println("isLog:"+errorMessage.isSuccess());
+//		System.out.println("user:"+_user+",pas:"+_pas);
+//		if (errorMessage.isSuccess()) {
+//			System.out.println("login sucess..");
+//			//登录成功, 销毁登录窗口
+//			ClientLogin.createClientLogin().dispose();
+//			MessageContext messageContext = (MessageContext) loginResult.get(1);
+//			if (messageContext.getObject() instanceof User) {
+//				User loginUser = (User) new MessageContext().getObject();
+//				MainWindow.createMainWindow(loginUser);
+//			}
+//			
+//		}else {
+//			//TODO login fail.. 
+//			System.out.println("login fail..");
+//		}
 		
 	}
 	

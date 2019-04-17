@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import message.MessageContext;
 import message.MessageHead;
 import message.MessageInterface;
 import message.MessageModel;
+import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
 import tools.TransmitTool;
 
@@ -30,6 +32,9 @@ public abstract class Request implements Runnable{
 	//保存请求的详细信息, 用于标识
 	public static Map<String, Runnable> requestMap = 
 			new HashMap<String, Runnable>(); 
+	
+	//请求结果
+	List<MessageInterface> result = null;
 	
 	private Socket socket;
 	protected MessageHead messageHead;
@@ -48,13 +53,10 @@ public abstract class Request implements Runnable{
 			this.socket = SocketClient.getSocket();
 			this.model = model;
 			
-			if(ObjectTool.isDoable(model))
-				throw new NullPointerException("model is no doable..");
-
 			this.messageHead = model.getMessageHead();
 			this.messageContext = model.getMessageContext();
 			
-			if(ObjectTool.isDoable(messageHead))
+			if(ObjectTool.isRequestHeadDoable(messageHead))
 				throw new NullPointerException("messageHead is no doable..");
 
 			
@@ -73,25 +75,72 @@ public abstract class Request implements Runnable{
 	@Override
 	public synchronized void run() {
 		
-//		this.sendMessageHead();
-//		this.sendMessageContext();
-		
-		
 		try {
+			
 			this.sendMessageModel();
 			
 			String requestMapKey = TransmitTool.getRequestMapKey(this.messageHead);
+			
+			System.out.println("requestMapKey:" + requestMapKey);
 			
 			requestMap.put(requestMapKey, this);
 			
 			this.wait();
 			
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public Object sendRequest() throws ConnectException {
+		Thread requestThread = new Thread(this);
+		ThreadConsole.useThreadPool().execute(requestThread);
+		
+		try {
+			requestThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
+		MessageModel replyModel = this.getReplyMessageModel();
+		
+		MessageHead replyMessageHead = replyModel.getMessageHead();
+		
+		if (!replyMessageHead.getReplyRequestResult()) {
+			throw new ConnectException("\"request data fail..\"");
+		}
+		
+		MessageContext messageContext = replyModel.getMessageContext();
+		
+		return messageContext.getObject();
+//		if (messageContext.getObject() instanceof MessageHead) {
+//		}
+	}
+	
+	public List<MessageInterface> resolutionResultModel() {
+		List<MessageInterface> resultList = new ArrayList<>();
+		ErrorMessage errorMessage = null;
+		
+		MessageModel replyModel = this.getReplyMessageModel();
+		
+		MessageHead replyMessageHead = replyModel.getMessageHead();
+		
+		if (!replyMessageHead.getReplyRequestResult()) {
+			errorMessage = new ErrorMessage(false, replyMessageHead.getReplyDescribe());
+			resultList.add(errorMessage);
+			return resultList;
+		}
+		
+		errorMessage = new ErrorMessage(true, replyMessageHead.getReplyDescribe());
+		resultList.add(errorMessage);
+		resultList.add(replyModel.getMessageContext());
+		
+		return resultList;
 	}
 	
 	protected abstract void sendMessageModel() throws IOException; 

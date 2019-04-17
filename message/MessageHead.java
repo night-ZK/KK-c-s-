@@ -19,7 +19,17 @@ public class MessageHead implements MessageInterface{
 	private boolean replyRequestResult;
 	//回复请求描述
 	private String replyDescribe;
-	
+	//回复的数据类型
+	private Class<?> replyDataType;
+
+	public Class<?> getReplyDataType() {
+		return replyDataType;
+	}
+
+	public void setReplyDataType(Class<?> replyDataType) {
+		this.replyDataType = replyDataType;
+	}
+
 	public String getReplyDescribe() {
 		return replyDescribe;
 	}

@@ -1,25 +1,28 @@
 package transmit;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
-import frame.ChatWindow;
-import message.ChatMessages;
 import message.ErrorMessage;
+import message.MessageContext;
 import message.MessageHead;
 import message.MessageInterface;
 import message.MessageModel;
 import tablebeans.User;
+import tablejson.UserFriendsInformation;
 import threadmanagement.ThreadConsole;
 
 public class MessageManagement {
 
-
-	public static List<MessageInterface> login(String userName, String password) {
-		List<MessageInterface> resultList = new ArrayList<>();
-		ErrorMessage errorMessage = null;
+	/**
+	 * 登录请求
+	 * @param userName
+	 * @param password
+	 * @return
+	 */
+	public static MessageModel loginMessageModel(String userName, String password) {
+		
 		MessageHead messageHead = new MessageHead();
 		messageHead.setType(1);
 		messageHead.setRequestDataType(User.class);
@@ -27,26 +30,38 @@ public class MessageManagement {
 		String describe = "/login?userName=" + userName + "&" + "password=" + password;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setReplyTime(0L);
-		messageHead.setReplyRequestResult(false);
 		
-		GetRequest getRequest = new GetRequest(new MessageModel(messageHead, null));
-		MessageModel replyModel = getRequest.getReplyMessageModel();
-		ThreadConsole.useThreadPool().execute(getRequest);
+		return new MessageModel(messageHead, null);
 		
-		MessageHead replyMessageHead = replyModel.getMessageHead();
+	}
+
+	/**
+	 * 获取好友ID
+	 * @param userID 当前用户ID
+	 * @return
+	 */
+	public static MessageModel getFrindIDMessageModel(int userID) {
+		MessageHead messageHead = new MessageHead();
+		messageHead.setType(2);
+		messageHead.setRequestDataType(List.class);
 		
-		if (replyMessageHead.getReplyRequestResult()) {
-			errorMessage = new ErrorMessage(false, replyMessageHead.getReplyDescribe());
-			resultList.add(errorMessage);
-			return resultList;
-		}
+		String describe = "/getFrindID?userID=" + userID;
+		messageHead.setRequestDescribe(describe);
+		messageHead.setRequestTime(System.currentTimeMillis());
 		
-		errorMessage = new ErrorMessage(true, replyMessageHead.getReplyDescribe());
-		resultList.add(errorMessage);
-		resultList.add(replyModel.getMessageContext());
+		return new MessageModel(messageHead, null);
+	}
+
+	public static MessageModel getUserFriendInfoMessageModel(Integer friendID) {
+		MessageHead messageHead = new MessageHead();
+		messageHead.setType(3);
+		messageHead.setRequestDataType(UserFriendsInformation.class);
 		
-		return resultList;
+		String describe = "/getUserFriendInfo?userID=" + friendID;
+		messageHead.setRequestDescribe(describe);
+		messageHead.setRequestTime(System.currentTimeMillis());
+		
+		return new MessageModel(messageHead, null);
 	}
 	
 	

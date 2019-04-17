@@ -3,10 +3,11 @@ package frame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Label;
+import java.rmi.ConnectException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,14 +16,15 @@ import javax.swing.JTree;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreeSelectionModel;
 
-import db.EvenProcess;
 import frame.Window;
 import frame.customjtree.FriendNodeRenderer;
 import frame.customjtree.FriendsListTree;
 import listener.FriendsListJTreeList;
-import tablebeans.Friend;
+import message.MessageModel;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
+import transmit.GetRequest;
+import transmit.MessageManagement;
 
 public class MainWindow extends Window{
 
@@ -55,8 +57,13 @@ public class MainWindow extends Window{
 		
 		//用于显示好友类别的JPanel
 		JPanel jpanel_FriendsList = new JPanel();
+		
 		//初始化好友列表
-		initFriendsListJPanel(jpanel_FriendsList);
+		try {
+			initFriendsListJPanel(jpanel_FriendsList);
+		} catch (ConnectException e) {
+			e.printStackTrace();
+		}
 		
 		//用于显示设置系统信息, 用户信息的JPanel
 		JPanel jpanel_InformationManagement = new JPanel();
@@ -111,8 +118,10 @@ public class MainWindow extends Window{
 	/**
 	 * 初始化好友列表
 	 * @param jpanel_FriendsList
+	 * @throws ConnectException 
 	 */
-	private void initFriendsListJPanel(JPanel jpanel_FriendsList) {
+	@SuppressWarnings("unchecked")
+	private void initFriendsListJPanel(JPanel jpanel_FriendsList) throws ConnectException {
 		
 		jpanel_FriendsList.setBounds(0, 155, _width, 430);
 		jpanel_FriendsList.setOpaque(false);
@@ -136,10 +145,27 @@ public class MainWindow extends Window{
 		FriendsListTree group_Stranger = new FriendsListTree();;
 		group_Stranger.set_groupText("stranger");
 		
+		List<Integer> friendsIDList = new ArrayList<Integer>();
+		
+		MessageModel messageModel = MessageManagement.getFrindIDMessageModel(_id.intValue());
+		
+		GetRequest getFrindIDRequest = new GetRequest(messageModel);
+		
+//		Object getFrindIDResultObject = getFrindIDRequest.sendRequest();
+		
+		friendsIDList = (ArrayList<Integer>) getFrindIDRequest.sendRequest();
+		
 		//TODO change to count
-		ArrayList<Friend> friendsInformationList = EvenProcess.getFriendInfo(_id.intValue());
-		for (Friend friend : friendsInformationList) {
-			UserFriendsInformation userFriendInformation = EvenProcess.getUser_FriendInfo(friend.getFriend_id().intValue());
+		for (Integer friendID : friendsIDList) {
+//			UserFriendsInformation userFriendInformation = EvenProcess.getUserFriendInfo(friendID);
+			
+			messageModel = MessageManagement.getUserFriendInfoMessageModel(friendID);
+			GetRequest getUserFriendInfoRequest = new GetRequest(messageModel);
+//			Object getUserFriendInfoObject = getUserFriendInfoRequest.sendRequest();
+			
+			UserFriendsInformation userFriendInformation = 
+					(UserFriendsInformation) getUserFriendInfoRequest.sendRequest();
+			
 			FriendsListTree friendsNode = new FriendsListTree();
 			friendsNode = new FriendsListTree();
 			friendsNode.set_userFriendInfo(userFriendInformation);
@@ -413,6 +439,6 @@ public class MainWindow extends Window{
 	}
 	
 	public static void main(String[] args) {
-		MainWindow.createMainWindow(EvenProcess.login("zxk", "zk001"));
+//		MainWindow.createMainWindow(EvenProcess.login("zxk", "zk001"));
 	}
 }
