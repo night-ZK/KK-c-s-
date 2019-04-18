@@ -48,6 +48,8 @@ public abstract class Request implements Runnable{
 	protected ObjectOutputStream oos;
 	protected ObjectInputStream ois;
 	
+	protected MessageContext replyMessageContext;
+	
 	protected Request(MessageModel model) {
 		try {
 			this.socket = SocketClient.getSocket();
@@ -87,6 +89,16 @@ public abstract class Request implements Runnable{
 			
 			this.wait();
 			
+			MessageModel replyModel = this.getReplyMessageModel();
+			
+			MessageHead replyMessageHead = replyModel.getMessageHead();
+			
+			if (!replyMessageHead.getReplyRequestResult()) {
+				throw new ConnectException("\"request data fail..\"");
+			}
+			
+			this.replyMessageContext = replyModel.getMessageContext();
+			
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -97,27 +109,27 @@ public abstract class Request implements Runnable{
 		
 	}
 	
-	public Object sendRequest() throws ConnectException {
+	public void sendRequest(boolean isJoin) {
 		Thread requestThread = new Thread(this);
 		ThreadConsole.useThreadPool().execute(requestThread);
 		
 		try {
-			requestThread.join();
+			if (isJoin) requestThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
-		MessageModel replyModel = this.getReplyMessageModel();
-		
-		MessageHead replyMessageHead = replyModel.getMessageHead();
-		
-		if (!replyMessageHead.getReplyRequestResult()) {
-			throw new ConnectException("\"request data fail..\"");
-		}
-		
-		MessageContext messageContext = replyModel.getMessageContext();
-		
-		return messageContext.getObject();
+//		MessageModel replyModel = this.getReplyMessageModel();
+//		
+//		MessageHead replyMessageHead = replyModel.getMessageHead();
+//		
+//		if (!replyMessageHead.getReplyRequestResult()) {
+//			throw new ConnectException("\"request data fail..\"");
+//		}
+//		
+//		MessageContext messageContext = replyModel.getMessageContext();
+//		
+//		return messageContext.getObject();
 //		if (messageContext.getObject() instanceof MessageHead) {
 //		}
 	}
@@ -141,6 +153,10 @@ public abstract class Request implements Runnable{
 		resultList.add(replyModel.getMessageContext());
 		
 		return resultList;
+	}
+	
+	public MessageContext getReplyMessageContext() {
+		return replyMessageContext;
 	}
 	
 	protected abstract void sendMessageModel() throws IOException; 

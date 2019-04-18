@@ -1,5 +1,6 @@
 package transmit;
 
+import java.awt.Image;
 import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,18 @@ public class MessageManagement {
 		messageHead.setRequestDataType(UserFriendsInformation.class);
 		
 		String describe = "/getUserFriendInfo?userID=" + friendID;
+		messageHead.setRequestDescribe(describe);
+		messageHead.setRequestTime(System.currentTimeMillis());
+		
+		return new MessageModel(messageHead, null);
+	}
+
+	public static MessageModel getUserFriendImageMessageModel(Integer friendID) {
+		MessageHead messageHead = new MessageHead();
+		messageHead.setType(4);
+		messageHead.setRequestDataType(Image.class);
+		
+		String describe = "/getUserFriendImage?userID=" + friendID;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
 		

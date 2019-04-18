@@ -2,6 +2,7 @@ package frame;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Label;
 import java.rmi.ConnectException;
 import java.util.ArrayList;
@@ -150,28 +151,44 @@ public class MainWindow extends Window{
 		MessageModel messageModel = MessageManagement.getFrindIDMessageModel(_id.intValue());
 		
 		GetRequest getFrindIDRequest = new GetRequest(messageModel);
+		getFrindIDRequest.sendRequest(true);
 		
 //		Object getFrindIDResultObject = getFrindIDRequest.sendRequest();
 		
-		friendsIDList = (ArrayList<Integer>) getFrindIDRequest.sendRequest();
+		friendsIDList = (ArrayList<Integer>) getFrindIDRequest.getReplyMessageContext().getObject();
 		
+		
+		
+		//获得好友头像
+		List<Image> getUserImageList = new ArrayList<>();
+		
+		
+		
+		//获得好友基本信息
+		List<GetRequest> getUserFriendInfoRequestList = new ArrayList<>();
+		
+		//获得好友头像
+		List<GetRequest> getUserFriendImageRequestList = new ArrayList<>();
 		//TODO change to count
 		for (Integer friendID : friendsIDList) {
-//			UserFriendsInformation userFriendInformation = EvenProcess.getUserFriendInfo(friendID);
 			
 			messageModel = MessageManagement.getUserFriendInfoMessageModel(friendID);
 			GetRequest getUserFriendInfoRequest = new GetRequest(messageModel);
+			getUserFriendInfoRequest.sendRequest(false);
+			
 //			Object getUserFriendInfoObject = getUserFriendInfoRequest.sendRequest();
+			getUserFriendInfoRequestList.add(getUserFriendInfoRequest);
+
+			messageModel = MessageManagement.getUserFriendImageMessageModel(friendID);
+			GetRequest getUserFriendImageRequest = new GetRequest(messageModel);
+			getUserFriendImageRequest.sendRequest(false);
 			
-			UserFriendsInformation userFriendInformation = 
-					(UserFriendsInformation) getUserFriendInfoRequest.sendRequest();
-			
-			FriendsListTree friendsNode = new FriendsListTree();
-			friendsNode = new FriendsListTree();
-			friendsNode.set_userFriendInfo(userFriendInformation);
-			group_Myfrends.add(friendsNode);
+			getUserFriendImageRequestList.add(getUserFriendImageRequest);
 			
 		}
+		
+		//递归设置分组中的好友列表
+		setFriendsGroupListTree(getUserFriendInfoRequestList, group_Myfrends);
 		
 		friendsListTree_RootNode.add(group_Myfrends);
 		friendsListTree_RootNode.add(group_Stranger);
@@ -208,6 +225,32 @@ public class MainWindow extends Window{
 		
 		jpanel_Friend.add(friendJScrollPane, BorderLayout.CENTER);
 		jpanel_FriendsList.add(jpanel_Friend);
+	}
+
+	/**
+	 * 递归设置分组中的好友列表
+	 * @param getUserFriendInfiRequestList
+	 * @param group
+	 */
+	private void setFriendsGroupListTree(List<GetRequest> getUserFriendInfiRequestList, FriendsListTree group) {
+		
+		for (GetRequest getRequest : getUserFriendInfiRequestList) {
+			if (getRequest.getReplyMessageContext() != null) {
+				
+				UserFriendsInformation userFriendInformation = 
+						(UserFriendsInformation) getRequest.getReplyMessageContext().getObject();
+				
+				FriendsListTree friendsNode = new FriendsListTree();
+				
+				friendsNode.set_userFriendInfo(userFriendInformation);
+				
+				group.add(friendsNode);
+				
+				getUserFriendInfiRequestList.remove(getRequest);
+			}
+		}
+		
+		if(!getUserFriendInfiRequestList.isEmpty()) setFriendsGroupListTree(getUserFriendInfiRequestList, group);
 	}
 
 	/**

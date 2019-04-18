@@ -1,5 +1,7 @@
 package tablejson;
 
+import java.awt.Image;
+
 import row.RowSupper;
 
 public class UserFriendsInformation extends RowSupper implements JsonInterface{
@@ -12,6 +14,15 @@ public class UserFriendsInformation extends RowSupper implements JsonInterface{
 	private String userState;
 	private Number gender;
 	private String personLabel;
+	
+	private Image userImage;
+
+	public Image getUserImage() {
+		return userImage;
+	}
+	public void setUserImage(Image userImage) {
+		this.userImage = userImage;
+	}
 	public Number getId() {
 		return id;
 	}

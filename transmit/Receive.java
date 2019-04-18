@@ -1,5 +1,6 @@
 package transmit;
 
+import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -53,6 +54,10 @@ public class Receive implements Runnable{
 				this.messageHead = receiveModel.getMessageHead();
 				
 				String requestMapKey = TransmitTool.getRequestMapKey(this.messageHead);
+				
+				if (messageHead.getReplyDataType().isAssignableFrom(Image.class)) {
+					
+				}
 				
 				receiveMap.put(requestMapKey, receiveModel);
 				
