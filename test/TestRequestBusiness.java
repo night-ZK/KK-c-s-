@@ -38,8 +38,11 @@ public class TestRequestBusiness {
 	
 	@Test
 	public void testTools() {
-		MessageHead messageHead = new MessageHead();
-		System.out.println(ObjectTool.isEmpty(messageHead));
+//		MessageHead messageHead = new MessageHead();
+//		System.out.println(ObjectTool.isEmpty(messageHead));
+		String aString = "a b c";
+		String[] aStrings = aString.split(" ");
+		System.out.println(aStrings[1]);
 	}
 	
 }
