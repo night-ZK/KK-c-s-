@@ -157,13 +157,6 @@ public class MainWindow extends Window{
 		
 		friendsIDList = (ArrayList<Integer>) getFrindIDRequest.getReplyMessageContext().getObject();
 		
-		
-		
-		//获得好友头像
-		List<Image> getUserImageList = new ArrayList<>();
-		
-		
-		
 		//获得好友基本信息
 		List<GetRequest> getUserFriendInfoRequestList = new ArrayList<>();
 		

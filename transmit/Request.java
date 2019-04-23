@@ -109,7 +109,7 @@ public abstract class Request implements Runnable{
 		
 	}
 	
-	public void sendRequest(boolean isJoin) {
+	public Thread sendRequest(boolean isJoin) {
 		Thread requestThread = new Thread(this);
 		ThreadConsole.useThreadPool().execute(requestThread);
 		
@@ -118,6 +118,7 @@ public abstract class Request implements Runnable{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return requestThread;
 		
 //		MessageModel replyModel = this.getReplyMessageModel();
 //		

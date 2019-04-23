@@ -28,10 +28,15 @@ public class TestRequestBusiness {
 //			//TODO wait frame
 //			System.out.println("login wait..");
 //		}
+		Object a = "1";
+		ChilesThread01 ct = new ChilesThread01(a);
+		ct.login().test();
+		synchronized (a) {
+			System.out.println("i get a..");
+			a.notify();
+			System.out.println("i lose a..");
+		}
 		
-		ChilesThread01 ct = new ChilesThread01();
-		ct.login();
-		ThreadConsole.useThreadPool().execute(ct);
 //		System.out.println(Thread.interrupted());
 		
 	}
@@ -40,9 +45,12 @@ public class TestRequestBusiness {
 	public void testTools() {
 //		MessageHead messageHead = new MessageHead();
 //		System.out.println(ObjectTool.isEmpty(messageHead));
-		String aString = "a b c";
-		String[] aStrings = aString.split(" ");
-		System.out.println(aStrings[1]);
+		
+//		String aString = "a b c";
+//		String[] aStrings = aString.split(" ");
+//		System.out.println(aStrings[1]);
+		
+		System.out.println(ObjectTool.isInteger("123"));
 	}
 	
 }

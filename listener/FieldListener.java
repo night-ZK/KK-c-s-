@@ -169,34 +169,36 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	 * 
 	 */
 	public static void loginMainWindow() {
+		
 		MessageModel messageModel = MessageManagement.loginMessageModel(_user, _pas);
 		
 		GetRequest getRequest = new GetRequest(messageModel);
+		getRequest.sendRequest(true);
 		
-		try {
-			Object object = getRequest.sendRequest();
-			
+		MessageContext messageContext = getRequest.getReplyMessageContext();
+		
+		if (messageContext == null) {
+			System.out.println("login fail..");
+			//TODO
+			return;
+		}
+		
+		if (messageContext.getObject() instanceof User) {
 			System.out.println("login sucess..");
 			//登录成功, 销毁登录窗口
 			ClientLogin.createClientLogin().dispose();
-			if (object instanceof User) {
-				User loginUser = (User) object;
-				if (ObjectTool.isNull(loginUser.getId())) {
-					System.out.println("user or password error..");
-					//TODO
-					
-					
-					return;
-				}
-				MainWindow.createMainWindow(loginUser);
-			}else {
+			User loginUser = (User) messageContext.getObject();
+			if (ObjectTool.isNull(loginUser.getId())) {
+				System.out.println("user or password error..");
 				//TODO
-				System.out.println("data type error..");
+				
+				
+				return;
 			}
-			
-		} catch (ConnectException e) {
+			MainWindow.createMainWindow(loginUser);
+		}else {
 			//TODO
-			e.printStackTrace();
+			System.out.println("data type error..");
 		}
 		
 //		RequestBusiness requestBusiness = new RequestBusiness(messageModel);

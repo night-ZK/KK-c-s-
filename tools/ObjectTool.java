@@ -85,4 +85,11 @@ public class ObjectTool {
 				&& !isNull(messageHead.getRequestTime());
 		
 	}
+	
+	
+	public static boolean isInteger(Object object) {
+		return object.toString().matches("\\d+");
+		
+	}
+	
 }
