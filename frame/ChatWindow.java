@@ -21,6 +21,8 @@ import javax.swing.table.DefaultTableModel;
 import message.ChatMessages;
 import message.MessageInterface;
 import tablebeans.User;
+import tablejson.UserFriendsInformation;
+import tools.ObjectTool;
 import transmit.MessageManagement;
 
 /**
@@ -52,10 +54,10 @@ public class ChatWindow extends Window{
 	 * @param friendUserInfo 好友的用户信息
 	 * @param _index 存放在List中的下标, 用于标识该类对象
 	 */
-	private ChatWindow(Integer friendID) {
+	private ChatWindow(UserFriendsInformation friendUserInfo) {
 		initCharWindow();
 		//记录聊天对象id, 用于标识窗口对象
-		_index = friendID.intValue();
+		_index = friendUserInfo.getId().intValue();
 		//用户ID为key
 		$friendUserInfoHashMap.put(_index, this);
 		//窗体个数加1
@@ -103,8 +105,6 @@ public class ChatWindow extends Window{
 		chatMessage_JPanel.add(chatMessage_JLabel);
 		
 		JTable chatMessage_JTable = new JTable(defaultModel);
-		
-		
 		
 //		chatMessage_JLabel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 5, true));
 		
@@ -179,22 +179,21 @@ public class ChatWindow extends Window{
 	 * @param friendUserInfo
 	 * @return
 	 */
-	public static ChatWindow createChatWindow(Integer friendID) {
-		if (friendID == null) {
+	public static ChatWindow createChatWindow(UserFriendsInformation friendsInfo) {
+		if (ObjectTool.isNull(friendsInfo.getId())) {
 			throw new IllegalArgumentException("argument is null ..");
 		}
 		if ($friendUserInfoHashMap.size() > 0) {
 			//Map.Entry遍历map
 			for (Entry<Integer, ChatWindow> entry_element : $friendUserInfoHashMap.entrySet()) {
-				if (entry_element.getKey().equals(
-						friendID)) {
+				if (entry_element.getKey().equals(friendsInfo.getId())) {
 					// 获得焦点
 					entry_element.getValue().requestFocus();
 					return null;
 				}
 			}
 		}
-		return new ChatWindow(friendID);
+		return new ChatWindow(friendsInfo);
 	}
 	
 	/**
@@ -224,7 +223,7 @@ public class ChatWindow extends Window{
 		return _index;
 	}
 
-	public void set_index(Number _index) {
+	public void set_index(Integer _index) {
 		this._index = _index;
 	}
 

@@ -32,11 +32,18 @@ public class TestRequestBusiness {
 		ChilesThread01 ct = new ChilesThread01(a);
 		ct.login().test();
 		synchronized (a) {
+			System.out.println("i get " + a);
+			a.notify();
+			System.out.println("i lose " + a);
+		}
+		a = "2";
+		ChilesThread01 ct1 = new ChilesThread01(a);
+		ct1.login().test();
+		synchronized (a) {
 			System.out.println("i get a..");
 			a.notify();
 			System.out.println("i lose a..");
 		}
-		
 //		System.out.println(Thread.interrupted());
 		
 	}

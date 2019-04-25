@@ -87,9 +87,18 @@ public abstract class Request implements Runnable{
 			
 			requestMap.put(requestMapKey, this);
 			
-			this.wait();
+			MessageModel replyModel = null;
+			synchronized(this) {					
+				this.wait();
+				replyModel = this.getReplyMessageModel();
+			}
+//			while(ObjectTool.isEmpty(replyModel)) {
+//			}
 			
-			MessageModel replyModel = this.getReplyMessageModel();
+			if(ObjectTool.isEmpty(replyModel))
+				//TODO
+//				throw new
+				System.err.println("replyModel is null..");
 			
 			MessageHead replyMessageHead = replyModel.getMessageHead();
 			
@@ -98,7 +107,6 @@ public abstract class Request implements Runnable{
 			}
 			
 			this.replyMessageContext = replyModel.getMessageContext();
-			
 		} 
 		catch (IOException e) {
 			e.printStackTrace();

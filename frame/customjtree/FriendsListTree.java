@@ -19,12 +19,13 @@ public class FriendsListTree implements TreeNode{
 	
 //	private String _nickname;
 //	private String _state;
-//	private ImageIcon _imageIcon;
 //	private String _personLabel;
 //	private String _userAccount;
 	private String _groupText;
 	private ImageIcon _groupOpenImage;
 	private ImageIcon _groupCloseImage;
+	
+	private ImageIcon _userImageIcon;
 	private UserFriendsInformation _userFriendInfo;
 	
 	protected ArrayList<TreeNode> children = null;
@@ -53,6 +54,14 @@ public class FriendsListTree implements TreeNode{
 
 	public String get_groupText() {
 		return _groupText;
+	}
+
+	public ImageIcon get_userImageIcon() {
+		return _userImageIcon;
+	}
+
+	public void set_userImageIcon(ImageIcon _userImageIcon) {
+		this._userImageIcon = _userImageIcon;
 	}
 
 	public UserFriendsInformation get_userFriendInfo() {

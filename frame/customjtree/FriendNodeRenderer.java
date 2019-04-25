@@ -50,7 +50,7 @@ public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 				!= tree.getModel().getRoot()) {
 			
 			//从FriendsListTree节点中获得icon
-			ImageIcon friendIcon = new ImageIcon(friendsListTree.get_userFriendInfo().getUserImagepath());
+			ImageIcon friendIcon = friendsListTree.get_userImageIcon();
 			//设置图片缩放比例
 			friendIcon = imageIconFilter(friendIcon, 60, 60);
 			String userNickAndpersonlabel = "";

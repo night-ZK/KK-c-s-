@@ -6,9 +6,13 @@ import java.awt.Image;
 import java.awt.Label;
 import java.rmi.ConnectException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,8 +28,10 @@ import listener.FriendsListJTreeList;
 import message.MessageModel;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
+import tools.ObjectTool;
 import transmit.GetRequest;
 import transmit.MessageManagement;
+import transmit.Receive;
 
 public class MainWindow extends Window{
 
@@ -161,7 +167,7 @@ public class MainWindow extends Window{
 		List<GetRequest> getUserFriendInfoRequestList = new ArrayList<>();
 		
 		//获得好友头像
-		List<GetRequest> getUserFriendImageRequestList = new ArrayList<>();
+		List<Integer> getUserFriendImageList = new ArrayList<>();
 		//TODO change to count
 		for (Integer friendID : friendsIDList) {
 			
@@ -176,15 +182,18 @@ public class MainWindow extends Window{
 			GetRequest getUserFriendImageRequest = new GetRequest(messageModel);
 			getUserFriendImageRequest.sendRequest(false);
 			
-			getUserFriendImageRequestList.add(getUserFriendImageRequest);
 			
 		}
-		
+		Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
 		//递归设置分组中的好友列表
-		setFriendsGroupListTree(getUserFriendInfoRequestList, group_Myfrends);
+		setFriendsGroupListTree(getUserFriendInfoRequestList, getUserFriendImageList, friendsListTreeMap);
+		setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);
+		
+		setGroupList(group_Myfrends, friendsListTreeMap);
 		
 		friendsListTree_RootNode.add(group_Myfrends);
 		friendsListTree_RootNode.add(group_Stranger);
+		
 		
 		JTree groupListTreeRoot = new JTree(friendsListTree_RootNode);
 		groupListTreeRoot.setRootVisible(false);
@@ -221,11 +230,24 @@ public class MainWindow extends Window{
 	}
 
 	/**
+	 * 设置分组好友list
+	 * @param group_Myfrends
+	 * @param friendsListTreeMap
+	 */
+	private void setGroupList(FriendsListTree group_Myfrends, Map<Integer, FriendsListTree> friendsListTreeMap) {
+		for (FriendsListTree friendsNode : friendsListTreeMap.values()) {
+			group_Myfrends.add(friendsNode);
+		}
+	}
+
+	/**
 	 * 递归设置分组中的好友列表
 	 * @param getUserFriendInfiRequestList
-	 * @param group
+	 * @param getUserFriendImageList 
+	 * @param friendsListTreeMap 
 	 */
-	private void setFriendsGroupListTree(List<GetRequest> getUserFriendInfiRequestList, FriendsListTree group) {
+	private void setFriendsGroupListTree(List<GetRequest> getUserFriendInfiRequestList
+			, List<Integer> getUserFriendImageList, Map<Integer, FriendsListTree> friendsListTreeMap) {
 		
 		for (GetRequest getRequest : getUserFriendInfiRequestList) {
 			if (getRequest.getReplyMessageContext() != null) {
@@ -236,15 +258,54 @@ public class MainWindow extends Window{
 				FriendsListTree friendsNode = new FriendsListTree();
 				
 				friendsNode.set_userFriendInfo(userFriendInformation);
-				
-				group.add(friendsNode);
+				friendsListTreeMap.put(userFriendInformation.getId().intValue(), friendsNode);
+				getUserFriendImageList.add(userFriendInformation.getId().intValue());
+//				group.add(friendsNode);
 				
 				getUserFriendInfiRequestList.remove(getRequest);
 			}
 		}
 		
-		if(!getUserFriendInfiRequestList.isEmpty()) setFriendsGroupListTree(getUserFriendInfiRequestList, group);
+		if(!getUserFriendInfiRequestList.isEmpty()) setFriendsGroupListTree(getUserFriendInfiRequestList
+				,getUserFriendImageList, friendsListTreeMap);
 	}
+
+	
+	private void setFriendsGroupListImageTree(List<Integer> getUserFriendImageList
+			, Map<Integer, FriendsListTree> friendsListTreeMap) {
+		
+		Iterator<Map.Entry<Integer, FriendsListTree>> entries = friendsListTreeMap.entrySet().iterator();
+		while(entries.hasNext()) {
+			Map.Entry<Integer, FriendsListTree> friendsList = entries.next();
+			Integer receiveImageMapKey = friendsList.getKey();
+			ImageIcon imageIcon = Receive.receiveImageMap.get(receiveImageMapKey.toString());
+			if (!ObjectTool.isNull(imageIcon)) {
+				friendsList.getValue().set_userImageIcon(imageIcon);
+				getUserFriendImageList.remove(receiveImageMapKey);
+			}
+		}
+		
+		if(!getUserFriendImageList.isEmpty()) setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);
+		
+//		for (GetRequest getRequest : getUserFriendImageRequestList) {
+//			if (getRequest.getReplyMessageContext() != null) {
+//				
+//				UserFriendsInformation userFriendInformation = 
+//						(UserFriendsInformation) getRequest.getReplyMessageContext().getObject();
+//				
+//				FriendsListTree friendsNode = new FriendsListTree();
+//				
+//				friendsNode.set_userFriendInfo(userFriendInformation);
+//				
+//				friendsListTreeMap.add(friendsNode);
+//				
+//				getUserFriendInfiRequestList.remove(getRequest);
+//			}
+//		}
+		
+//		if(!getUserFriendInfiRequestList.isEmpty()) setFriendsGroupListTree(getUserFriendInfiRequestList, friendsListTreeMap);
+	}
+	
 
 	/**
 	 * 初始化用于显示用户信息的JPanel

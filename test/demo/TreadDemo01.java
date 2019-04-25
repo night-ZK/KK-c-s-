@@ -8,10 +8,11 @@ public class TreadDemo01 implements Runnable{
 	@Override
 	public synchronized void run() {
 		try {
-			synchronized(object) {				
-				System.out.println("i do ..");
+			synchronized(object) {
+				System.out.println("i am "+ this.object);
+				System.out.println(this.object+ "i do ..");
 				object.wait();
-				System.out.println("i done ..");
+				System.out.println(this.object+ "i done ..");
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

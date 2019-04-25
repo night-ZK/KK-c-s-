@@ -23,6 +23,7 @@ public class Receive implements Runnable{
 			new HashMap<String, MessageModel>();
 
 	//保存接收的数据
+	//key = uid, value = userImage
 	public static Map<String, ImageIcon> receiveImageMap = 
 			new HashMap<String, ImageIcon>();
 		
@@ -160,11 +161,7 @@ public class Receive implements Runnable{
 				receiveImageMap.put(imageMapKey, imageIcon);
 			}
 			
-			Runnable requestThread = Request.requestMap.get(imageMapKey);
-			
-			if (requestThread != null) {
-				requestThread.notify();
-			}
+			notifyRequestThread(imageMapKey);
 			
 		}else {
 			//TODO
@@ -174,7 +171,20 @@ public class Receive implements Runnable{
 		}
 	}
 	
-	
+	/**
+	 * 唤醒等待资源的线程
+	 * @param requestMapKey
+	 */
+	private void notifyRequestThread(String requestMapKey) {
+		Runnable requestThread = Request.requestMap.get(requestMapKey);
+		if (requestThread != null) {
+			
+			synchronized (requestThread) {
+				requestThread.notify();
+			}
+		}
+	}
+
 	/**
 	 * 读取服务器响应的MessageModel
 	 * @throws ClassNotFoundException
@@ -189,14 +199,12 @@ public class Receive implements Runnable{
 		MessageHead messageHead = receiveModel.getMessageHead();
 			
 		String requestMapKey = TransmitTool.getRequestMapKey(messageHead);
+		
 		synchronized(receiveMap) {		
 			receiveMap.put(requestMapKey, receiveModel);			
 		}
-		Runnable requestThread = Request.requestMap.get(requestMapKey);
 		
-		if (requestThread != null) {
-			requestThread.notify();
-		}
+		notifyRequestThread(requestMapKey);
 	}
 	
 	/**
