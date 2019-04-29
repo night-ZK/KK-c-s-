@@ -1,6 +1,10 @@
 package transmit;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -8,16 +12,25 @@ import org.dom4j.Element;
 
 import parsefile.ParseXML;
 
-public class SocketClient {
-	private static Socket socket;
+public abstract class SocketClient implements Runnable{
+	
+	protected static Socket socket;
 	private static ParseXML parseXML;
 	private static String serverID = "001";
+	
+	protected OutputStream os;
+	protected InputStream is;
+	
+	protected ObjectOutputStream oos;
+	protected ObjectInputStream ois;
+	
 	static {
 		parseXML = ParseXML.createParseXML();
 		Element element = parseXML.getServerXMLElement(serverID);
 		try {
 			socket = new Socket(element.elementText("host-address")
 					, Integer.parseInt(element.elementText("port")));
+			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
@@ -25,6 +38,20 @@ public class SocketClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
+	}
+	
+	public SocketClient() {
+
+		try {
+			this.os = socket.getOutputStream();
+			this.is = socket.getInputStream();
+			
+			this.oos = new ObjectOutputStream(os);
+			this.ois = new ObjectInputStream(is);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -62,8 +89,5 @@ public class SocketClient {
 //		};
 //		ThreadConsole.useThreadPool().execute(keepLogin_Runnable);
 //	}
-
-	public static Socket getSocket() {
-		return socket;
-	}	
+	
 }

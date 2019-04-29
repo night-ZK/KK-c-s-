@@ -7,6 +7,7 @@ import message.ErrorMessage;
 import message.MessageHead;
 import message.MessageInterface;
 import message.MessageModel;
+import transmit.sender.GetRequest;
 
 public class RequestBusiness extends GetRequest{
 

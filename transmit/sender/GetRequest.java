@@ -1,11 +1,10 @@
-package transmit;
+package transmit.sender;
 
 import java.io.IOException;
 
-import message.MessageContext;
-import message.MessageHead;
 import message.MessageModel;
 import tools.TransmitTool;
+import transmit.getter.Receive;
 
 public class GetRequest extends Request{
 
@@ -14,30 +13,21 @@ public class GetRequest extends Request{
 	}
 
 	@Override
-	protected void sendMessageHead() {
+	protected void sendMessageHeader() {
 		try {
+			
 			this.oos.writeObject(messageHead);
 			
-			this.oos.flush();
-			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	protected void sendMessageContext() {
 		
 	}
 
-	@Override
-	protected void sendMessageModel() throws IOException {
-		this.oos.writeObject(messageHead);
-		
-		this.oos.flush();
-	}
-	
 	@Override
 	protected MessageModel getReplyMessageModel() {
 		
@@ -45,6 +35,5 @@ public class GetRequest extends Request{
 		
 		return Receive.receiveMap.get(key); 
 	}
-
 
 }

@@ -1,23 +1,25 @@
-package transmit;
+package transmit.getter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
 
 import customexception.ResponseLineNotAbleExcetion;
-import message.MessageContext;
+import customexception.ServerSendChatMessageException;
+import frame.ChatWindow;
 import message.MessageHead;
 import message.MessageModel;
 import tools.ObjectTool;
 import tools.TransmitTool;
+import transmit.SocketClient;
+import transmit.sender.Request;
 
-public class Receive implements Runnable{
+public class Receive extends SocketClient implements Runnable{
 	//保存接收的数据
 	public static Map<String, MessageModel> receiveMap = 
 			new HashMap<String, MessageModel>();
@@ -26,30 +28,10 @@ public class Receive implements Runnable{
 	//key = uid, value = userImage
 	public static Map<String, ImageIcon> receiveImageMap = 
 			new HashMap<String, ImageIcon>();
-		
-	private static Socket socket;
-//	protected static OutputStream os;
-//	protected static InputStream is;
-	
-//	protected static ObjectOutputStream oos;
-//	protected static ObjectInputStream ois;
 
-	protected MessageHead messageHead;
-	protected MessageContext messageContext;
+//	protected MessageHead messageHead;
+//	protected MessageContext messageContext;
 	
-	static {
-		socket = SocketClient.getSocket();
-//		try {
-			
-//			os = socket.getOutputStream();
-//			is = socket.getInputStream();
-//			
-//			oos = new ObjectOutputStream(os);
-//			ois = new ObjectInputStream(is);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-	}
 	@Override
 	public void run() {
 		while(true) {			
@@ -131,11 +113,28 @@ public class Receive implements Runnable{
 			
 			this.readReplyImage(is, existJson, responseLength[1]);
 			break;
+			
+		case "ChatMessage":
+			this.forwardChatMessage(is);
+			break;
 		default:
 			break;
 		}
 	}
 	
+	private void forwardChatMessage(InputStream is) throws IOException, ClassNotFoundException {
+		ObjectInputStream ois = new ObjectInputStream(is);
+		MessageModel newsModel = (MessageModel) ois.readObject();
+		
+		try {
+			ChatWindow.newsComing(newsModel);
+		} catch (ServerSendChatMessageException e) {
+			//TODO
+			
+			e.printStackTrace();
+		}
+	}
+
 	private void readReplyImage(InputStream is, Boolean existJson, String responseLength) throws IOException, ResponseLineNotAbleExcetion {
 		
 		byte[] readByte = new byte[Integer.parseInt(responseLength)];

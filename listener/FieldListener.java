@@ -23,9 +23,9 @@ import message.MessageModel;
 import tablebeans.User;
 import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
-import transmit.GetRequest;
 import transmit.MessageManagement;
 import transmit.RequestBusiness;
+import transmit.sender.GetRequest;
 
 public class FieldListener implements MouseListener, FocusListener, KeyListener {
 

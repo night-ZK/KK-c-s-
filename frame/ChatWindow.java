@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
@@ -18,12 +17,16 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
+import customexception.ServerSendChatMessageException;
+import frame.customjtree.FriendsListTree;
 import message.ChatMessages;
-import message.MessageInterface;
-import tablebeans.User;
+import message.MessageHead;
+import message.MessageModel;
+import model.ChatModel;
 import tablejson.UserFriendsInformation;
 import tools.ObjectTool;
 import transmit.MessageManagement;
+import transmit.sender.ChatSender;
 
 /**
  * 聊天窗口
@@ -142,8 +145,10 @@ public class ChatWindow extends Window{
 					chatMessage.setSenderID(MainWindow.getSaveUserID().intValue());
 					chatMessage.setGetterID(_index.intValue());
 					chatMessage.setMessage(textPane_Message);					
-					MessageInterface ms = MessageManagement.sendChatMessage(chatMessage);
-					System.out.println("ms:" + ms);
+					MessageModel chatMessageModel = MessageManagement.chatMessageModel(chatMessage);
+					ChatSender chatSender = new ChatSender(chatMessageModel);
+					chatSender.sendRequest(false);
+					
 					entry_JTextPane.setText("");
 					//TODO handle "ms"
 				}
@@ -176,10 +181,11 @@ public class ChatWindow extends Window{
 	
 	/**
 	 * 
+	 * @param chatModel 
 	 * @param friendUserInfo
 	 * @return
 	 */
-	public static ChatWindow createChatWindow(UserFriendsInformation friendsInfo) {
+	public static ChatWindow createChatWindow(UserFriendsInformation friendsInfo, ChatModel chatModel) {
 		if (ObjectTool.isNull(friendsInfo.getId())) {
 			throw new IllegalArgumentException("argument is null ..");
 		}
@@ -189,10 +195,23 @@ public class ChatWindow extends Window{
 				if (entry_element.getKey().equals(friendsInfo.getId())) {
 					// 获得焦点
 					entry_element.getValue().requestFocus();
+					
+					if (!ObjectTool.isNull(chatModel)) {			
+						//TODO
+						System.out.println("news is : " + chatModel.getNews() + 
+								", time : " + chatModel.getDate());
+					}
+					
 					return null;
 				}
 			}
 		}
+		
+		if (!ObjectTool.isNull(chatModel)) {			
+			//TODO
+			
+		}
+		
 		return new ChatWindow(friendsInfo);
 	}
 	
@@ -225,6 +244,29 @@ public class ChatWindow extends Window{
 
 	public void set_index(Integer _index) {
 		this._index = _index;
+	}
+
+	public static void newsComing(MessageModel newsModel) throws ServerSendChatMessageException {
+		ChatMessages chatMessages = (ChatMessages)newsModel.getMessageContext();
+		
+		if(ObjectTool.isNull(chatMessages)) 
+			throw new ServerSendChatMessageException("server charmessage illegal..");
+		
+		Integer friendID = chatMessages.getSenderID();
+		
+		if(ObjectTool.isNull(friendID))
+				throw new ServerSendChatMessageException("server charmessage illegal..");
+		
+		FriendsListTree friendsListTree = MainWindow.friendsListTreeMap.get(friendID);
+		if (!ObjectTool.isNull(friendsListTree)) {
+
+			UserFriendsInformation ufi = friendsListTree.get_userFriendInfo();
+			MessageHead newsHead = newsModel.getMessageHead();
+			ChatModel chatModel = new ChatModel(chatMessages.getMessage(), newsHead.getReplyTime().toString());
+			createChatWindow(ufi, chatModel);
+			
+		}
+		
 	}
 
 //	public static void main(String[] args) {

@@ -29,15 +29,17 @@ import message.MessageModel;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
 import tools.ObjectTool;
-import transmit.GetRequest;
 import transmit.MessageManagement;
-import transmit.Receive;
+import transmit.getter.Receive;
+import transmit.sender.GetRequest;
 
 public class MainWindow extends Window{
 
 	private static final long serialVersionUID = 1L;
 	
 	private static MainWindow _mainWindow = null;
+	
+	static Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
 
 	private MainWindow(User user){
 		super(user);
@@ -184,7 +186,7 @@ public class MainWindow extends Window{
 			
 			
 		}
-		Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
+		
 		//递归设置分组中的好友列表
 		setFriendsGroupListTree(getUserFriendInfoRequestList, getUserFriendImageList, friendsListTreeMap);
 		setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);

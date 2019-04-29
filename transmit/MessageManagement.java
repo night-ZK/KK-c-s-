@@ -1,18 +1,13 @@
 package transmit;
 
 import java.awt.Image;
-import java.rmi.ConnectException;
-import java.util.ArrayList;
 import java.util.List;
 
-import message.ErrorMessage;
-import message.MessageContext;
+import message.ChatMessages;
 import message.MessageHead;
-import message.MessageInterface;
 import message.MessageModel;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
-import threadmanagement.ThreadConsole;
 
 public class MessageManagement {
 
@@ -77,62 +72,16 @@ public class MessageManagement {
 		return new MessageModel(messageHead, null);
 	}
 	
-	
-	
-	
-//	/**
-//	 * 通过ChatMessage类发送聊天信息给服务器
-//	 * @param message
-//	 * @return 返回包含发送状态的message
-//	 */
-//	public static MessageInterface sendChatMessage(ChatMessages message) {
-//		
-//		ObjectOutputStream oos = null;
-//		ErrorMessage errerMessage = null;
-//		try {
-//			oos = new ObjectOutputStream(SocketClient.getSocket().getOutputStream());
-//			oos.writeObject(message);
-//			oos.flush();
-//			errerMessage = new ErrorMessage(true, "Success Send.");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			errerMessage = new ErrorMessage(false, e.getMessage());
-//		}finally {
-//			try {
-//				if (oos != null) {
-//					oos.close();
-//				}
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//				errerMessage = new ErrorMessage(false, "oos close faile.");
-//			}
-//		}
-//		return errerMessage;
-//	}
-//
+	public static MessageModel chatMessageModel(ChatMessages chatMessage) {
+		MessageHead messageHead = new MessageHead();
+		messageHead.setType(5);
+		messageHead.setRequestDataType(Object.class);
+		
+		String describe = "/sendChatMessage";
+		messageHead.setRequestDescribe(describe);
+		messageHead.setRequestTime(System.currentTimeMillis());
+		
+		return new MessageModel(messageHead, chatMessage);
+	}
 
-//	public static MessageInterface receiveMessage() {
-//		ObjectInputStream ois = null;
-//		ErrerMessage errerMessage = null;
-//		try {
-//			ois = new ObjectInputStream(SocketClient.getSocket().getInputStream());
-//			ChatMessages messages = (ChatMessages)ois.readObject();
-//			ChatWindow.createChatWindow(friendUserInfo);
-//			errerMessage = new ErrerMessage(true, "Success Send.");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			errerMessage = new ErrerMessage(false, e.getMessage());
-//		}finally {
-//			try {
-//				if (oos != null) {
-//					oos.close();
-//				}
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//				errerMessage = new ErrerMessage(false, "oos close faile.");
-//			}
-//		}
-//		return errerMessage;
-//
-//	}
 }
