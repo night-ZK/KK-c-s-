@@ -33,7 +33,7 @@ public abstract class Request extends Sender{
 	}
 	
 	@Override
-	public synchronized void run() {
+	public void run() {
 		
 		try {
 			
@@ -46,6 +46,7 @@ public abstract class Request extends Sender{
 			requestMap.put(requestMapKey, this);
 			
 			MessageModel replyModel = null;
+			System.out.println("synchronized..");
 			synchronized(this) {					
 				this.wait();
 				replyModel = this.getReplyMessageModel();

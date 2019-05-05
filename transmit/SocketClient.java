@@ -49,7 +49,6 @@ public abstract class SocketClient implements Runnable{
 			this.oos = new ObjectOutputStream(os);
 			this.ois = new ObjectInputStream(is);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

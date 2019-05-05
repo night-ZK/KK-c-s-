@@ -173,10 +173,11 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 		MessageModel messageModel = MessageManagement.loginMessageModel(_user, _pas);
 		
 		GetRequest getRequest = new GetRequest(messageModel);
+		System.out.println("login..");
 		getRequest.sendRequest(true);
+		System.out.println("end..");
 		
 		MessageContext messageContext = getRequest.getReplyMessageContext();
-		
 		if (messageContext == null) {
 			System.out.println("login fail..");
 			//TODO

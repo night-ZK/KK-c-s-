@@ -32,14 +32,33 @@ public abstract class Sender extends SocketClient{
 	}
 
 	public Thread sendRequest(boolean isJoin) {
-		Thread requestThread = new Thread(this);
-		ThreadConsole.useThreadPool().execute(requestThread);
+		Thread requestThread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					System.out.println("test thread start..");
+					Thread.sleep(5000);
+
+					System.out.println("test thread end..");
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
 		
 		try {
-			if (isJoin) requestThread.join();
+			if (isJoin) {
+				System.out.println("threadname: " + Thread.currentThread().getName());
+				System.out.println("MainThread wait..");
+				requestThread.join();
+				System.out.println("MainThread wait done..");
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		ThreadConsole.useThreadPool().execute(requestThread);
 		return requestThread;
 		
 //		MessageModel replyModel = this.getReplyMessageModel();
