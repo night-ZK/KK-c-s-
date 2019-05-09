@@ -22,7 +22,7 @@ public class ObjectTool {
 				field.setAccessible(true);
 				if(field.get(object) != null 
 						&& !field.getName().equals("serialVersionUID")
-						&& field.getType().isAssignableFrom(Boolean.class)) {
+						&& !field.getType().isAssignableFrom(Boolean.class)) {
 					System.out.println("field.get(object): " + field.get(object)+ ", field.getName():" + field.getName());
 					isEmpty = false;
 					return isEmpty;

@@ -25,6 +25,7 @@ import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
 import transmit.MessageManagement;
 import transmit.RequestBusiness;
+import transmit.getter.Receive;
 import transmit.sender.GetRequest;
 
 public class FieldListener implements MouseListener, FocusListener, KeyListener {
@@ -175,7 +176,6 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 		GetRequest getRequest = new GetRequest(messageModel);
 		System.out.println("login..");
 		getRequest.sendRequest(true);
-		System.out.println("end..");
 		
 		MessageContext messageContext = getRequest.getReplyMessageContext();
 		if (messageContext == null) {

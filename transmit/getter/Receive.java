@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ import tools.TransmitTool;
 import transmit.SocketClient;
 import transmit.sender.Request;
 
-public class Receive extends SocketClient implements Runnable{
+public class Receive implements Runnable{
 	//保存接收的数据
 	public static Map<String, MessageModel> receiveMap = 
 			new HashMap<String, MessageModel>();
@@ -32,33 +33,56 @@ public class Receive extends SocketClient implements Runnable{
 //	protected MessageHead messageHead;
 //	protected MessageContext messageContext;
 	
+//	private static Receive receive = new Receive();
+	
+	private Socket socket;
+	
+	public Receive(Socket socket) {
+		this.socket = socket;
+	}
+	
+//	public static Receive getReceive() {
+//		return receive;
+//	}
+	
 	@Override
 	public void run() {
-		while(true) {			
-			InputStream is = null;
-			try {
-				is = socket.getInputStream();
+		System.out.println("receiveThread start..");
+		InputStream is = null;
+		try {
+			is = socket.getInputStream();
+			
+			while(true) {
+				
 				resolutionResponseLine(is);
-								
+				
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (ResponseLineNotAbleExcetion e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(is != null) is.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (ResponseLineNotAbleExcetion e) {
-				e.printStackTrace();
-			}finally {
-					try {
-						if(is != null) is.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
 			}
 		}
 	}
 	
 	private void resolutionResponseLine(InputStream is) throws IOException, ResponseLineNotAbleExcetion, ClassNotFoundException {
 		byte[] responseLineByte = this.readResponse(is);
+		
+		if (ObjectTool.isNull(responseLineByte)) {
+			return;
+		}
+		
 		String responseLine = new String(responseLineByte, "UTF-8");
+		
+		System.out.println("responseLine: " + responseLine);
 		
 		String[] responseLineArrays = responseLine.split(" ");
 		if (responseLineArrays.length < 3) 
@@ -86,7 +110,7 @@ public class Receive extends SocketClient implements Runnable{
 		if (responseLength.length < 2)
 			throw new ResponseLineNotAbleExcetion("responseLength length < 2..");
 
-		if(ObjectTool.isInteger(responseLength[1])) 
+		if(!ObjectTool.isInteger(responseLength[1])) 
 			throw new ResponseLineNotAbleExcetion("responseLength type not Integer..");
 		
 		
@@ -217,8 +241,13 @@ public class Receive extends SocketClient implements Runnable{
 		
 		//两个字节表示响应消息的长度
 		int lengthFirst = is.read();
+		
+		if (lengthFirst == -1) {
+			return null;
+		}
+		
 		int lengthEnd = is.read();
-		int length = lengthFirst << 8 + lengthEnd;
+		int length = (lengthFirst << 8) + lengthEnd;
 		
 		byte[] responseLineByte = new byte[length];
 		is.read(responseLineByte);

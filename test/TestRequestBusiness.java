@@ -60,4 +60,44 @@ public class TestRequestBusiness {
 		System.out.println(ObjectTool.isInteger("123"));
 	}
 	
+	@Test
+	public void testThreadJoin() {
+		Thread aThread = new Thread() {
+			@Override
+			public void run() {
+				Thread.currentThread().setName("Thread-a");
+				for(int i = 0; i < 10; i++) {					
+					System.out.println(Thread.currentThread().getName() + " : " + i);
+				}
+			}
+		};
+		
+		Thread bThread = new Thread() {
+			@Override
+			public void run() {
+				Thread.currentThread().setName("Thread-b");
+				for(int i = 0; i < 10; i++) {					
+					System.out.println(Thread.currentThread().getName() + " : " + i);
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		
+		ThreadConsole.useThreadPool().execute(aThread);
+//		aThread.start();
+		ThreadConsole.useThreadPool().execute(bThread);
+		try {
+			bThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("end..");
+	}
+	
 }

@@ -48,11 +48,12 @@ public abstract class Request extends Sender{
 			MessageModel replyModel = null;
 			System.out.println("synchronized..");
 			synchronized(this) {					
+				System.out.println("requestThread wait..");
+				this.isWait = true;
 				this.wait();
 				replyModel = this.getReplyMessageModel();
+				System.out.println("replyModel: " + replyModel);
 			}
-//			while(ObjectTool.isEmpty(replyModel)) {
-//			}
 			
 			if(ObjectTool.isEmpty(replyModel))
 				//TODO

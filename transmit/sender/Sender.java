@@ -8,6 +8,7 @@ import message.MessageModel;
 import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
 import transmit.SocketClient;
+import transmit.getter.Receive;
 
 public abstract class Sender extends SocketClient{
 	
@@ -31,25 +32,30 @@ public abstract class Sender extends SocketClient{
 		}
 	}
 
-	public Thread sendRequest(boolean isJoin) {
-		Thread requestThread = new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println("test thread start..");
-					Thread.sleep(5000);
+	public void sendRequest(boolean isJoin) {
+		Thread requestThread = new Thread(this);
 
-					System.out.println("test thread end..");
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
+		requestThread.start();
 		
 		try {
-			if (isJoin) {
-				System.out.println("threadname: " + Thread.currentThread().getName());
+			
+			Runnable round = () ->{
+				
+				while(true) {
+					synchronized(this) {						
+						if (this.isWait) {							
+							Thread receiveThread = new Thread(new Receive(this.socket));
+							receiveThread.start();
+							break;
+						}
+					}
+				}
+			};
+			
+			Thread roundThread = new Thread(round);
+			
+			roundThread.start();
+			if (isJoin) {	
 				System.out.println("MainThread wait..");
 				requestThread.join();
 				System.out.println("MainThread wait done..");
@@ -58,33 +64,26 @@ public abstract class Sender extends SocketClient{
 			e.printStackTrace();
 		}
 		
-		ThreadConsole.useThreadPool().execute(requestThread);
-		return requestThread;
+//		ThreadConsole.useThreadPool().execute(requestThread);
+//		return requestThread;
 		
-//		MessageModel replyModel = this.getReplyMessageModel();
-//		
-//		MessageHead replyMessageHead = replyModel.getMessageHead();
-//		
-//		if (!replyMessageHead.getReplyRequestResult()) {
-//			throw new ConnectException("\"request data fail..\"");
-//		}
-//		
-//		MessageContext messageContext = replyModel.getMessageContext();
-//		
-//		return messageContext.getObject();
-//		if (messageContext.getObject() instanceof MessageHead) {
-//		}
 	}
 	
 	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	protected void sendMessageModel() throws IOException {
 		this.sendMessageHeader();
 		this.sendMessageContext();
 
-		this.oos.flush();
+		this.socket.shutdownOutput();
 		
-		if(ObjectTool.isNull(this.oos)) this.oos.close();
-		if(ObjectTool.isNull(this.os)) this.os.close();
+//		if(ObjectTool.isNull(this.oos)) this.oos.close();
+//		if(ObjectTool.isNull(this.os)) this.os.close();
 		
 	}
 	
