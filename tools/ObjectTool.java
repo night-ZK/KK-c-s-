@@ -10,6 +10,7 @@ public class ObjectTool {
 	 * @return
 	 */
 	public static boolean isEmpty(Object object) {
+		if (ObjectTool.isNull(object)) return true; 
 		Class<?> cla = object.getClass();
 		Field[] fields = cla.getDeclaredFields();
 		Field[] supperFiedls = cla.getSuperclass().getDeclaredFields();
@@ -23,7 +24,6 @@ public class ObjectTool {
 				if(field.get(object) != null 
 						&& !field.getName().equals("serialVersionUID")
 						&& !field.getType().isAssignableFrom(Boolean.class)) {
-					System.out.println("field.get(object): " + field.get(object)+ ", field.getName():" + field.getName());
 					isEmpty = false;
 					return isEmpty;
 				}

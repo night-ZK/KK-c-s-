@@ -32,6 +32,7 @@ import tools.ObjectTool;
 import transmit.MessageManagement;
 import transmit.getter.Receive;
 import transmit.sender.GetRequest;
+import transmit.sender.ImageRequest;
 
 public class MainWindow extends Window{
 
@@ -156,7 +157,7 @@ public class MainWindow extends Window{
 		
 		List<Integer> friendsIDList = new ArrayList<Integer>();
 		
-		MessageModel messageModel = MessageManagement.getFrindIDMessageModel(_id.intValue());
+		MessageModel messageModel = MessageManagement.getFriendsIDMessageModel(_id.intValue(), "myFriends");
 		
 		GetRequest getFrindIDRequest = new GetRequest(messageModel);
 		getFrindIDRequest.sendRequest(true);
@@ -181,15 +182,58 @@ public class MainWindow extends Window{
 			getUserFriendInfoRequestList.add(getUserFriendInfoRequest);
 
 			messageModel = MessageManagement.getUserFriendImageMessageModel(friendID);
-			GetRequest getUserFriendImageRequest = new GetRequest(messageModel);
-			getUserFriendImageRequest.sendRequest(false);
 			
+			ImageRequest getUserFriendImageRequest = new ImageRequest(messageModel);
+			getUserFriendImageRequest.setImageRequestMapKey(friendID.toString());
+//			GetRequest getUserFriendImageRequest = new GetRequest(messageModel);
+			getUserFriendImageRequest.sendRequest(false);
 			
 		}
 		
+//		Runnable rounld = () ->{
+//			while(true) {				
+//				int isCounit = 0;
+//				for (GetRequest getRequest : getUserFriendInfoRequestList) {
+////				synchronized(getRequest) {
+////				}
+//					if (!getRequest.isWait && getRequest.hasRepley) {
+//						isCounit++;
+//					}
+//				}
+//				if (isCounit == getUserFriendInfoRequestList.size()) {
+//					break;
+//				}
+//			}
+//		};
+//		Thread rounldThread = new Thread(rounld);
+//		rounldThread.start();
+//		try {
+//			rounldThread.join(10000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 		//递归设置分组中的好友列表
-		setFriendsGroupListTree(getUserFriendInfoRequestList, getUserFriendImageList, friendsListTreeMap);
-		setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);
+		long currentTime = System.currentTimeMillis();
+		while(!getUserFriendInfoRequestList.isEmpty()) {	
+			if ((System.currentTimeMillis() - currentTime) >= 10000) {
+				//TODO
+				System.err.println("set friends group over time..");
+				break;
+			}
+			setFriendsGroupListTree(getUserFriendInfoRequestList, getUserFriendImageList, friendsListTreeMap, currentTime);
+		}
+		
+		currentTime = System.currentTimeMillis();
+		while(!getUserFriendImageList.isEmpty()) {
+			if ((System.currentTimeMillis() - currentTime) >= 10000) {
+				//TODO
+				System.err.println("set friends group over time..");
+				break;
+			}
+			setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);
+		}
 		
 		setGroupList(group_Myfrends, friendsListTreeMap);
 		
@@ -244,15 +288,20 @@ public class MainWindow extends Window{
 
 	/**
 	 * 递归设置分组中的好友列表
-	 * @param getUserFriendInfiRequestList
+	 * @param getUserFriendInfoRequestList
 	 * @param getUserFriendImageList 
 	 * @param friendsListTreeMap 
 	 */
-	private void setFriendsGroupListTree(List<GetRequest> getUserFriendInfiRequestList
-			, List<Integer> getUserFriendImageList, Map<Integer, FriendsListTree> friendsListTreeMap) {
+	private void setFriendsGroupListTree(List<GetRequest> getUserFriendInfoRequestList
+			, List<Integer> getUserFriendImageList, Map<Integer, FriendsListTree> friendsListTreeMap
+			,long currentTime) {
 		
-		for (GetRequest getRequest : getUserFriendInfiRequestList) {
-			if (getRequest.getReplyMessageContext() != null) {
+		Iterator<GetRequest> requestIteror = getUserFriendInfoRequestList.iterator();
+		while(requestIteror.hasNext()) {
+			GetRequest getRequest = requestIteror.next();
+			
+			if (!getRequest.isWait && getRequest.hasRepley && 
+					getRequest.getReplyMessageContext() != null) {
 				
 				UserFriendsInformation userFriendInformation = 
 						(UserFriendsInformation) getRequest.getReplyMessageContext().getObject();
@@ -264,12 +313,35 @@ public class MainWindow extends Window{
 				getUserFriendImageList.add(userFriendInformation.getId().intValue());
 //				group.add(friendsNode);
 				
-				getUserFriendInfiRequestList.remove(getRequest);
+				requestIteror.remove();
 			}
+			
 		}
 		
-		if(!getUserFriendInfiRequestList.isEmpty()) setFriendsGroupListTree(getUserFriendInfiRequestList
-				,getUserFriendImageList, friendsListTreeMap);
+//		for (GetRequest getRequest : getUserFriendInfoRequestList) {
+//			if (!getRequest.isWait && getRequest.hasRepley && 
+//					getRequest.getReplyMessageContext() != null) {
+//				
+//				UserFriendsInformation userFriendInformation = 
+//						(UserFriendsInformation) getRequest.getReplyMessageContext().getObject();
+//				
+//				FriendsListTree friendsNode = new FriendsListTree();
+//				
+//				friendsNode.set_userFriendInfo(userFriendInformation);
+//				friendsListTreeMap.put(userFriendInformation.getId().intValue(), friendsNode);
+//				getUserFriendImageList.add(userFriendInformation.getId().intValue());
+////				group.add(friendsNode);
+//				
+//				getUserFriendInfoRequestList.remove(getRequest);
+//			}
+//		}
+			
+		
+//		if((System.currentTimeMillis() - currentTime) <= 10000 
+//				&& getUserFriendInfoRequestList.size() != 0) //.isEmpty()
+//			setFriendsGroupListTree(getUserFriendInfoRequestList
+//					,getUserFriendImageList, friendsListTreeMap, currentTime);
+		
 	}
 
 	
@@ -287,25 +359,9 @@ public class MainWindow extends Window{
 			}
 		}
 		
-		if(!getUserFriendImageList.isEmpty()) setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);
+//		if(!getUserFriendImageList.isEmpty()) 
+//			setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);
 		
-//		for (GetRequest getRequest : getUserFriendImageRequestList) {
-//			if (getRequest.getReplyMessageContext() != null) {
-//				
-//				UserFriendsInformation userFriendInformation = 
-//						(UserFriendsInformation) getRequest.getReplyMessageContext().getObject();
-//				
-//				FriendsListTree friendsNode = new FriendsListTree();
-//				
-//				friendsNode.set_userFriendInfo(userFriendInformation);
-//				
-//				friendsListTreeMap.add(friendsNode);
-//				
-//				getUserFriendInfiRequestList.remove(getRequest);
-//			}
-//		}
-		
-//		if(!getUserFriendInfiRequestList.isEmpty()) setFriendsGroupListTree(getUserFriendInfiRequestList, friendsListTreeMap);
 	}
 	
 
@@ -515,7 +571,7 @@ public class MainWindow extends Window{
 		
 		this._id = user.getId();
 		this._nickName = user.getUserNick();
-		this._path = user.getUserImagepath();
+		this._path = user.getUserImagepath();//绝对路径
 		this._personLabel = user.getPersonLabel();
 		this._findSum = user.getFiendSum();
 	}

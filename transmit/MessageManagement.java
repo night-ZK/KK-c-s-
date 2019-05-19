@@ -8,6 +8,7 @@ import message.MessageHead;
 import message.MessageModel;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
+import transmit.sender.Request;
 
 public class MessageManagement {
 
@@ -26,25 +27,26 @@ public class MessageManagement {
 		String describe = "/login?userName=" + userName + "&" + "password=" + password;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
+		messageHead.setRequestNO(Request.getRequestNo());
 		
 		return new MessageModel(messageHead, null);
 		
 	}
 
 	/**
-	 * 获取好友ID
+	 * 获取好友ID, Integer类型List
 	 * @param userID 当前用户ID
 	 * @return
 	 */
-	public static MessageModel getFrindIDMessageModel(int userID) {
+	public static MessageModel getFriendsIDMessageModel(int userID, String group) {
 		MessageHead messageHead = new MessageHead();
 		messageHead.setType(2);
 		messageHead.setRequestDataType(List.class);
 		
-		String describe = "/getFrindID?userID=" + userID;
+		String describe = "/getFriendsID?userID=" + userID + "&group=" + group;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		
+		messageHead.setRequestNO(Request.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
 
@@ -56,7 +58,7 @@ public class MessageManagement {
 		String describe = "/getUserFriendInfo?userID=" + friendID;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		
+		messageHead.setRequestNO(Request.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
 
@@ -68,7 +70,7 @@ public class MessageManagement {
 		String describe = "/getUserFriendImage?userID=" + friendID;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		
+		messageHead.setRequestNO(Request.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
 	
@@ -80,7 +82,7 @@ public class MessageManagement {
 		String describe = "/sendChatMessage";
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		
+		messageHead.setRequestNO(Request.getRequestNo());
 		return new MessageModel(messageHead, chatMessage);
 	}
 

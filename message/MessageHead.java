@@ -4,6 +4,9 @@ public class MessageHead implements MessageInterface{
 
 	private static final long serialVersionUID = 1L;
 	
+	//请求番号
+	private Integer requestNO;
+	
 	//用于标识客户端发送的消息类型
 	private Integer type;
 	//请求的数据类型
@@ -12,6 +15,8 @@ public class MessageHead implements MessageInterface{
 	private String requestDescribe;
 	//发送请求时间戳
 	private Long requestTime;
+	//是否存在context
+	private boolean hasMessageContext;
 	
 	//回复请求时间戳
 	private Long replyTime;
@@ -21,6 +26,22 @@ public class MessageHead implements MessageInterface{
 	private String replyDescribe;
 	//回复的数据类型
 	private Class<?> replyDataType;
+	
+	public Integer getRequestNO() {
+		return requestNO;
+	}
+
+	public void setRequestNO(Integer requestNO) {
+		this.requestNO = requestNO;
+	}
+
+	public boolean isHasMessageContext() {
+		return hasMessageContext;
+	}
+
+	public void setHasMessageContext(boolean hasMessageContext) {
+		this.hasMessageContext = hasMessageContext;
+	}
 
 	public Class<?> getReplyDataType() {
 		return replyDataType;
@@ -85,12 +106,14 @@ public class MessageHead implements MessageInterface{
 	public void setRequestDescribe(String requestDescribe) {
 		this.requestDescribe = requestDescribe;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "MessageHead [type=" + type + ", requestDataType=" + requestDataType + ", requestDescribe="
-				+ requestDescribe + ", requestTime=" + requestTime + ", replyTime=" + replyTime
-				+ ", replyRequestResult=" + replyRequestResult + ", replyDescribe=" + replyDescribe + "]";
+				+ requestDescribe + ", requestTime=" + requestTime + ", hasMessageContext=" + hasMessageContext
+				+ ", replyTime=" + replyTime + ", replyRequestResult=" + replyRequestResult + ", replyDescribe="
+				+ replyDescribe + ", replyDataType=" + replyDataType + "]";
 	}
-
+	
+	
 }

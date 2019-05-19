@@ -39,7 +39,7 @@ public class FriendsListJTreeList implements MouseListener{
 				if (treePath.getLastPathComponent() instanceof FriendsListTree) {
 					FriendsListTree friendsListTree = (FriendsListTree)treePath.getLastPathComponent();
 					
-					if (ObjectTool.isNull(friendsListTree.get_userFriendInfo())) {
+					if (!ObjectTool.isNull(friendsListTree.get_userFriendInfo())) {
 						ChatWindow.createChatWindow(
 								friendsListTree.get_userFriendInfo(), null);											
 					}

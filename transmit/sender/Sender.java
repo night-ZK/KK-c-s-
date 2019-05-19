@@ -7,6 +7,7 @@ import message.MessageHead;
 import message.MessageModel;
 import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
+import tools.SenderTools;
 import transmit.SocketClient;
 import transmit.getter.Receive;
 
@@ -17,12 +18,15 @@ public abstract class Sender extends SocketClient{
 	
 	protected MessageModel model;
 	
+	protected SenderTools senderTools;
 	public Sender(MessageModel model) {
 		try {
 			this.model = model;
 			
 			this.messageHead = model.getMessageHead();
 			this.messageContext = model.getMessageContext();
+			
+			this.senderTools = new SenderTools(os);
 			
 			if(!ObjectTool.isRequestHeadDoable(messageHead))
 				throw new NullPointerException("messageHead is no doable..");
@@ -37,24 +41,8 @@ public abstract class Sender extends SocketClient{
 
 		requestThread.start();
 		
-		try {
+		try {			
 			
-			Runnable round = () ->{
-				
-				while(true) {
-					synchronized(this) {						
-						if (this.isWait) {							
-							Thread receiveThread = new Thread(new Receive(this.socket));
-							receiveThread.start();
-							break;
-						}
-					}
-				}
-			};
-			
-			Thread roundThread = new Thread(round);
-			
-			roundThread.start();
 			if (isJoin) {	
 				System.out.println("MainThread wait..");
 				requestThread.join();
@@ -63,27 +51,11 @@ public abstract class Sender extends SocketClient{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-//		ThreadConsole.useThreadPool().execute(requestThread);
-//		return requestThread;
-		
 	}
 	
-	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	protected void sendMessageModel() throws IOException {
 		this.sendMessageHeader();
 		this.sendMessageContext();
-
-		this.socket.shutdownOutput();
-		
-//		if(ObjectTool.isNull(this.oos)) this.oos.close();
-//		if(ObjectTool.isNull(this.os)) this.os.close();
 		
 	}
 	

@@ -174,6 +174,26 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 		MessageModel messageModel = MessageManagement.loginMessageModel(_user, _pas);
 		
 		GetRequest getRequest = new GetRequest(messageModel);
+		
+		Runnable round = () ->{
+			
+			while(true) {
+				synchronized(getRequest) {						
+					if (getRequest.isWait) {							
+						Thread receiveThread = new Thread(new Receive(GetRequest.socket));
+						receiveThread.start();
+						break;
+					}
+				}
+			}
+		};
+		
+//		Thread roundThread = new Thread(round);
+//		
+//		roundThread.start();
+		
+		ThreadConsole.useThreadPool().execute(round);
+		
 		System.out.println("login..");
 		getRequest.sendRequest(true);
 		

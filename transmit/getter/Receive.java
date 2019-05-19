@@ -1,5 +1,6 @@
 package transmit.getter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -8,6 +9,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.ImageIcon;
 
 import customexception.ResponseLineNotAbleExcetion;
@@ -15,8 +17,10 @@ import customexception.ServerSendChatMessageException;
 import frame.ChatWindow;
 import message.MessageHead;
 import message.MessageModel;
+import tools.GetterTools;
 import tools.ObjectTool;
 import tools.TransmitTool;
+import tools.client.ThreadTools;
 import transmit.SocketClient;
 import transmit.sender.Request;
 
@@ -30,32 +34,22 @@ public class Receive implements Runnable{
 	public static Map<String, ImageIcon> receiveImageMap = 
 			new HashMap<String, ImageIcon>();
 
-//	protected MessageHead messageHead;
-//	protected MessageContext messageContext;
-	
-//	private static Receive receive = new Receive();
-	
 	private Socket socket;
 	
 	public Receive(Socket socket) {
 		this.socket = socket;
 	}
-	
-//	public static Receive getReceive() {
-//		return receive;
-//	}
-	
+		
 	@Override
 	public void run() {
 		System.out.println("receiveThread start..");
 		InputStream is = null;
 		try {
-			is = socket.getInputStream();
 			
 			while(true) {
 				
-				resolutionResponseLine(is);
-				
+				is = socket.getInputStream();
+				resolutionResponse(is);
 			}
 			
 		} catch (IOException e) {
@@ -64,24 +58,22 @@ public class Receive implements Runnable{
 			e.printStackTrace();
 		} catch (ResponseLineNotAbleExcetion e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				if(is != null) is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
+//		finally {
+//			try {
+//				if(is != null) is.close();
+//				Thread.currentThread().interrupt();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 	
-	private void resolutionResponseLine(InputStream is) throws IOException, ResponseLineNotAbleExcetion, ClassNotFoundException {
-		byte[] responseLineByte = this.readResponse(is);
-		
-		if (ObjectTool.isNull(responseLineByte)) {
+	private void resolutionResponse(InputStream is) throws IOException, ResponseLineNotAbleExcetion, ClassNotFoundException {
+		//format: "state:200 length:100 type:MessageModel"
+		String responseLine = GetterTools.readResponseLine(is);
+		if (ObjectTool.isNull(responseLine))
 			return;
-		}
-		
-		String responseLine = new String(responseLineByte, "UTF-8");
-		
 		System.out.println("responseLine: " + responseLine);
 		
 		String[] responseLineArrays = responseLine.split(" ");
@@ -110,13 +102,18 @@ public class Receive implements Runnable{
 		if (responseLength.length < 2)
 			throw new ResponseLineNotAbleExcetion("responseLength length < 2..");
 
-		if(!ObjectTool.isInteger(responseLength[1])) 
+		if(!ObjectTool.isInteger(responseLength[1])) {			
+			//responseLine
+			System.err.println("responseLine: " + responseLine);
+			System.err.println("requestLength: " + responseLength[1]);
 			throw new ResponseLineNotAbleExcetion("responseLength type not Integer..");
+		}
 		
 		
 		String[] responseType = responseLineArrays[2].split(":");
 		if (responseType.length < 2)
 			throw new ResponseLineNotAbleExcetion("responseType length < 2..");
+		
 		switch (responseType[1].trim()) {
 		case "MessageModel":
 			this.readReplyMessageModel(is);
@@ -129,7 +126,7 @@ public class Receive implements Runnable{
 			String[] responseExistJson = responseLineArrays[3].split(":");
 			boolean existJson = false;
 			try {				
-				existJson = Boolean.valueOf(responseExistJson[1].trim());
+				existJson = Boolean.valueOf(responseExistJson[1].trim());//equals"true"
 			} catch (Exception e) {
 				//TODO
 				e.printStackTrace();
@@ -144,6 +141,7 @@ public class Receive implements Runnable{
 		default:
 			break;
 		}
+		
 	}
 	
 	private void forwardChatMessage(InputStream is) throws IOException, ClassNotFoundException {
@@ -153,7 +151,6 @@ public class Receive implements Runnable{
 		try {
 			ChatWindow.newsComing(newsModel);
 		} catch (ServerSendChatMessageException e) {
-			//TODO
 			
 			e.printStackTrace();
 		}
@@ -161,63 +158,49 @@ public class Receive implements Runnable{
 
 	private void readReplyImage(InputStream is, Boolean existJson, String responseLength) throws IOException, ResponseLineNotAbleExcetion {
 		
-		byte[] readByte = new byte[Integer.parseInt(responseLength)];
+//		byte[] readByte = new byte[Integer.parseInt(responseLength)];
 		if (existJson) {
-			is.read(readByte);
-			String imageJson = new String(readByte);
+//			is.read(readByte);
+			String imageJson = GetterTools.readResponseLine(is);
 			String[] imageDescribe = imageJson.split(" ");
-			
+			System.out.println("imageJson: " + imageJson);
 			if(imageDescribe.length < 2) 
 				throw new ResponseLineNotAbleExcetion("imageDescribe length < 2..");
-			
+			//key: imageName : userID
 			String imageMapKey = imageDescribe[0].split(":")[1].trim();
 			String imageByteLength = imageDescribe[1].split(":")[1].trim();
 			
 			if (!ObjectTool.isInteger(imageByteLength))
 				throw new ResponseLineNotAbleExcetion("imageByteLength is not Integer..");
 			
-			byte[] imageByte = new byte[Integer.parseInt(imageByteLength)];
-			is.read(imageByte);
+			byte[] imageByte = GetterTools.readImageByteArraysInfoForBig(is, Integer.parseInt(imageByteLength));
+			File iFile = new File("G:/image/" + imageMapKey + ".png");
+			FileImageOutputStream fio = new FileImageOutputStream(iFile);
+			
+			fio.write(imageByte,0,imageByte.length);
+			fio.close();
 			
 			ImageIcon imageIcon = new ImageIcon(imageByte);
 			synchronized(receiveImageMap) {
 				receiveImageMap.put(imageMapKey, imageIcon);
 			}
 			
-			notifyRequestThread(imageMapKey);
+			ThreadTools.notifyRequestThread(imageMapKey);
 			
 		}else {
 			//TODO
 			
-//			is.read(readByte);
-//			ImageIcon imageIcon = new ImageIcon(readByte);
 		}
 	}
 	
-	/**
-	 * 唤醒等待资源的线程
-	 * @param requestMapKey
-	 */
-	private void notifyRequestThread(String requestMapKey) {
-		Runnable requestThread = Request.requestMap.get(requestMapKey);
-		if (requestThread != null) {
-			
-			synchronized (requestThread) {
-				requestThread.notify();
-			}
-		}
-	}
-
 	/**
 	 * 读取服务器响应的MessageModel
 	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
 	private void readReplyMessageModel(InputStream is) throws ClassNotFoundException, IOException {
-		ObjectInputStream ois = new ObjectInputStream(is);
-		MessageModel receiveModel = (MessageModel) ois.readObject();
 		
-//		if (receiveModel == null) continue;
+		MessageModel receiveModel = GetterTools.streamToObjectForClient(is);
 		
 		MessageHead messageHead = receiveModel.getMessageHead();
 			
@@ -227,36 +210,8 @@ public class Receive implements Runnable{
 			receiveMap.put(requestMapKey, receiveModel);			
 		}
 		
-		notifyRequestThread(requestMapKey);
-	}
-	
-	/**
-	 * 读取响应消息
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws IOException
-	 */
-	private byte[] readResponse(InputStream is) throws IOException{
-//		StringBuffer responseLine = new StringBuffer();
-		
-		//两个字节表示响应消息的长度
-		int lengthFirst = is.read();
-		
-		if (lengthFirst == -1) {
-			return null;
-		}
-		
-		int lengthEnd = is.read();
-		int length = (lengthFirst << 8) + lengthEnd;
-		
-		byte[] responseLineByte = new byte[length];
-		is.read(responseLineByte);
-//		responseLine.append(new String(b, "UTF-8"));
-//		System.out.println("char: " + (char)b);
-//		System.out.println("String: "+ new String(b, 0, length, "UTF-8"));
-//		responseLine.append(new String(b, 0, length, "UTF-8"));
-		
-		return responseLineByte;
+		ThreadTools.notifyRequestThread(requestMapKey);
+		System.out.println("notify...");
 	}
 	
 }

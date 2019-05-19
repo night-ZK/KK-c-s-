@@ -100,4 +100,18 @@ public class TestRequestBusiness {
 		System.out.println("end..");
 	}
 	
+	@Test
+	public void testSplit() {
+		String aString = "asdasdas d";
+		String[] as = aString.split(" ");
+		for (String string : as) {
+			
+			System.out.println("as: " + string);
+		}
+		String[] bs = aString.split("G");
+		for (String string : bs) {
+			
+			System.out.println("bs: " + string);
+		}
+	}
 }

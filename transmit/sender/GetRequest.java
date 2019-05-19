@@ -1,6 +1,7 @@
 package transmit.sender;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 import message.MessageModel;
 import tools.TransmitTool;
@@ -15,9 +16,7 @@ public class GetRequest extends Request{
 	@Override
 	protected void sendMessageHeader() {
 		try {
-			
-			this.oos.writeObject(messageHead);
-			
+			senderTools.sendMessage(messageHead).sendDone();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -26,14 +25,6 @@ public class GetRequest extends Request{
 	@Override
 	protected void sendMessageContext() {
 		
-	}
-
-	@Override
-	protected MessageModel getReplyMessageModel() {
-		
-		String key = TransmitTool.getRequestMapKey(this.messageHead);
-		
-		return Receive.receiveMap.get(key); 
 	}
 
 }

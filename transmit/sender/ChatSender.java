@@ -23,12 +23,12 @@ public class ChatSender extends Sender{
 
 	@Override
 	protected void sendMessageHeader() throws IOException {
-		this.oos.writeObject(messageHead);
+		senderTools.sendMessage(messageHead).sendDone();
 	}
 
 	@Override
 	protected void sendMessageContext() throws IOException {
-		this.oos.writeObject(messageContext);
+		senderTools.sendMessage(messageContext);
 	}
 
 }

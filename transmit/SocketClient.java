@@ -1,6 +1,8 @@
 package transmit;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -19,12 +21,13 @@ public abstract class SocketClient implements Runnable{
 	
 	//µÈ´ý±êÖ¾
 	public boolean isWait;
+	public boolean hasRepley;
 	
-	protected Socket socket;
+	public static Socket socket;
 	
 	protected OutputStream os;
 	
-	protected ObjectOutputStream oos;
+	protected InputStream is;
 	
 	
 	static {
@@ -32,14 +35,21 @@ public abstract class SocketClient implements Runnable{
 		Element element = parseXML.getServerXMLElement(serverID);
 		host = element.elementText("host-address");
 		port = Integer.parseInt(element.elementText("port"));	
+		try {
+			socket = new Socket(host, port);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public SocketClient() {
 		try {
-			socket = new Socket(host, port);
 			this.os = socket.getOutputStream();
 			
-			this.oos = new ObjectOutputStream(os);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
