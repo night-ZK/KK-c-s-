@@ -39,30 +39,34 @@ public class GetterTools extends TransmitTool{
 	 */
 	public static byte[] readImageByteArraysInfo(InputStream is, int byteLength) throws IOException{
 		byte[] imageByte = new byte[byteLength];
-		is.read(imageByte);	
+		int readLength = 0;
+		while (byteLength > readLength) {			
+			readLength += is.read(imageByte, readLength, byteLength - readLength);	
+		}
 		return imageByte;
 	}
 	
 	/**
 	 * 使用InputStream读取socket输入流中信息, 返回byte[]--image用,
-	 * 分割图片传输数据
+	 * 分割图片传输数据--停用
 	 * @param is
 	 * @return
 	 * @throws IOException
 	 */
-	public static byte[] readImageByteArraysInfoForBig(InputStream is, int byteLength) throws IOException{
-		int p = byteLength / 51200;
+	public static synchronized byte[] readImageByteArraysInfoForBig(InputStream is, int byteLength) throws IOException{
+		int splitLength = 10240;
+		int p = byteLength / splitLength;
 		byte[] imageByte = new byte[byteLength];
 		byte[] subImageByte;
 		if (p >= 1) {
 			for(int i=0; i<p; i++) {
-				subImageByte = new byte[51200];
+				subImageByte = new byte[splitLength];
 				is.read(subImageByte);
-				System.arraycopy(subImageByte, 0, imageByte, i*51200, 51200);
+				System.arraycopy(subImageByte, 0, imageByte, i*splitLength, splitLength);
 			}
-			subImageByte = new byte[byteLength-p*51200];
-			is.read(subImageByte, 0, byteLength-p*51200);
-			System.arraycopy(subImageByte, 0, imageByte, p*51200, subImageByte.length);
+			subImageByte = new byte[byteLength-p*splitLength];
+			is.read(subImageByte, 0, byteLength-p*splitLength);
+			System.arraycopy(subImageByte, 0, imageByte, p*splitLength, subImageByte.length);
 			return imageByte;
 		}
 		is.read(imageByte);	

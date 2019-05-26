@@ -185,14 +185,6 @@ public class MainWindow extends Window{
 		};
 		getUserFriendInfoListRequest.sendRequest(true).then();		
 		
-//		Thread setGroupThread = new Thread() {
-//			@Override
-//			public void run() {
-//				
-//			}
-//		};
-//		setGroupThread.start();
-		
 		friendsListTree_RootNode.add(group_Myfrends);
 		
 		friendsListTree_RootNode.add(group_Stranger);
@@ -548,9 +540,5 @@ public class MainWindow extends Window{
 			_mainWindow = new MainWindow(user);
 		}
 		return _mainWindow;
-	}
-	
-	public static void main(String[] args) {
-//		MainWindow.createMainWindow(EvenProcess.login("zxk", "zk001"));
 	}
 }

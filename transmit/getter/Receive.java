@@ -43,20 +43,23 @@ public class Receive implements Runnable{
 		
 	@Override
 	public void run() {
-		System.out.println("receiveThread start..");
-		InputStream is = null;
+//		InputStream is = null;
 		try {
 			
 			while(true) {
 				
-				is = socket.getInputStream();
-				resolutionResponse(is);
-				
-				synchronized(Receive.class) {
-					if (isClose) {
-						break;
-					}
+//				socket.setSoTimeout(5000);
+				InputStream is = socket.getInputStream();
+
+				if (!ObjectTool.isNull(is)) {	
+					resolutionResponse(is);
 				}
+				
+//				synchronized(Receive.class) {
+//					if (isClose) {
+//						break;
+//					}
+//				}
 			}
 			
 		} catch (IOException e) {
@@ -68,8 +71,9 @@ public class Receive implements Runnable{
 		}
 		finally {
 			try {
-				if(ObjectTool.isNull(is)) is.close();
-				if(ObjectTool.isNull(socket)) socket.close();
+//				if(!ObjectTool.isNull(is)) is.close();
+				if(!ObjectTool.isNull(socket)) socket.close();
+				System.out.println("this.socket is close: " + socket.isClosed());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -180,13 +184,15 @@ public class Receive implements Runnable{
 			if (!ObjectTool.isInteger(imageByteLength))
 				throw new ResponseLineNotAbleExcetion("imageByteLength is not Integer..");
 			
-			byte[] imageByte = GetterTools.readImageByteArraysInfoForBig(is, Integer.parseInt(imageByteLength));
-			File iFile = new File("G:/image/" + imageMapKey + ".png");
-			FileImageOutputStream fio = new FileImageOutputStream(iFile);
-			
-			fio.write(imageByte,0,imageByte.length);
-			fio.close();
-			
+//			byte[] imageByte = GetterTools.readImageByteArraysInfoForBig(is, Integer.parseInt(imageByteLength));
+			byte[] imageByte = GetterTools.readImageByteArraysInfo(is, Integer.parseInt(imageByteLength));
+//			File iFile = new File("G:/image/" + imageMapKey + ".png");
+//			FileImageOutputStream fio = new FileImageOutputStream(iFile);
+//			
+//			fio.write(imageByte,0,imageByte.length);
+//			fio.close();
+			String endflag = GetterTools.readResponseLine(is);
+			System.out.println("endFlag: " + endflag);
 			ImageIcon imageIcon = new ImageIcon(imageByte);
 			synchronized(receiveImageMap) {
 				receiveImageMap.put(imageMapKey, imageIcon);
