@@ -6,14 +6,13 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,8 +24,6 @@ import message.MessageModel;
 import model.ChatModel;
 import tablejson.UserFriendsInformation;
 import tools.ObjectTool;
-import transmit.MessageManagement;
-import transmit.sender.ChatSender;
 
 /**
  * 聊天窗口
@@ -48,7 +45,7 @@ public class ChatWindow extends Window{
 	static {
 		$friendUserInfoHashMap = new HashMap<Integer, ChatWindow>();
 //		$chatWindowLocationMap = new HashMap<Integer, Object[]>();
-//		$chatWindowLocationMap.put(0, [null, new int[]])
+//		$chatWindowLocationMap.put(0, [null, new int[]])a
 		$index = 0;
 	}
 	
@@ -85,33 +82,36 @@ public class ChatWindow extends Window{
 		tools_JPanel.setBackground(new Color(100, 200, 100));
 		
 		//用于显示聊天消息的JPanel
-		JPanel chatMessage_JPanel = new JPanel();
-		chatMessage_JPanel.setBounds(0, 60, chatwidth_Temp, 310);
-		chatMessage_JPanel.setLayout(null);
-		chatMessage_JPanel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 1));
-
-		JScrollPane chatMessage_JScorllPane = new JScrollPane();
-		chatMessage_JScorllPane.setBounds(0, 0, chatMessage_JPanel.getWidth(), chatMessage_JPanel.getHeight());
+		JTextArea showChatMessage_JTextPane = new JTextArea();
+		showChatMessage_JTextPane.setBounds(0, 60, chatwidth_Temp, 310);
+		showChatMessage_JTextPane.setLayout(null);
+		showChatMessage_JTextPane.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 1));
+		showChatMessage_JTextPane.setEditable(false);
+		showChatMessage_JTextPane.setLineWrap(true);
+		showChatMessage_JTextPane.setWrapStyleWord(true);
+//		showChatMessage_JTextPane.setContentType("text/html");
 		
-		DefaultTableModel defaultModel = new DefaultTableModel();
-//		defaultModel.addRow(rowData);
-		JLabel chatMessage_JLabel = new JLabel();
+		JScrollPane chatMessage_JScorllPane = new JScrollPane();
+		chatMessage_JScorllPane.setBounds(0, 0, showChatMessage_JTextPane.getWidth(), showChatMessage_JTextPane.getHeight());
+		
+		Color tempColor = new Color(156, 156, 156);
+		
 		Date currentTime = new Date();
-		SimpleDateFormat chatDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String messageContext = "<html>" + chatDate.format(currentTime) 
+		_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String messageContext = "<html>" + _dateFormat.format(currentTime) 
 			+ "&nbsp;&nbsp;&nbsp;" + friendUserInfo.getUserNick() + "<br/>"
 				+ "&nbsp;&nbsp;&nbsp;" + "hi~";
-		chatMessage_JLabel.setText(messageContext);
-		chatMessage_JLabel.setBounds(12, 12, chatMessage_JPanel.getWidth(), 60);
-		Color tempColor = new Color(156, 156, 156);
-		chatMessage_JLabel.setBorder(BorderFactory.createLineBorder(tempColor, 1));
-		chatMessage_JPanel.add(chatMessage_JLabel);
 		
-		JTable chatMessage_JTable = new JTable(defaultModel);
+//		JLabel chatMessage_JLabel = new JLabel();
+//		chatMessage_JLabel.setText(messageContext);
+//		chatMessage_JLabel.setBounds(12, 12, showChatMessage_JTextPane.getWidth(), 60);
+//		
+//		chatMessage_JLabel.setBorder(BorderFactory.createLineBorder(tempColor, 1));
 		
-//		chatMessage_JLabel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 5, true));
+//		showChatMessage_JTextPane.add(chatMessage_JLabel);
+		showChatMessage_JTextPane.setText(messageContext);
 		
-		
+		chatMessage_JScorllPane.add(showChatMessage_JTextPane);
 		
 		//用于显示聊天工具栏的JPanel
 		JPanel chatTools_JPanel = new JPanel();
@@ -129,11 +129,13 @@ public class ChatWindow extends Window{
 		entry_JTextPane.setBounds(0, 0, messageEntry_JPanel.getWidth() - 1, messageEntry_JPanel.getHeight() - 40);
 		entry_JTextPane.setAutoscrolls(true);
 		messageEntry_JPanel.add(entry_JTextPane);
-		
+
+		//发送按钮
 		JButton sendMessage_JButton = new JButton("send");
 		sendMessage_JButton.setBounds(chatwidth_Temp - 90, entry_JTextPane.getHeight() + 5, 80, 20);
 		messageEntry_JPanel.add(sendMessage_JButton);
 		sendMessage_JButton.addMouseListener(new MouseAdapter() {
+//			StringBuffer me = new StringBuffer();
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
@@ -141,22 +143,34 @@ public class ChatWindow extends Window{
 				System.out.println("textPane_Message: " + textPane_Message);
 				if (!textPane_Message.equals("")) {
 					//需要发送的消息不为空
-					ChatMessages chatMessage = new ChatMessages();
-					chatMessage.setSenderID(MainWindow.getSaveUserID().intValue());
-					chatMessage.setGetterID(_index.intValue());
-					chatMessage.setMessage(textPane_Message);					
-					MessageModel chatMessageModel = MessageManagement.chatMessageModel(chatMessage);
-					ChatSender chatSender = new ChatSender(chatMessageModel);
-					chatSender.sendRequest(false);
+//					ChatMessages chatMessage = new ChatMessages();
+//					chatMessage.setSenderID(MainWindow.getSaveUserID().intValue());
+//					chatMessage.setGetterID(_index.intValue());
+//					chatMessage.setMessage(textPane_Message);					
+//					MessageModel chatMessageModel = MessageManagement.chatMessageModel(chatMessage);
+//					ChatSender chatSender = new ChatSender(chatMessageModel);
+//					chatSender.sendRequest(false);
+//					
+//					entry_JTextPane.setText("");
 					
-					entry_JTextPane.setText("");
+					String messageContext = "<html>" + "<br/>" + _dateFormat.format(new Date()) 
+					+ "&nbsp;&nbsp;&nbsp;" + friendUserInfo.getUserNick() + "<br/>"
+						+ "&nbsp;&nbsp;&nbsp;" + "aa..";
 					//TODO handle "ms"
+					JLabel chatMessage = new JLabel();
+					chatMessage.setText(messageContext);
+//					showChatMessage_JTextPane.add(chatMessage);
+					showChatMessage_JTextPane.append(messageContext);
+//					showChatMessage_JTextPane.repaint();
+//					chatMessage_JScorllPane.repaint();
+//					container_JPanel.repaint();
 				}
 			}
 		});
 		
 		container_JPanel.add(tools_JPanel);
-		container_JPanel.add(chatMessage_JPanel);
+//		container_JPanel.add(chatMessage_JPanel);
+		container_JPanel.add(chatMessage_JScorllPane);
 		container_JPanel.add(chatTools_JPanel);
 		container_JPanel.add(messageEntry_JPanel);
 		
@@ -190,21 +204,30 @@ public class ChatWindow extends Window{
 			throw new IllegalArgumentException("argument is null ..");
 		}
 		if ($friendUserInfoHashMap.size() > 0) {
-			//Map.Entry遍历map
-			for (Entry<Integer, ChatWindow> entry_element : $friendUserInfoHashMap.entrySet()) {
-				if (entry_element.getKey().equals(friendsInfo.getId())) {
-					// 获得焦点
-					entry_element.getValue().requestFocus();
-					
-					if (!ObjectTool.isNull(chatModel)) {			
-						//TODO
-						System.out.println("news is : " + chatModel.getNews() + 
-								", time : " + chatModel.getDate());
-					}
-					
-					return null;
+			Number idKey = friendsInfo.getId();
+			if($friendUserInfoHashMap.containsKey(idKey)) {
+				$friendUserInfoHashMap.get(idKey).requestFocus();
+				if (!ObjectTool.isNull(chatModel)) {			
+					//TODO
+					System.out.println("news is : " + chatModel.getNews() + 
+							", time : " + chatModel.getDate());
 				}
 			}
+			//Map.Entry遍历map
+//			for (Entry<Integer, ChatWindow> entry_element : $friendUserInfoHashMap.entrySet()) {
+//				if (entry_element.getKey().equals(friendsInfo.getId())) {
+//					// 获得焦点
+//					entry_element.getValue().requestFocus();
+//					
+//					if (!ObjectTool.isNull(chatModel)) {			
+//						//TODO
+//						System.out.println("news is : " + chatModel.getNews() + 
+//								", time : " + chatModel.getDate());
+//					}
+//					
+//					return null;
+//				}
+//			}
 		}
 		
 		if (!ObjectTool.isNull(chatModel)) {			

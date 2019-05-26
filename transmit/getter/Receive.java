@@ -36,6 +36,7 @@ public class Receive implements Runnable{
 
 	private Socket socket;
 	
+	public static boolean isClose;
 	public Receive(Socket socket) {
 		this.socket = socket;
 	}
@@ -50,6 +51,12 @@ public class Receive implements Runnable{
 				
 				is = socket.getInputStream();
 				resolutionResponse(is);
+				
+				synchronized(Receive.class) {
+					if (isClose) {
+						break;
+					}
+				}
 			}
 			
 		} catch (IOException e) {
@@ -59,14 +66,14 @@ public class Receive implements Runnable{
 		} catch (ResponseLineNotAbleExcetion e) {
 			e.printStackTrace();
 		}
-//		finally {
-//			try {
-//				if(is != null) is.close();
-//				Thread.currentThread().interrupt();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		finally {
+			try {
+				if(ObjectTool.isNull(is)) is.close();
+				if(ObjectTool.isNull(socket)) socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void resolutionResponse(InputStream is) throws IOException, ResponseLineNotAbleExcetion, ClassNotFoundException {

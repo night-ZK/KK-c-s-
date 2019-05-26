@@ -27,4 +27,10 @@ public class GetRequest extends Request{
 		
 	}
 
+	@Override
+	public void then() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

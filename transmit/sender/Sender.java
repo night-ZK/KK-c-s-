@@ -36,22 +36,22 @@ public abstract class Sender extends SocketClient{
 		}
 	}
 
-	public void sendRequest(boolean isJoin) {
+	public Sender sendRequest(boolean isJoin) {
 		Thread requestThread = new Thread(this);
 
 		requestThread.start();
 		
-		try {			
-			
+		try {
 			if (isJoin) {	
-				System.out.println("MainThread wait..");
 				requestThread.join();
-				System.out.println("MainThread wait done..");
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return this;
 	}
+	
+	public abstract void then();
 	
 	protected void sendMessageModel() throws IOException {
 		this.sendMessageHeader();

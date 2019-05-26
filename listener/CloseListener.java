@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import frame.ChatWindow;
 import frame.Window;
+import transmit.getter.Receive;
 
 public class CloseListener implements MouseListener{
 
@@ -43,6 +44,18 @@ public class CloseListener implements MouseListener{
 			ChatWindow.set$index(ChatWindow.get$index() - 1);
 			Number index_Key = ((ChatWindow) _win).get_index();
 			((ChatWindow)_win).removeChatFriendsList(index_Key);
+		}else {
+			synchronized (Receive.class) {
+				Receive.isClose = true;
+			}
+			ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+			int activeThreadCount = threadGroup.activeCount();
+			Thread[] activeThreadArrays = new Thread[activeThreadCount];
+			threadGroup.enumerate(activeThreadArrays);
+			for (Thread thread : activeThreadArrays) {
+				System.out.println("threadName: " + thread.getName());
+				thread.interrupt();
+			}
 		}
 	}
 

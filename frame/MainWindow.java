@@ -39,9 +39,9 @@ public class MainWindow extends Window{
 	private static final long serialVersionUID = 1L;
 	
 	private static MainWindow _mainWindow = null;
-	
-	static Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
 
+	static Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
+	
 	private MainWindow(User user){
 		super(user);
 		initMainWindow();
@@ -152,92 +152,49 @@ public class MainWindow extends Window{
 		FriendsListTree group_Myfrends = new FriendsListTree();
 		group_Myfrends.set_groupText("myFriends");
 		
-		FriendsListTree group_Stranger = new FriendsListTree();;
+		FriendsListTree group_Stranger = new FriendsListTree();
 		group_Stranger.set_groupText("stranger");
 		
-		List<Integer> friendsIDList = new ArrayList<Integer>();
-		
-		MessageModel messageModel = MessageManagement.getFriendsIDMessageModel(_id.intValue(), "myFriends");
-		
-		GetRequest getFrindIDRequest = new GetRequest(messageModel);
-		getFrindIDRequest.sendRequest(true);
-		
-//		Object getFrindIDResultObject = getFrindIDRequest.sendRequest();
-		
-		friendsIDList = (ArrayList<Integer>) getFrindIDRequest.getReplyMessageContext().getObject();
-		
-		//获得好友基本信息
-		List<GetRequest> getUserFriendInfoRequestList = new ArrayList<>();
-		
-		//获得好友头像
-		List<Integer> getUserFriendImageList = new ArrayList<>();
-		//TODO change to count
-		for (Integer friendID : friendsIDList) {
-			
-			messageModel = MessageManagement.getUserFriendInfoMessageModel(friendID);
-			GetRequest getUserFriendInfoRequest = new GetRequest(messageModel);
-			getUserFriendInfoRequest.sendRequest(false);
-			
-//			Object getUserFriendInfoObject = getUserFriendInfoRequest.sendRequest();
-			getUserFriendInfoRequestList.add(getUserFriendInfoRequest);
 
-			messageModel = MessageManagement.getUserFriendImageMessageModel(friendID);
-			
-			ImageRequest getUserFriendImageRequest = new ImageRequest(messageModel);
-			getUserFriendImageRequest.setImageRequestMapKey(friendID.toString());
-//			GetRequest getUserFriendImageRequest = new GetRequest(messageModel);
-			getUserFriendImageRequest.sendRequest(false);
-			
-		}
+		MessageModel getUserFriendInfoListModel = MessageManagement.getUserFriendInfoListMessageModel(_id.intValue(),"myFriends");
 		
-//		Runnable rounld = () ->{
-//			while(true) {				
-//				int isCounit = 0;
-//				for (GetRequest getRequest : getUserFriendInfoRequestList) {
-////				synchronized(getRequest) {
-////				}
-//					if (!getRequest.isWait && getRequest.hasRepley) {
-//						isCounit++;
-//					}
-//				}
-//				if (isCounit == getUserFriendInfoRequestList.size()) {
-//					break;
-//				}
+		GetRequest getUserFriendInfoListRequest = new GetRequest(getUserFriendInfoListModel) {
+			@Override
+			public void then() {
+				List<UserFriendsInformation> userFriendsInformationList = 
+						(ArrayList<UserFriendsInformation>) this.getReplyMessageContext().getObject();
+				
+				for (UserFriendsInformation userFriendsInformation : userFriendsInformationList) {
+					
+					Integer friendID = userFriendsInformation.getId().intValue();
+					MessageModel messageModel = 
+							MessageManagement.getUserFriendImageMessageModel(friendID);
+					
+					ImageRequest getUserFriendImageRequest = new ImageRequest(messageModel);
+					getUserFriendImageRequest.setImageRequestMapKey(friendID.toString());
+					getUserFriendImageRequest.sendRequest(true);
+					ImageIcon imageIcon = Receive.receiveImageMap.get(friendID.toString());
+					
+					FriendsListTree friendsNode = new FriendsListTree();
+					friendsNode.set_userFriendInfo(userFriendsInformation);
+					friendsNode.set_userImageIcon(imageIcon);
+					friendsListTreeMap.put(friendID, friendsNode);
+				}
+				setGroupList(group_Myfrends, friendsListTreeMap);
+			}
+		};
+		getUserFriendInfoListRequest.sendRequest(true).then();		
+		
+//		Thread setGroupThread = new Thread() {
+//			@Override
+//			public void run() {
+//				
 //			}
 //		};
-//		Thread rounldThread = new Thread(rounld);
-//		rounldThread.start();
-//		try {
-//			rounldThread.join(10000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		//递归设置分组中的好友列表
-		long currentTime = System.currentTimeMillis();
-		while(!getUserFriendInfoRequestList.isEmpty()) {	
-			if ((System.currentTimeMillis() - currentTime) >= 10000) {
-				//TODO
-				System.err.println("set friends group over time..");
-				break;
-			}
-			setFriendsGroupListTree(getUserFriendInfoRequestList, getUserFriendImageList, friendsListTreeMap, currentTime);
-		}
-		
-		currentTime = System.currentTimeMillis();
-		while(!getUserFriendImageList.isEmpty()) {
-			if ((System.currentTimeMillis() - currentTime) >= 10000) {
-				//TODO
-				System.err.println("set friends group over time..");
-				break;
-			}
-			setFriendsGroupListImageTree(getUserFriendImageList, friendsListTreeMap);
-		}
-		
-		setGroupList(group_Myfrends, friendsListTreeMap);
+//		setGroupThread.start();
 		
 		friendsListTree_RootNode.add(group_Myfrends);
+		
 		friendsListTree_RootNode.add(group_Stranger);
 		
 		

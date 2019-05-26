@@ -14,7 +14,6 @@ public class ThreadTools {
 		if (requestThread != null) {
 			
 			synchronized (requestThread) {
-				System.out.println("getRequestThread..");
 				requestThread.notify();
 			}
 		}

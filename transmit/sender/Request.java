@@ -132,7 +132,7 @@ public abstract class Request extends Sender{
 	
 	
 	
-	public static Integer getRequestNo() {
+	public synchronized static Integer getRequestNo() {
 		return requestNo++;
 	}
 

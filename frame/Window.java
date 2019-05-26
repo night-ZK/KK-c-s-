@@ -1,5 +1,6 @@
 package frame;
 import java.awt.*;
+import java.text.SimpleDateFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -27,6 +28,8 @@ public class Window extends JFrame{
 	
 	private static User _saveUser;
 	
+	protected SimpleDateFormat _dateFormat;
+
 	protected int _height;
 	protected int _width;
 	protected double _x;
@@ -40,6 +43,7 @@ public class Window extends JFrame{
 	protected Number _findSum;
 	protected String _gender;
 	protected String _personLabel;
+	
 
 	static{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
@@ -47,10 +51,12 @@ public class Window extends JFrame{
 		_screenHeight = screenSize.height;	
 		_closeJButton_Ago = new ImageIcon("./resources/image/close_button-1.png");
 		_closeJButton_After = new ImageIcon("./resources/image/close_button-2.png");
+		
 	}
 	
 	protected Window(User user){
 		_saveUser = user;
+		_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	}
 
 	protected Window(){

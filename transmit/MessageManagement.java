@@ -86,4 +86,16 @@ public class MessageManagement {
 		return new MessageModel(messageHead, chatMessage);
 	}
 
+	public static MessageModel getUserFriendInfoListMessageModel(int userID, String group) {
+		MessageHead messageHead = new MessageHead();
+		messageHead.setType(6);
+		messageHead.setRequestDataType(List.class);
+		
+		String describe = "/getFriendsInfoList?userID=" + userID + "&group=" + group;
+		messageHead.setRequestDescribe(describe);
+		messageHead.setRequestTime(System.currentTimeMillis());
+		messageHead.setRequestNO(Request.getRequestNo());
+		return new MessageModel(messageHead, null);
+	}
+
 }
