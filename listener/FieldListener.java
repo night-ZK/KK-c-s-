@@ -179,19 +179,13 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			
 			while(true) {
 				synchronized(getRequest) {						
-					if (getRequest.isWait) {							
-						Thread receiveThread = new Thread(new Receive(GetRequest.socket));
-//						receiveThread.start();
-						ThreadConsole.useThreadPool().execute(receiveThread);
+					if (getRequest.isWait) {
+						Receive.startReceiveThread();
 						break;
 					}
 				}
 			}
 		};
-		
-//		Thread roundThread = new Thread(round);
-//		
-//		roundThread.start();
 		
 		ThreadConsole.useThreadPool().execute(round);
 		

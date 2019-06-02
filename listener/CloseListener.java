@@ -2,6 +2,7 @@ package listener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.SocketException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -10,6 +11,7 @@ import javax.swing.JPanel;
 import frame.ChatWindow;
 import frame.Window;
 import threadmanagement.ThreadConsole;
+import tools.ObjectTool;
 import transmit.getter.Receive;
 
 public class CloseListener implements MouseListener{
@@ -46,8 +48,10 @@ public class CloseListener implements MouseListener{
 			Number index_Key = ((ChatWindow) _win).get_index();
 			((ChatWindow)_win).removeChatFriendsList(index_Key);
 		}else {
-//			synchronized (Receive.class) {
-//				Receive.isClose = true;
+//			try {
+//				Receive.getReceive().getSocket().setSoTimeout(5000);
+//			} catch (SocketException e) {
+//				e.printStackTrace();
 //			}
 			ThreadConsole.useThreadPool().shutdown();
 			ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
@@ -55,8 +59,10 @@ public class CloseListener implements MouseListener{
 			Thread[] activeThreadArrays = new Thread[activeThreadCount];
 			threadGroup.enumerate(activeThreadArrays);
 			for (Thread thread : activeThreadArrays) {
-				System.out.println("threadName: " + thread.getName());
-				thread.interrupt();
+				if (!ObjectTool.isNull(thread)) {					
+					System.out.println("threadName: " + thread.getName());
+					thread.interrupt();
+				}
 			}
 		}
 	}

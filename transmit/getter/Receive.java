@@ -6,8 +6,11 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.RejectedExecutionException;
 
 import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.ImageIcon;
@@ -15,14 +18,15 @@ import javax.swing.ImageIcon;
 import customexception.ResponseLineNotAbleExcetion;
 import customexception.ServerSendChatMessageException;
 import frame.ChatWindow;
+import message.ChatMessages;
 import message.MessageHead;
 import message.MessageModel;
+import threadmanagement.ThreadConsole;
 import tools.GetterTools;
 import tools.ObjectTool;
 import tools.TransmitTool;
 import tools.client.ThreadTools;
 import transmit.SocketClient;
-import transmit.sender.Request;
 
 public class Receive implements Runnable{
 	//保存接收的数据
@@ -35,45 +39,47 @@ public class Receive implements Runnable{
 			new HashMap<String, ImageIcon>();
 
 	private Socket socket;
+	private static Receive receive;
 	
 	public static boolean isClose;
-	public Receive(Socket socket) {
+	
+	private Receive(Socket socket) {
 		this.socket = socket;
 	}
-		
+	
 	@Override
 	public void run() {
-//		InputStream is = null;
+		InputStream is = null;
 		try {
 			
 			while(true) {
 				
-//				socket.setSoTimeout(5000);
-				InputStream is = socket.getInputStream();
+//				socket.setSoTimeout(10000);
+				is = socket.getInputStream();
 
-				if (!ObjectTool.isNull(is)) {	
+				if (!ObjectTool.isNull(is)) {					
 					resolutionResponse(is);
 				}
-				
-//				synchronized(Receive.class) {
-//					if (isClose) {
-//						break;
-//					}
-//				}
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			try {
+
+				if(!ObjectTool.isNull(receive)) receive = null;
+				startReceiveThread();
+			} catch (RejectedExecutionException e2) {
+				//TODO
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (ResponseLineNotAbleExcetion e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			try {
-//				if(!ObjectTool.isNull(is)) is.close();
+				if(!ObjectTool.isNull(is)) is.close();
 				if(!ObjectTool.isNull(socket)) socket.close();
 				System.out.println("this.socket is close: " + socket.isClosed());
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -156,11 +162,11 @@ public class Receive implements Runnable{
 	}
 	
 	private void forwardChatMessage(InputStream is) throws IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(is);
-		MessageModel newsModel = (MessageModel) ois.readObject();
+		
+		MessageModel receiveModel = GetterTools.streamToObjectForClient(is);
 		
 		try {
-			ChatWindow.newsComing(newsModel);
+			ChatWindow.newsComing(receiveModel);
 		} catch (ServerSendChatMessageException e) {
 			
 			e.printStackTrace();
@@ -169,9 +175,7 @@ public class Receive implements Runnable{
 
 	private void readReplyImage(InputStream is, Boolean existJson, String responseLength) throws IOException, ResponseLineNotAbleExcetion {
 		
-//		byte[] readByte = new byte[Integer.parseInt(responseLength)];
 		if (existJson) {
-//			is.read(readByte);
 			String imageJson = GetterTools.readResponseLine(is);
 			String[] imageDescribe = imageJson.split(" ");
 			System.out.println("imageJson: " + imageJson);
@@ -225,6 +229,21 @@ public class Receive implements Runnable{
 		
 		ThreadTools.notifyRequestThread(requestMapKey);
 		System.out.println("notify...");
+	}
+	
+	public synchronized static void startReceiveThread() {
+		ThreadConsole.useThreadPool().execute(getReceive());
+	}
+	
+	public synchronized static Receive getReceive() {
+		if (ObjectTool.isNull(receive)) {
+			receive = new Receive(SocketClient.getSocket());
+		}
+		return receive;
+	}
+
+	public Socket getSocket() {
+		return socket;
 	}
 	
 }

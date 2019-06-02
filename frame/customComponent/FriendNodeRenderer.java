@@ -1,4 +1,4 @@
-package frame.customjtree;
+package frame.customComponent;
 
 import java.awt.Color;
 import java.awt.Component;

@@ -22,8 +22,8 @@ import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreeSelectionModel;
 
 import frame.Window;
-import frame.customjtree.FriendNodeRenderer;
-import frame.customjtree.FriendsListTree;
+import frame.customComponent.FriendNodeRenderer;
+import frame.customComponent.FriendsListTree;
 import listener.FriendsListJTreeList;
 import message.MessageModel;
 import tablebeans.User;
@@ -155,7 +155,7 @@ public class MainWindow extends Window{
 		FriendsListTree group_Stranger = new FriendsListTree();
 		group_Stranger.set_groupText("stranger");
 		
-
+		
 		MessageModel getUserFriendInfoListModel = MessageManagement.getUserFriendInfoListMessageModel(_id.intValue(),"myFriends");
 		
 		GetRequest getUserFriendInfoListRequest = new GetRequest(getUserFriendInfoListModel) {
@@ -189,7 +189,6 @@ public class MainWindow extends Window{
 		
 		friendsListTree_RootNode.add(group_Stranger);
 		
-		
 		JTree groupListTreeRoot = new JTree(friendsListTree_RootNode);
 		groupListTreeRoot.setRootVisible(false);
 		groupListTreeRoot.putClientProperty("JTree.lineStyle"
@@ -205,12 +204,10 @@ public class MainWindow extends Window{
 
 			@Override
 			public void setLeftChildIndent(int newAmount) {
-//				super.setLeftChildIndent(newAmount);
 			}
 
 			@Override
 			public void setRightChildIndent(int newAmount) {
-//				super.setRightChildIndent(newAmount);
 			}
 			
 		});
@@ -266,30 +263,6 @@ public class MainWindow extends Window{
 			}
 			
 		}
-		
-//		for (GetRequest getRequest : getUserFriendInfoRequestList) {
-//			if (!getRequest.isWait && getRequest.hasRepley && 
-//					getRequest.getReplyMessageContext() != null) {
-//				
-//				UserFriendsInformation userFriendInformation = 
-//						(UserFriendsInformation) getRequest.getReplyMessageContext().getObject();
-//				
-//				FriendsListTree friendsNode = new FriendsListTree();
-//				
-//				friendsNode.set_userFriendInfo(userFriendInformation);
-//				friendsListTreeMap.put(userFriendInformation.getId().intValue(), friendsNode);
-//				getUserFriendImageList.add(userFriendInformation.getId().intValue());
-////				group.add(friendsNode);
-//				
-//				getUserFriendInfoRequestList.remove(getRequest);
-//			}
-//		}
-			
-		
-//		if((System.currentTimeMillis() - currentTime) <= 10000 
-//				&& getUserFriendInfoRequestList.size() != 0) //.isEmpty()
-//			setFriendsGroupListTree(getUserFriendInfoRequestList
-//					,getUserFriendImageList, friendsListTreeMap, currentTime);
 		
 	}
 

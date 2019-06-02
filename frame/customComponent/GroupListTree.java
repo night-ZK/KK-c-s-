@@ -1,4 +1,4 @@
-package frame.customjtree;
+package frame.customComponent;
 
 import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultMutableTreeNode;

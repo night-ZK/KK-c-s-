@@ -164,6 +164,14 @@ public class Window extends JFrame{
 	}
 	
 	/**
+	 * 返回当前用户名
+	 * @return 用户名
+	 */
+	public static String getSaveUserNick() {
+		return _saveUser.getUserNick();
+	}
+	
+	/**
 	 * 用户ID = user表ID
 	 * @return ID
 	 */

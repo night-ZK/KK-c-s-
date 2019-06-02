@@ -1,4 +1,4 @@
-package frame.customjtree;
+package frame.customComponent;
 
 import java.util.ArrayList;
 import java.util.Enumeration;

@@ -27,7 +27,10 @@ public class GetterTools extends TransmitTool{
 		int length = (lengthFirst << 8) + lengthEnd;
 		
 		byte[] responseLineByte = new byte[length];
-		is.read(responseLineByte);	
+		int readLength = 0;
+		while(readLength < length) {
+			readLength += is.read(responseLineByte, readLength, length - readLength);	
+		}
 		return responseLineByte;
 	}
 	

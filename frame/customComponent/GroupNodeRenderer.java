@@ -1,4 +1,4 @@
-package frame.customjtree;
+package frame.customComponent;
 
 import java.awt.Component;
 import java.awt.Image;

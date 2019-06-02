@@ -77,12 +77,13 @@ public class MessageManagement {
 	public static MessageModel chatMessageModel(ChatMessages chatMessage) {
 		MessageHead messageHead = new MessageHead();
 		messageHead.setType(5);
-		messageHead.setRequestDataType(Object.class);
+		messageHead.setRequestDataType(ChatMessages.class);
 		
 		String describe = "/sendChatMessage";
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
 		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setHasMessageContext(true);
 		return new MessageModel(messageHead, chatMessage);
 	}
 

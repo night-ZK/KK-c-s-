@@ -10,7 +10,7 @@ import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
 import frame.ChatWindow;
-import frame.customjtree.FriendsListTree;
+import frame.customComponent.FriendsListTree;
 import tools.ObjectTool;
 
 public class FriendsListJTreeList implements MouseListener{
@@ -41,7 +41,7 @@ public class FriendsListJTreeList implements MouseListener{
 					
 					if (!ObjectTool.isNull(friendsListTree.get_userFriendInfo())) {
 						ChatWindow.createChatWindow(
-								friendsListTree.get_userFriendInfo(), null);											
+								friendsListTree.get_userFriendInfo());											
 					}
 				}
 				
