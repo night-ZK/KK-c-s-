@@ -114,4 +114,11 @@ public class TestRequestBusiness {
 			System.out.println("bs: " + string);
 		}
 	}
+	
+	@Test
+	public void testgetByte() {
+		String aString = "";
+		int b = aString.getBytes().length;
+		System.out.println("b: " + b);
+	}
 }

@@ -219,9 +219,9 @@ public class Receive implements Runnable{
 		
 		MessageModel receiveModel = GetterTools.streamToObjectForClient(is);
 		
-		MessageHead messageHead = receiveModel.getMessageHead();
+//		MessageHead messageHead = receiveModel.getMessageHead();
 			
-		String requestMapKey = TransmitTool.getRequestMapKey(messageHead);
+		String requestMapKey = TransmitTool.getRequestMapKey(receiveModel);
 		
 		synchronized(receiveMap) {		
 			receiveMap.put(requestMapKey, receiveModel);			

@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.rmi.ConnectException;
 import java.util.List;
 
@@ -21,11 +22,14 @@ import message.MessageContext;
 import message.MessageInterface;
 import message.MessageModel;
 import tablebeans.User;
+import threadmanagement.LockModel;
 import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
+import tools.TransmitTool;
 import transmit.MessageManagement;
 import transmit.RequestBusiness;
 import transmit.getter.Receive;
+import transmit.nio.SocketClientNIO;
 import transmit.sender.GetRequest;
 
 public class FieldListener implements MouseListener, FocusListener, KeyListener {
@@ -171,28 +175,45 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	 */
 	public static void loginMainWindow() {
 		
-		MessageModel messageModel = MessageManagement.loginMessageModel(_user, _pas);
+		MessageModel requestMessageModel = MessageManagement.loginMessageModel(_user, _pas);
+		LockModel lockModel = new LockModel(0, "login request");
 		
-		GetRequest getRequest = new GetRequest(messageModel);
+//		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
+//		socketClientNIO.start();
+//		
+//		String lockKey = TransmitTool.getRequestMapKey(requestMessageModel);
+//		LockModel lockModel = new LockModel(0, "login request");
+//		TransmitTool.getLockModel().put(lockKey, lockModel);
+//		
+//		ThreadConsole.blockThread(lockModel, socketClientNIO);
 		
-		Runnable round = () ->{
-			
-			while(true) {
-				synchronized(getRequest) {						
-					if (getRequest.isWait) {
-						Receive.startReceiveThread();
-						break;
-					}
-				}
-			}
-		};
+//		socketClientNIO.sendReuqest(messageModel);
+//		GetRequest getRequest = new GetRequest(messageModel);
 		
-		ThreadConsole.useThreadPool().execute(round);
+//		Runnable round = () ->{
+//			
+//			while(true) {
+//				synchronized(getRequest) {						
+//					if (getRequest.isWait) {
+//						Receive.startReceiveThread();
+//						break;
+//					}
+//				}
+//			}
+//		};
+		
+//		ThreadConsole.useThreadPool().execute(round);
 		
 		System.out.println("login..");
-		getRequest.sendRequest(true);
+//		getRequest.sendRequest(true);
 		
-		MessageContext messageContext = getRequest.getReplyMessageContext();
+		MessageContext messageContext = null;
+		try {
+			messageContext = TransmitTool.sendRequestMessageForNIOByBlock(requestMessageModel, lockModel);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		if (messageContext == null) {
 			System.out.println("login fail..");
 			//TODO

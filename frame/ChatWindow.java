@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.util.ArrayDeque;
@@ -23,11 +24,13 @@ import customexception.ServerSendChatMessageException;
 import frame.customComponent.ChatJLabel;
 import frame.customComponent.FriendsListTree;
 import message.ChatMessages;
+import message.MessageContext;
 import message.MessageHead;
 import message.MessageModel;
 import model.ChatModel;
 import tablejson.UserFriendsInformation;
 import tools.ObjectTool;
+import tools.TransmitTool;
 import transmit.MessageManagement;
 import transmit.sender.ChatSender;
 
@@ -122,14 +125,11 @@ public class ChatWindow extends Window{
 		
 		chatMessage_JScorllPane = new JScrollPane();
 		chatMessage_JScorllPane.setBounds(0, 60, chatwidth_Temp, 300);
-//		chatMessage_JScorllPane.setAutoscrolls(true);
 		chatMessage_JScorllPane.setHorizontalScrollBarPolicy(
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		chatMessage_JScorllPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		chatMessage_JScorllPane.setSize(chatwidth_Temp, 300);
-//		chatMessage_JScorllPane.doLayout();
-//		chatMessage_JScorllPane.add(showChatMessage_JTextPane);
 		
 		//用于显示聊天消息的JPanel
 		showChatMessage_JPanel = new JPanel();
@@ -137,12 +137,6 @@ public class ChatWindow extends Window{
 		showChatMessage_JPanel.setLayout(null);
 		showChatMessage_JPanel.setBorder(BorderFactory.createLineBorder(borderColor, 1));
 		showChatMessage_JPanel.setPreferredSize(new Dimension(chatwidth_Temp, 300));
-		
-//		chatMessage_JLabel = new ChatJLabel(0, friendUserInfo.getUserNick(), "test");
-//		chatMessage_JLabel.setBounds(12, 10, showChatMessage_JPanel.getWidth(), 55);
-//		chatMessageQueue.add(chatMessage_JLabel);
-//		
-//		showChatMessage_JPanel.add(chatMessage_JLabel);
 		
 		chatMessage_JScorllPane.setViewportView(showChatMessage_JPanel);
 
@@ -183,8 +177,14 @@ public class ChatWindow extends Window{
 					chatMessage.setGetterID(_index.intValue());
 					chatMessage.setMessage(textPane_Message);					
 					MessageModel chatMessageModel = MessageManagement.chatMessageModel(chatMessage);
-					ChatSender chatSender = new ChatSender(chatMessageModel);
-					chatSender.sendRequest(false);
+//					ChatSender chatSender = new ChatSender(chatMessageModel);
+//					chatSender.sendRequest(false);
+					
+					try {
+						TransmitTool.sendChatMessageForNIO(chatMessageModel);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 					
 					entry_JTextPane.setText("");
 					

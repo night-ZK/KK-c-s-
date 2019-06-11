@@ -2,6 +2,7 @@ package listener;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.net.SocketException;
 
 import javax.swing.ImageIcon;
@@ -13,6 +14,7 @@ import frame.Window;
 import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
 import transmit.getter.Receive;
+import transmit.nio.SocketClientNIO;
 
 public class CloseListener implements MouseListener{
 
@@ -64,6 +66,13 @@ public class CloseListener implements MouseListener{
 					thread.interrupt();
 				}
 			}
+			
+//			try {
+//				SocketClientNIO.createSocketClient().getSocketChannel().close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 

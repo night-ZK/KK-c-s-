@@ -1,6 +1,7 @@
 package tools.client;
 
-import transmit.sender.Request;
+import threadmanagement.LockModel;
+import tools.TransmitTool;
 
 public class ThreadTools {
 	
@@ -9,12 +10,13 @@ public class ThreadTools {
 	 * @param requestMapKey
 	 */
 	public static void notifyRequestThread(String requestMapKey) {
-		Runnable requestThread = Request.requestMap.get(requestMapKey);
+//		Runnable requestThread = Request.requestMap.get(requestMapKey);
+		LockModel lockModel = TransmitTool.getLockModel().get(requestMapKey);
 		System.out.println("responseMapKey: " + requestMapKey);
-		if (requestThread != null) {
+		if (lockModel != null) {
 			
-			synchronized (requestThread) {
-				requestThread.notify();
+			synchronized (lockModel) {
+				lockModel.notify();
 			}
 		}
 	}

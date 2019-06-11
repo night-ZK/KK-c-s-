@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Label;
+import java.io.IOException;
 import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +26,13 @@ import frame.Window;
 import frame.customComponent.FriendNodeRenderer;
 import frame.customComponent.FriendsListTree;
 import listener.FriendsListJTreeList;
+import message.MessageContext;
 import message.MessageModel;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
+import threadmanagement.LockModel;
 import tools.ObjectTool;
+import tools.TransmitTool;
 import transmit.MessageManagement;
 import transmit.getter.Receive;
 import transmit.sender.GetRequest;
@@ -158,22 +162,26 @@ public class MainWindow extends Window{
 		
 		MessageModel getUserFriendInfoListModel = MessageManagement.getUserFriendInfoListMessageModel(_id.intValue(),"myFriends");
 		
-		GetRequest getUserFriendInfoListRequest = new GetRequest(getUserFriendInfoListModel) {
-			@Override
-			public void then() {
+		LockModel lockModel = new LockModel(0, "getUserFriendInfoListModel request");
+		
+		try {
+			MessageContext replyMessageContext = 
+					TransmitTool.sendRequestMessageForNIOByBlock(getUserFriendInfoListModel, lockModel);
+			
+			if (replyMessageContext != null) {
 				List<UserFriendsInformation> userFriendsInformationList = 
-						(ArrayList<UserFriendsInformation>) this.getReplyMessageContext().getObject();
+						(ArrayList<UserFriendsInformation>) replyMessageContext.getObject();
 				
 				for (UserFriendsInformation userFriendsInformation : userFriendsInformationList) {
 					
 					Integer friendID = userFriendsInformation.getId().intValue();
-					MessageModel messageModel = 
+					MessageModel imageMessageModel = 
 							MessageManagement.getUserFriendImageMessageModel(friendID);
-					
-					ImageRequest getUserFriendImageRequest = new ImageRequest(messageModel);
-					getUserFriendImageRequest.setImageRequestMapKey(friendID.toString());
-					getUserFriendImageRequest.sendRequest(true);
-					ImageIcon imageIcon = Receive.receiveImageMap.get(friendID.toString());
+		
+					lockModel = new LockModel(0, "getUserFriendImageMessageModel request");
+					String imageKey = friendID + "";
+					ImageIcon imageIcon =
+							TransmitTool.sendImageRequestMessageForNIOByBlock(imageMessageModel, lockModel, imageKey);
 					
 					FriendsListTree friendsNode = new FriendsListTree();
 					friendsNode.set_userFriendInfo(userFriendsInformation);
@@ -182,8 +190,37 @@ public class MainWindow extends Window{
 				}
 				setGroupList(group_Myfrends, friendsListTreeMap);
 			}
-		};
-		getUserFriendInfoListRequest.sendRequest(true).then();		
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+//		GetRequest getUserFriendInfoListRequest = new GetRequest(getUserFriendInfoListModel) {
+//			@Override
+//			public void then() {
+//				List<UserFriendsInformation> userFriendsInformationList = 
+//						(ArrayList<UserFriendsInformation>) this.getReplyMessageContext().getObject();
+//				
+//				for (UserFriendsInformation userFriendsInformation : userFriendsInformationList) {
+//					
+//					Integer friendID = userFriendsInformation.getId().intValue();
+//					MessageModel messageModel = 
+//							MessageManagement.getUserFriendImageMessageModel(friendID);
+//					
+//					ImageRequest getUserFriendImageRequest = new ImageRequest(messageModel);
+//					getUserFriendImageRequest.setImageRequestMapKey(friendID.toString());
+//					getUserFriendImageRequest.sendRequest(true);
+//					ImageIcon imageIcon = Receive.receiveImageMap.get(friendID.toString());
+//					
+//					FriendsListTree friendsNode = new FriendsListTree();
+//					friendsNode.set_userFriendInfo(userFriendsInformation);
+//					friendsNode.set_userImageIcon(imageIcon);
+//					friendsListTreeMap.put(friendID, friendsNode);
+//				}
+//				setGroupList(group_Myfrends, friendsListTreeMap);
+//			}
+//		};
+//		getUserFriendInfoListRequest.sendRequest(true).then();		
 		
 		friendsListTree_RootNode.add(group_Myfrends);
 		

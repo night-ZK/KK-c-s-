@@ -127,7 +127,7 @@ public abstract class Request extends Sender{
 	 * @return
 	 */
 	protected String getRequestMapKey() {
-		return TransmitTool.getRequestMapKey(this.messageHead);
+		return TransmitTool.getRequestMapKey(this.model);
 	}
 	
 	
@@ -138,7 +138,7 @@ public abstract class Request extends Sender{
 
 	protected MessageModel getReplyMessageModel() {
 		
-		String key = TransmitTool.getRequestMapKey(this.messageHead);
+		String key = TransmitTool.getRequestMapKey(this.model);
 		
 		return Receive.receiveMap.get(key); 
 	}

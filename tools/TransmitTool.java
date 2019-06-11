@@ -6,21 +6,34 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
+
 import customexception.RequestParameterExcetion;
+import message.MessageContext;
 import message.MessageHead;
+import message.MessageModel;
+import threadmanagement.LockModel;
+import threadmanagement.ThreadConsole;
+import transmit.getter.Receive;
+import transmit.nio.SocketClientNIO;
 
 public class TransmitTool {
+	//requestLock
+	private static Map<String, LockModel> lockModel =
+			new HashMap<>();
 	
 	/**
 	 * 获取requestMap的key值
 	 * @param messageHead
 	 * @return
 	 */
-	public static String getRequestMapKey(MessageHead messageHead) {
-		
+	public static String getRequestMapKey(MessageModel messageModel) {
+		MessageHead messageHead = messageModel.getMessageHead();
 		Integer headType = messageHead.getType();
 		Long sendTime = messageHead.getRequestTime();
 		Integer requestNo = messageHead.getRequestNO();
@@ -49,6 +62,30 @@ public class TransmitTool {
 	}
 	
 	/**
+	 * 通过发送规则发送request
+	 * 规则: 4个字节作为消息长度
+	 * @param requestModelByteArrays
+	 * @return
+	 */
+	public static ByteBuffer sendRequestForNIOByRule(byte[] requestModelByteArrays) {
+		ByteBuffer byteBuffer = ByteBuffer.allocate(requestModelByteArrays.length + 4);
+		
+		byteBuffer.put((byte)(requestModelByteArrays.length >> 24));
+		byteBuffer.put((byte)(requestModelByteArrays.length >> 16));
+		byteBuffer.put((byte)(requestModelByteArrays.length >> 8));
+		byteBuffer.put((byte)requestModelByteArrays.length);
+		
+		byteBuffer.put(requestModelByteArrays);
+		byteBuffer.flip();
+		return byteBuffer;
+	}
+	
+	public static ByteBuffer sendRequestForNIO(MessageModel messageModel) throws IOException {
+		byte[] bs = ObjectToByteArrays(messageModel);
+		return sendRequestForNIOByRule(bs);
+	}
+	
+	/**
 	 * 对象转化成byte[]
 	 * @param o
 	 * @return
@@ -64,6 +101,40 @@ public class TransmitTool {
 		if(!ObjectTool.isNull(bais)) bais.close();
 		
 		return o;
+	}
+	
+	/**
+	 * 流转对象 -- nio用
+	 * @param o
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException 
+	 */
+	public static Object channelSteamToObjectForNIO(SocketChannel socketChannel) throws IOException, ClassNotFoundException {
+
+		byte[] b = channelSteamToByteArraysForNIO(socketChannel);
+		return byteArraysToObject(b);
+	}
+	
+	/**
+	 * 流转化成byte[] -- nio用
+	 * @param o
+	 * @return
+	 * @throws IOException
+	 * @throws ClassNotFoundException 
+	 */
+	public static byte[] channelSteamToByteArraysForNIO(SocketChannel socketChannel) throws IOException {
+		//读取缓冲区
+		ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+		//从通道中读数据到缓冲区
+		socketChannel.read(byteBuffer);
+		byteBuffer.flip();
+		int length = byteBuffer.getInt();
+		byteBuffer = ByteBuffer.allocate(length);
+		socketChannel.read(byteBuffer);
+		byteBuffer.flip();
+		
+		return byteBuffer.array();	
 	}
 	
 	/**
@@ -180,5 +251,92 @@ public class TransmitTool {
 		return parametersMap;
 	}
 
+	public static Map<String, LockModel> getLockModel() {
+		return lockModel;
+	}
 	
+	public static MessageModel getReplyMessageModel(MessageModel requestMessageModel) {
+		return Receive.receiveMap.get(getRequestMapKey(requestMessageModel)); 
+	}
+	
+	public static MessageModel getReplyMessageModelForNIO(MessageModel requestMessageModel) {
+		return SocketClientNIO.receiveMap.get(getRequestMapKey(requestMessageModel)); 
+	}
+	
+	public static ImageIcon getReplyImageForNIO(String imageKey) {
+		return SocketClientNIO.receiveImageMap.get(imageKey); 
+	}
+	
+	
+	public static MessageContext sendRequestMessageForNIOByBlock(MessageModel requestMessageModel, LockModel lockModel) throws IOException {
+		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
+
+		if(!socketClientNIO.isAlive()) {			
+			socketClientNIO.start();
+			synchronized (socketClientNIO) {
+				try {
+					socketClientNIO.wait();
+					System.out.println("succeed connect..");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		String lockKey = TransmitTool.getRequestMapKey(requestMessageModel);
+		
+		TransmitTool.getLockModel().put(lockKey, lockModel);
+		
+
+		synchronized (socketClientNIO) {			
+			socketClientNIO.sendReuqest(requestMessageModel);
+		}
+		
+		ThreadConsole.blockThread(lockModel, socketClientNIO);
+		
+		return TransmitTool.getReplyMessageModelForNIO(requestMessageModel)
+				.getMessageContext();
+	}
+	
+	public static ImageIcon sendImageRequestMessageForNIOByBlock(MessageModel requestMessageModel
+			, LockModel lockModel, String imageKey) throws IOException {
+		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
+
+		if(!socketClientNIO.isAlive())
+			socketClientNIO.start();
+		
+//		String lockKey = TransmitTool.getRequestMapKey(requestMessageModel);
+		
+		TransmitTool.getLockModel().put(imageKey, lockModel);
+		
+		synchronized (socketClientNIO) {			
+			socketClientNIO.sendReuqest(requestMessageModel);
+		}
+		
+		ThreadConsole.blockThread(lockModel, socketClientNIO);
+		
+		return TransmitTool.getReplyImageForNIO(imageKey);
+	}
+	
+	
+	public static void sendChatMessageForNIO(MessageModel requestMessageModel) throws IOException {
+
+		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
+		if(!socketClientNIO.isAlive()) {			
+			socketClientNIO.start();
+			synchronized (socketClientNIO) {
+				try {
+					socketClientNIO.wait();
+					System.out.println("succeed connect..");
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		synchronized (socketClientNIO) {			
+			socketClientNIO.sendReuqest(requestMessageModel);
+		}
+		
+	}
 }
