@@ -156,6 +156,24 @@ public class Window extends JFrame{
 		return jpanelImage;
 	}
 	
+	/**
+	 * 获得带有背景图的JPanel
+	 * @param imageBytes 图片字节数组
+	 * @return
+	 */
+	protected JPanel getJpanelImage(final byte[] imageBytes){
+		JPanel jpanelImage = new JPanel(){
+			private static final long serialVersionUID = 1L;
+			@Override
+			protected void paintComponent(java.awt.Graphics arg0) {
+				super.paintComponent(arg0);
+				ImageIcon userIcon = new ImageIcon(imageBytes);
+				arg0.drawImage(userIcon.getImage(), 0, 0, getWidth(), getHeight(), userIcon.getImageObserver());
+			}
+		};
+		return jpanelImage;
+	}
+	
 	protected User getUserInfo() {
 		//TODO privilege management
 		return _saveUser;

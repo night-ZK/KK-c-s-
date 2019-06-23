@@ -32,6 +32,9 @@ public class ClientLogin extends Window{
 	
 	private static String _tipText_User;
 	private static String _tipText_Pas;
+	
+	private TextField userText = new TextField();
+	private TextField pasText = new TextField();
 
 	static{
 		 _userL = "username:";
@@ -43,6 +46,23 @@ public class ClientLogin extends Window{
 		 _tipText_Pas = "please enter password..";
 	}
 	
+	
+	public TextField getUserText() {
+		return userText;
+	}
+
+	public void setUserText(TextField userText) {
+		this.userText = userText;
+	}
+
+	public TextField getPasText() {
+		return pasText;
+	}
+
+	public void setPasText(TextField pasText) {
+		this.pasText = pasText;
+	}
+
 	private ClientLogin(){
 		
 		clientLoginInFo();
@@ -67,8 +87,8 @@ public class ClientLogin extends Window{
 		userLabel.setFont(contextFont);
 		pasLabel.setFont(contextFont);
 		
-		TextField userText = new TextField();
-		TextField pasText = new TextField();
+		userText = new TextField();
+		pasText = new TextField();
 		
 		FieldListener userFieldLis = new FieldListener(_tipText_User, userText, "textfield0");
 		FieldListener pasFieldLis = new FieldListener(_tipText_Pas, pasText, "textfield1");
@@ -100,11 +120,10 @@ public class ClientLogin extends Window{
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				super.mouseClicked(arg0);
 				FieldListener.loginMainWindow();
 			}
-			
 		});
+		
 		closeButton.addMouseListener(new CloseListener(this));
 		
 		JPanel backGroundJPanel = new JPanel();

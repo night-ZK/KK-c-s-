@@ -44,8 +44,11 @@ public class MainWindow extends Window{
 
 	static Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
 	
-	private MainWindow(User user){
+	private byte[] _iconBytes;
+	private MainWindow(User user, byte[] iconBytes){
 		super(user);
+
+		this._iconBytes =  iconBytes;
 		initMainWindow();
 		
 		JPanel container_JPanel = (JPanel)this.getContentPane();
@@ -324,6 +327,7 @@ public class MainWindow extends Window{
 
 	/**
 	 * 初始化用于显示用户信息的JPanel
+	 * @throws  
 	 */
 	private void initUserInformationJPanel(JPanel jpanel_UserInformation) {
 
@@ -332,7 +336,7 @@ public class MainWindow extends Window{
 		jpanel_UserInformation.setOpaque(false);
 //		jpanel_UserInformation.setBackground(new Color(255, 52, 179));
 
-		JPanel jpanel_UserImage = getJpanelImage(_path);
+		JPanel jpanel_UserImage = getJpanelImage(this._iconBytes);
 		jpanel_UserImage.setBounds(10, 10, 80, 80);
 		
 		//用户昵称
@@ -539,13 +543,13 @@ public class MainWindow extends Window{
 	 * @param password 密码
 	 * @return
 	 */
-	public synchronized static MainWindow createMainWindow(User user){
+	public synchronized static MainWindow createMainWindow(User user, byte[] iconBytes){
 		if (_mainWindow == null) {
 			
 			if (user.getUserName() == null || user.getUserName() == null) {
 				return null;
 			}
-			_mainWindow = new MainWindow(user);
+			_mainWindow = new MainWindow(user, iconBytes);
 		}
 		return _mainWindow;
 	}

@@ -12,10 +12,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.rmi.ConnectException;
+import java.util.ArrayList;
 import java.util.List;
 
 import frame.ClientLogin;
 import frame.MainWindow;
+import frame.MessageWindow;
 import frame.Window;
 import message.ErrorMessage;
 import message.MessageContext;
@@ -104,20 +106,36 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	
 	@Override
 	public void focusGained(FocusEvent arg0) {
-		if (_evenLis.getText().equals(_textLis)) {
-			//获得焦点时, 文本框内存在默认字符, 则清除
-			_evenLis.setText("");					
+		if(arg0.getComponent() instanceof TextField) {
+			TextField textField = (TextField)arg0.getComponent();
+			if(textField.getText().equals(_textLis)) {
+				textField.setText("");
+			}
+			
 		}
+//		if (_evenLis.getText().equals(_textLis)) {
+//			//获得焦点时, 文本框内存在默认字符, 则清除
+//			_evenLis.setText("");					
+//		}
 	}
 	
 	@Override
 	public void focusLost(FocusEvent arg0) {
 
-		if (_evenLis.getText().equals("")) {
-			_evenLis.setText(_textLis);					
-		}else if (_componentName.equals("textfield0")) {
-			_user = _evenLis.getText();
+		if(arg0.getComponent() instanceof TextField) {
+			TextField textField = (TextField)arg0.getComponent();
+			if(textField.getText().equals("")) {
+//				System.out.println("_textLis:" + _textLis);
+				textField.setText(_textLis);
+			}else if (_componentName.equals("textfield0")) {
+				_user = _evenLis.getText();
+				System.out.println("_user: " + _user);
+			}
+			
 		}
+//		if (_evenLis.getText().equals("")) {
+//			_evenLis.setText(_textLis);					
+//		}
 	}
 	@Override
 	public void keyPressed(KeyEvent arg0) {
@@ -156,7 +174,18 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 				
 				return;
 			}
-			loginMainWindow();
+			boolean loginSucceed = loginMainWindow();
+			ClientLogin clientLogin = ClientLogin.createClientLogin();
+			if (loginSucceed) {
+				//登录成功, 销毁登录窗口
+				clientLogin.dispose();
+			} else{
+				_user = "";
+				_pas = "";
+				
+				clientLogin.getUserText().setText("");
+				clientLogin.getPasText().setText("");
+			}
 		}
 	}
 	@Override
@@ -177,7 +206,12 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	 * 登陆到MainWindow窗口
 	 * 
 	 */
-	public static void loginMainWindow() {
+	public static boolean loginMainWindow() {
+		
+		if (ObjectTool.isNull(_user) || ObjectTool.isNull(_pas)) {
+			new MessageWindow();
+			return false;
+		}
 		
 		MessageModel requestMessageModel = MessageManagement.loginMessageModel(_user, _pas);
 		LockModel lockModel = new LockModel(0, "login request");
@@ -221,26 +255,51 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 		if (messageContext == null) {
 			System.out.println("login fail..");
 			//TODO
-			return;
+			return false;
 		}
 		
-		if (messageContext.getObject() instanceof User) {
-			System.out.println("login sucess..");
-			//登录成功, 销毁登录窗口
-			ClientLogin.createClientLogin().dispose();
-			User loginUser = (User) messageContext.getObject();
-			if (ObjectTool.isNull(loginUser.getId())) {
-				System.out.println("user or password error..");
-				//TODO
+		if (messageContext.getObject() instanceof ArrayList<?>) {
+			ArrayList<?> loginContext = (ArrayList<?>)messageContext.getObject();
+
+			if (loginContext.get(0) instanceof User) {
 				
+				User loginUser = (User) loginContext.get(0);
+				if (ObjectTool.isNull(loginUser.getId())) {
+					System.out.println("user or password error..");
+					//TODO
+					
+					return false;
+				}
 				
-				return;
+				if (loginContext.get(1) instanceof byte[]) {
+					byte[] iconBytes = (byte[]) loginContext.get(1);
+					if (ObjectTool.isNull(iconBytes)) {
+						System.err.println("server no find icon error..");
+						//TODO 加载默认icon
+						
+					}
+					
+					MainWindow.createMainWindow(loginUser, iconBytes);
+					System.out.println("login sucess..");
+				}else {
+					System.err.println("login icon data type error..");
+					return false;
+				}
+				
+			}else {
+				System.err.println("login user data type error..");
+				new MessageWindow();
+				return false;
 			}
-			MainWindow.createMainWindow(loginUser);
+						
 		}else {
 			//TODO
-			System.out.println("data type error..");
+			System.err.println("data type error..");
+			
+			return false;
 		}
+
+		return true;
 		
 //		RequestBusiness requestBusiness = new RequestBusiness(messageModel);
 //		Thread loginThread = new Thread(requestBusiness);
