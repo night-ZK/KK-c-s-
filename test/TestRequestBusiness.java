@@ -1,9 +1,13 @@
 package test;
 
+import java.awt.Frame;
 import java.util.List;
+
+import javax.swing.JTextPane;
 
 import org.junit.Test;
 
+import frame.customComponent.ChatMessageTextJPanel;
 import message.MessageHead;
 import message.MessageInterface;
 import message.MessageModel;
@@ -120,5 +124,25 @@ public class TestRequestBusiness {
 		String aString = "";
 		int b = aString.getBytes().length;
 		System.out.println("b: " + b);
+	}
+	
+	@Test
+	public void testTextJPanel() {
+		Frame frame = new Frame();
+		frame.setLayout(null);
+		frame.setSize(300, 500);
+		
+		ChatMessageTextJPanel kJTextPane = new ChatMessageTextJPanel();
+		kJTextPane.setEditable(true);
+		double h = kJTextPane.getPreferredSize().height;
+		System.out.println("h1: " + h);
+		kJTextPane.setText("asdasddddddddasdas"
+				+ "asdasdasddddddddddddddddd"
+				+ "asddddd");
+		kJTextPane.setBounds(10, 10, 20, (int)h);
+		h = kJTextPane.getPreferredSize().height;
+		System.out.println("h: " + h);
+		frame.add(kJTextPane);
+		frame.setVisible(true);
 	}
 }

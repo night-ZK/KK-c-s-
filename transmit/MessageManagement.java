@@ -98,5 +98,17 @@ public class MessageManagement {
 		messageHead.setRequestNO(Request.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
+	
+	public static MessageModel getCloseMessageModel() {
+		MessageHead messageHead = new MessageHead();
+		messageHead.setType(7);
+		messageHead.setRequestDataType(String.class);
+		
+		String describe = "/close";
+		messageHead.setRequestDescribe(describe);
+		messageHead.setRequestTime(System.currentTimeMillis());
+		messageHead.setRequestNO(Request.getRequestNo());
+		return new MessageModel(messageHead, null);
+	}
 
 }

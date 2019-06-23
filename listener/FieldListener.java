@@ -151,7 +151,11 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			if (_componentName.equals("textfield0")) {
 				_user = _evenLis.getText();
 			}
-			
+			if (_user.equals("") || _pas.equals("")) {
+				//TODO
+				
+				return;
+			}
 			loginMainWindow();
 		}
 	}

@@ -1,10 +1,7 @@
 package transmit.nio;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -13,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.ImageIcon;
 
 import org.dom4j.Element;
@@ -21,15 +17,11 @@ import org.dom4j.Element;
 import customexception.ResponseLineNotAbleExcetion;
 import customexception.ServerSendChatMessageException;
 import frame.ChatWindow;
-import message.MessageHead;
 import message.MessageModel;
 import parsefile.ParseXML;
-import tools.GetterTools;
 import tools.ObjectTool;
-import tools.SenderTools;
 import tools.TransmitTool;
 import tools.client.ThreadTools;
-import transmit.sender.Sender;
 
 public class SocketClientNIO extends Thread{
 	
@@ -91,6 +83,9 @@ public class SocketClientNIO extends Thread{
 	public void startSocketClient(){
 		try{
 			while(true){
+				
+//				if (isClose) return;
+				
 				//有事件则返回, 无则阻塞
 				selector.select();
 				
@@ -128,7 +123,8 @@ public class SocketClientNIO extends Thread{
 							String responseLine = new String(byteArrays, "UTF-8");
 							if (ObjectTool.isNull(responseLine))
 								return;
-							System.out.println("responseLine: " + responseLine);
+							
+							if (responseLine.equals("state:close")) return;
 							
 							String[] responseLineArrays = responseLine.split(" ");
 							if (responseLineArrays.length < 3) 
@@ -148,6 +144,7 @@ public class SocketClientNIO extends Thread{
 							case "403":
 								
 								break;
+							
 							default:
 								break;
 							}
@@ -186,7 +183,7 @@ public class SocketClientNIO extends Thread{
 									e.printStackTrace();
 								}
 								
-								this.readReplyImage(socketChannel, existJson, responseLength[1]);
+								this.readReplyImage(socketChannel, existJson);
 								break;
 								
 							case "ChatMessage":
@@ -206,6 +203,12 @@ public class SocketClientNIO extends Thread{
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+//			try {
+//				socketChannel.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 	
@@ -221,7 +224,7 @@ public class SocketClientNIO extends Thread{
 		}
 	}
 	
-	private void readReplyImage(SocketChannel socketChannel, boolean existJson, String string) throws IOException, ResponseLineNotAbleExcetion {
+	private void readReplyImage(SocketChannel socketChannel, boolean existJson) throws IOException, ResponseLineNotAbleExcetion {
 		if (existJson) {
 			byte[] receiveByte = TransmitTool.channelSteamToByteArraysForNIO(socketChannel);
 			String imageJson = new String(receiveByte, "UTF-8");

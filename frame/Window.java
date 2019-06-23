@@ -28,7 +28,7 @@ public class Window extends JFrame{
 	
 	private static User _saveUser;
 	
-	protected SimpleDateFormat _dateFormat;
+	protected static SimpleDateFormat _dateFormat;
 
 	protected int _height;
 	protected int _width;
@@ -51,12 +51,11 @@ public class Window extends JFrame{
 		_screenHeight = screenSize.height;	
 		_closeJButton_Ago = new ImageIcon("./resources/image/close_button-1.png");
 		_closeJButton_After = new ImageIcon("./resources/image/close_button-2.png");
-		
+		_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
 	}
 	
 	protected Window(User user){
 		_saveUser = user;
-		_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	}
 
 	protected Window(){
@@ -68,11 +67,18 @@ public class Window extends JFrame{
 	 */
 	protected JButton getCloseJButton(){
 		
-		JButton jButton = new JButton();
+		JButton jButton = new JButton(_closeJButton_Ago);
 		jButton.setBounds(this._width - 31, 1, 30, 30);
 		
+		//³ý±ß¿ò
 		jButton.setBorder(null);
-		jButton.setIcon(_closeJButton_Ago);
+		//³ýÄ¬ÈÏ±³¾°Ìî³ä
+		jButton.setContentAreaFilled(false);
+		
+//		jButton.setBorderPainted(false);//²»´òÓ¡±ß¿ò
+		jButton.setFocusPainted(false);//½¹µã¿ò
+		jButton.setIconTextGap(0);//Í¼Æ¬ÎÄ×Ö¼ä¸ôÁ¿ÉèÖÃÎª0
+//		jButton.setMargin(new Insets(0, 0, 0, 0));
 		jButton.addMouseListener(new CloseListener(this, jButton, _closeJButton_Ago, _closeJButton_After));
 		return jButton;
 	}

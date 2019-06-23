@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 
 import frame.ChatWindow;

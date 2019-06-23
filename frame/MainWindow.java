@@ -2,7 +2,6 @@ package frame;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Label;
 import java.io.IOException;
 import java.rmi.ConnectException;
@@ -36,7 +35,6 @@ import tools.TransmitTool;
 import transmit.MessageManagement;
 import transmit.getter.Receive;
 import transmit.sender.GetRequest;
-import transmit.sender.ImageRequest;
 
 public class MainWindow extends Window{
 
