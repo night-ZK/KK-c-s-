@@ -1,7 +1,10 @@
 package tools;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,10 +14,11 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageInputStream;
 import javax.swing.ImageIcon;
 
 import customexception.RequestParameterExcetion;
-import message.MessageContext;
 import message.MessageHead;
 import message.MessageModel;
 import threadmanagement.LockModel;
@@ -268,7 +272,7 @@ public class TransmitTool {
 	}
 	
 	
-	public static MessageContext sendRequestMessageForNIOByBlock(MessageModel requestMessageModel, LockModel lockModel) throws IOException {
+	public static MessageModel sendRequestMessageForNIOByBlock(MessageModel requestMessageModel, LockModel lockModel) throws IOException {
 		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
 
 		if(!socketClientNIO.isAlive()) {			
@@ -276,10 +280,10 @@ public class TransmitTool {
 			synchronized (socketClientNIO) {
 				try {
 					socketClientNIO.wait();
-					System.out.println("succeed connect..");
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+//				System.out.println("succeed connect..");
 			}
 		}
 		
@@ -294,8 +298,7 @@ public class TransmitTool {
 		
 		ThreadConsole.blockThread(lockModel, socketClientNIO);
 		
-		return TransmitTool.getReplyMessageModelForNIO(requestMessageModel)
-				.getMessageContext();
+		return TransmitTool.getReplyMessageModelForNIO(requestMessageModel);
 	}
 	
 	public static ImageIcon sendImageRequestMessageForNIOByBlock(MessageModel requestMessageModel
@@ -338,5 +341,61 @@ public class TransmitTool {
 			socketClientNIO.sendReuqest(requestMessageModel);
 		}
 		
+	}
+	
+	public static byte[] getImageBytesByPath(String path){
+		byte[] imageByte = null;
+		FileImageInputStream fileImageInputStream = null;
+		ByteArrayOutputStream byteArrayOutputStream = null;
+		try {
+			fileImageInputStream = new FileImageInputStream(new File(path));
+			byteArrayOutputStream = new ByteArrayOutputStream();
+			byte[] bufByte = new byte[1024];
+			int imageByteLength = -1;
+
+			while ((imageByteLength = fileImageInputStream.read(bufByte)) != -1) {
+
+				byteArrayOutputStream.write(bufByte, 0, imageByteLength);
+			}
+
+			imageByte = byteArrayOutputStream.toByteArray();
+
+		}catch (IOException e){
+			e.printStackTrace();
+		}finally {
+			try {
+				if (!ObjectTool.isNull(byteArrayOutputStream)) byteArrayOutputStream.close();
+				if (!ObjectTool.isNull(fileImageInputStream)) fileImageInputStream.close();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+		return  imageByte;
+	}
+	
+	public static byte[] getImageBytesByImage(Image image){
+		byte[] imageByte = null;
+		ByteArrayOutputStream bos = null;
+		BufferedImage bi = null;
+		try {
+			
+			bos = new ByteArrayOutputStream();
+			bi = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+			ImageIO.write(bi, "png", bos);
+			
+			imageByte = bos.toByteArray();
+					
+		}catch (IOException e){
+			e.printStackTrace();
+		}finally {
+			try {
+				if (!ObjectTool.isNull(bos)) bos.close();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+		return  imageByte;
 	}
 }

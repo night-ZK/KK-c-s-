@@ -4,8 +4,10 @@ import java.awt.Image;
 import java.util.List;
 
 import message.ChatMessages;
+import message.MessageContext;
 import message.MessageHead;
 import message.MessageModel;
+import model.UpdateInformation;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
 import transmit.sender.Request;
@@ -109,6 +111,20 @@ public class MessageManagement {
 		messageHead.setRequestTime(System.currentTimeMillis());
 		messageHead.setRequestNO(Request.getRequestNo());
 		return new MessageModel(messageHead, null);
+	}
+	
+	public static MessageModel getUpdateUserInfoMessageModel(UpdateInformation updateInformation) {
+		MessageHead messageHead = new MessageHead();
+		messageHead.setType(8);
+		messageHead.setRequestDataType(String.class);
+		
+		String describe = "/updateUserInfo";
+		messageHead.setRequestDescribe(describe);
+		messageHead.setRequestTime(System.currentTimeMillis());
+		messageHead.setRequestNO(Request.getRequestNo());
+		MessageContext messageContext = new MessageContext();
+		messageContext.setObject(updateInformation);
+		return new MessageModel(messageHead, messageContext);
 	}
 
 }

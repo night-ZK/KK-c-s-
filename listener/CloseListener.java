@@ -51,11 +51,12 @@ public class CloseListener implements MouseListener{
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		_win.dispose();
+		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
 		if (_win instanceof ChatWindow) {
 			ChatWindow.set$index(ChatWindow.get$index() - 1);
 			Number index_Key = ((ChatWindow) _win).get_index();
 			((ChatWindow)_win).removeChatFriendsList(index_Key);
-		}else if(!(_win instanceof ClientLogin)){
+		}else if(socketClientNIO.getSocketChannel() != null && socketClientNIO.getSocketChannel().isOpen()){
 //			try {
 //				Receive.getReceive().getSocket().setSoTimeout(5000);
 //			} catch (SocketException e) {
@@ -63,7 +64,7 @@ public class CloseListener implements MouseListener{
 //			}
 			try {
 				MessageModel closeModel = MessageManagement.getCloseMessageModel();
-				SocketClientNIO.createSocketClient().sendReuqest(closeModel);
+				socketClientNIO.sendReuqest(closeModel);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

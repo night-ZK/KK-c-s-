@@ -49,7 +49,7 @@ public class SocketClientNIO extends Thread{
 	}
 	
 	Selector selector;
-	SocketChannel socketChannel;
+	private SocketChannel socketChannel;
 	private SocketClientNIO() {
 		try {
 			
@@ -74,7 +74,7 @@ public class SocketClientNIO extends Thread{
 	public SocketChannel getSocketChannel() {
 		return socketChannel;
 	}
-
+	
 	@Override
 	public void run() {
 		startSocketClient();
@@ -116,8 +116,16 @@ public class SocketClientNIO extends Thread{
 					}else if(selectionKey.isReadable()){
 						System.out.println("receive data..");
 						
+						byte[] byteArrays = null;
 						//»º³åÇø×ªbyte[]
-						byte[] byteArrays = TransmitTool.channelSteamToByteArraysForNIO(socketChannel);
+						try {
+							
+							byteArrays = TransmitTool.channelSteamToByteArraysForNIO(socketChannel);
+						} catch (IOException e) {
+							socketChannel.socket().close();
+							socketChannel.close();
+							return;
+						}
 						
 						try {
 							String responseLine = new String(byteArrays, "UTF-8");

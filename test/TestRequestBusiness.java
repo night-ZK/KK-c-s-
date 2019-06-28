@@ -7,6 +7,7 @@ import javax.swing.JTextPane;
 
 import org.junit.Test;
 
+import frame.UpdateInformationWindow;
 import frame.customComponent.ChatMessageTextJPanel;
 import message.MessageHead;
 import message.MessageInterface;
@@ -144,5 +145,20 @@ public class TestRequestBusiness {
 		System.out.println("h: " + h);
 		frame.add(kJTextPane);
 		frame.setVisible(true);
+	}
+
+	@Test
+	public void testUpdateWinodw() {
+		new UpdateInformationWindow();
+		long a = System.currentTimeMillis();
+		while (System.currentTimeMillis() - a < 10000) {
+//			System.out.println(1);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

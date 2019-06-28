@@ -29,7 +29,9 @@ public class ThreadConsole {
 	public static void blockThread(LockModel lockModel, Thread blockThread) {
 		try {		
 			synchronized(lockModel) {
+				lockModel.setLockState(2);
 				lockModel.wait();
+				lockModel.setLockState(3);
 			}
 			System.out.println(lockModel.getLockDescribe() + ": wait done..");
 //			blockThread.join();

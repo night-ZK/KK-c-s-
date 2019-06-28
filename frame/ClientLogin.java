@@ -63,6 +63,22 @@ public class ClientLogin extends Window{
 		this.pasText = pasText;
 	}
 
+	public static String get_tipText_User() {
+		return _tipText_User;
+	}
+
+	public static void set_tipText_User(String _tipText_User) {
+		ClientLogin._tipText_User = _tipText_User;
+	}
+
+	public static String get_tipText_Pas() {
+		return _tipText_Pas;
+	}
+
+	public static void set_tipText_Pas(String _tipText_Pas) {
+		ClientLogin._tipText_Pas = _tipText_Pas;
+	}
+
 	private ClientLogin(){
 		
 		clientLoginInFo();

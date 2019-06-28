@@ -1,6 +1,5 @@
 package listener;
 
-
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.TextField;
@@ -11,28 +10,21 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.rmi.ConnectException;
 import java.util.ArrayList;
-import java.util.List;
 
+import javax.swing.JRootPane;
 import frame.ClientLogin;
 import frame.MainWindow;
 import frame.MessageWindow;
 import frame.Window;
-import message.ErrorMessage;
 import message.MessageContext;
-import message.MessageInterface;
 import message.MessageModel;
 import tablebeans.User;
 import threadmanagement.LockModel;
-import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
 import tools.TransmitTool;
 import transmit.MessageManagement;
-import transmit.RequestBusiness;
-import transmit.getter.Receive;
 import transmit.nio.SocketClientNIO;
-import transmit.sender.GetRequest;
 
 public class FieldListener implements MouseListener, FocusListener, KeyListener {
 
@@ -129,7 +121,7 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 				textField.setText(_textLis);
 			}else if (_componentName.equals("textfield0")) {
 				_user = _evenLis.getText();
-				System.out.println("_user: " + _user);
+//				System.out.println("_user: " + _user);
 			}
 			
 		}
@@ -169,22 +161,20 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			if (_componentName.equals("textfield0")) {
 				_user = _evenLis.getText();
 			}
-			if (_user.equals("") || _pas.equals("")) {
-				//TODO
-				
-				return;
-			}
-			boolean loginSucceed = loginMainWindow();
+			
+			MessageWindow messageWindow = loginMainWindow();
 			ClientLogin clientLogin = ClientLogin.createClientLogin();
-			if (loginSucceed) {
+			if (messageWindow == null) {
 				//登录成功, 销毁登录窗口
 				clientLogin.dispose();
 			} else{
-				_user = "";
-				_pas = "";
-				
-				clientLogin.getUserText().setText("");
-				clientLogin.getPasText().setText("");
+				if (_componentName.equals("textfield0")) {
+					clientLogin.getPasText().setText(ClientLogin.get_tipText_Pas());
+					_pas = "";
+				}else {					
+					clientLogin.getUserText().setText(ClientLogin.get_tipText_User());
+					_user = "";
+				}
 			}
 		}
 	}
@@ -197,6 +187,7 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 				_pas = _pas.concat(String.valueOf(keyChar));
 			}else {
 				//TODO 密码只允许字母和数字提示框
+//				new MessageWindow("tip", "passworld only allowed match [a-zA-Z0-9+]..", JRootPane.INFORMATION_DIALOG);
 			}
 			
 		}
@@ -206,56 +197,35 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 	 * 登陆到MainWindow窗口
 	 * 
 	 */
-	public static boolean loginMainWindow() {
+	public static MessageWindow loginMainWindow() {
 		
 		if (ObjectTool.isNull(_user) || ObjectTool.isNull(_pas)) {
-			new MessageWindow();
-			return false;
+			return new MessageWindow("tip", "username or passworld is empty", JRootPane.ERROR_DIALOG);
 		}
 		
+		MessageModel messageModel = null;
+		MessageContext messageContext = null;
+
 		MessageModel requestMessageModel = MessageManagement.loginMessageModel(_user, _pas);
 		LockModel lockModel = new LockModel(0, "login request");
 		
-//		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
-//		socketClientNIO.start();
-//		
-//		String lockKey = TransmitTool.getRequestMapKey(requestMessageModel);
-//		LockModel lockModel = new LockModel(0, "login request");
-//		TransmitTool.getLockModel().put(lockKey, lockModel);
-//		
-//		ThreadConsole.blockThread(lockModel, socketClientNIO);
+//		showLoginWait(lockModel);
 		
-//		socketClientNIO.sendReuqest(messageModel);
-//		GetRequest getRequest = new GetRequest(messageModel);
-		
-//		Runnable round = () ->{
-//			
-//			while(true) {
-//				synchronized(getRequest) {						
-//					if (getRequest.isWait) {
-//						Receive.startReceiveThread();
-//						break;
-//					}
-//				}
-//			}
-//		};
-		
-//		ThreadConsole.useThreadPool().execute(round);
-		
-		System.out.println("login..");
-//		getRequest.sendRequest(true);
-		
-		MessageContext messageContext = null;
 		try {
-			messageContext = TransmitTool.sendRequestMessageForNIOByBlock(requestMessageModel, lockModel);
+			messageModel = TransmitTool.sendRequestMessageForNIOByBlock(requestMessageModel, lockModel);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		if (messageModel == null) {
+			if(SocketClientNIO.createSocketClient().getSocketChannel() == null 
+					|| !SocketClientNIO.createSocketClient().getSocketChannel().isOpen())
+				return new MessageWindow("login fail", "502: Unconnected Server..", JRootPane.ERROR_DIALOG);
+			return new MessageWindow("login fail", "502: login outTime..", JRootPane.ERROR_DIALOG);
+		}
+		messageContext = messageModel.getMessageContext();
 		if (messageContext == null) {
-			System.out.println("login fail..");
-			//TODO
-			return false;
+			return new MessageWindow("login faild", "403: username or password error..", JRootPane.ERROR_DIALOG);
 		}
 		
 		if (messageContext.getObject() instanceof ArrayList<?>) {
@@ -265,10 +235,8 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 				
 				User loginUser = (User) loginContext.get(0);
 				if (ObjectTool.isNull(loginUser.getId())) {
-					System.out.println("user or password error..");
-					//TODO
 					
-					return false;
+					return new MessageWindow("login faild", "403: username or password error..", JRootPane.ERROR_DIALOG);
 				}
 				
 				if (loginContext.get(1) instanceof byte[]) {
@@ -280,26 +248,25 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 					}
 					
 					MainWindow.createMainWindow(loginUser, iconBytes);
-					System.out.println("login sucess..");
 				}else {
-					System.err.println("login icon data type error..");
-					return false;
+					
+					return new MessageWindow("login faild", "500: login icon data type error..", JRootPane.ERROR_DIALOG);
 				}
 				
 			}else {
-				System.err.println("login user data type error..");
-				new MessageWindow();
-				return false;
+				return new MessageWindow("login faild", "500: login user data type error..", JRootPane.ERROR_DIALOG);
 			}
 						
 		}else {
-			//TODO
-			System.err.println("data type error..");
-			
-			return false;
+			return new MessageWindow("login faild", "500: data type error..", JRootPane.ERROR_DIALOG);
 		}
 
-		return true;
+		return null;
+	
+//		loginForBIO();
+	}
+	@SuppressWarnings("unused")
+	private static void loginForBIO() {
 		
 //		RequestBusiness requestBusiness = new RequestBusiness(messageModel);
 //		Thread loginThread = new Thread(requestBusiness);
@@ -343,7 +310,63 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 //			//TODO login fail.. 
 //			System.out.println("login fail..");
 //		}
+	
+	}
+	
+	@SuppressWarnings("unused")
+	private static void showLoginWait(LockModel lockModel) {
+		long beginTime = System.currentTimeMillis();
+		MessageWindow loginWait
+			= new MessageWindow("loging", "please wait.", JRootPane.INFORMATION_DIALOG);
+
+		Thread runRoun = new Thread() {
+			String point = ".";
+			boolean lock = true;
+			@Override
+			public void run() {
+				System.out.println("runRoun start..");
+				try {
+					while(lock && System.currentTimeMillis() - beginTime < 10000) {
+						switch (point) {
+						case ".":
+							point = ". .";
+							break;
+						case ". .":
+							point = ". . .";
+							break;
+						case ". . .":
+							point = ".";
+						default:
+							break;
+						}
+//						loginWait.setMessage("please wait" + point);
+						loginWait.requestFocus();
+						loginWait.getjTextPane().setText("please wait" + point);
+//						loginWait.getjTextPane().updateUI();
+						Thread.sleep(500);
+						System.out.println("runRoun sleep..");
+						synchronized (lockModel) {							
+							lock = lockModel.getLockState() != 3;
+						}
+					}
+					
+					synchronized(lockModel) {
+						if(lockModel.getLockState() == 2) {
+							lockModel.notify();
+						}
+					}
+					
+					loginWait.dispose();
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		};
 		
+//		ThreadConsole.useThreadPool().execute(runRoun);
+		runRoun.start();
+
 	}
 	
 }

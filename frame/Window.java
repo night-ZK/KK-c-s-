@@ -1,7 +1,10 @@
 package frame;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
+import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -43,6 +46,8 @@ public class Window extends JFrame{
 	protected Number _findSum;
 	protected String _gender;
 	protected String _personLabel;
+
+	protected int _genderState;
 	
 
 	static{
@@ -56,9 +61,67 @@ public class Window extends JFrame{
 	
 	protected Window(User user){
 		_saveUser = user;
+		initUserInformation();
 	}
 
 	protected Window(){
+	}
+	
+	protected void saveImage(byte[] iconBytes) {
+
+		File iFile = new File("./resources/icon/" + this._id + ".png");
+		try (FileImageOutputStream fio 
+				= new FileImageOutputStream(iFile)){
+			
+			fio.write(iconBytes,0,iconBytes.length);
+//			fio.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 初始化用户相关信息
+	 */
+	protected void initUserInformation() {
+		
+		User user = getUserInfo();
+		
+		//初始化用户状态
+		switch (user.getUserState()) {
+			case "0":				
+				this._loginState = "OnLine";
+				break;
+			case "1":				
+				this._loginState = "Invisibilit";
+				break;
+			case "2":				
+				this._loginState = "OutLogin";
+				break;
+			default:
+				this._loginState = user.getUserState();
+				break;
+		}
+		
+		this._genderState = user.getGender().intValue(); 
+		//初始化用户性别
+		switch (this._genderState) {
+			case 0:
+				
+				this._gender = "man";
+				break;
+			case 1:
+				this._gender = "woman";
+				break;
+			default:
+				break;
+		}
+		
+		this._id = user.getId();
+		this._nickName = user.getUserNick();
+		this._path = user.getUserImagepath();//绝对路径
+		this._personLabel = user.getPersonLabel();
+		this._findSum = user.getFiendSum();
 	}
 	
 	/**
@@ -144,16 +207,8 @@ public class Window extends JFrame{
 	 * @return
 	 */
 	protected JPanel getJpanelImage(final String path){
-		JPanel jpanelImage = new JPanel(){
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void paintComponent(java.awt.Graphics arg0) {
-				super.paintComponent(arg0);
-				ImageIcon userIcon = new ImageIcon(path);
-				arg0.drawImage(userIcon.getImage(), 0, 0, getWidth(), getHeight(), userIcon.getImageObserver());
-			}
-		};
-		return jpanelImage;
+		ImageIcon userIcon = new ImageIcon(path);
+		return getJpanelImage(userIcon);
 	}
 	
 	/**

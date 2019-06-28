@@ -3,6 +3,8 @@ package frame;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Label;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.rmi.ConnectException;
 import java.util.ArrayList;
@@ -49,6 +51,9 @@ public class MainWindow extends Window{
 		super(user);
 
 		this._iconBytes =  iconBytes;
+		
+		saveImage(iconBytes);
+		
 		initMainWindow();
 		
 		JPanel container_JPanel = (JPanel)this.getContentPane();
@@ -96,7 +101,8 @@ public class MainWindow extends Window{
 		
 		this.setVisible(true);
 	}
-	
+
+
 	/**
 	 * 初始化信息管理JPanel
 	 * @param jpanel_InformationManagement
@@ -167,7 +173,7 @@ public class MainWindow extends Window{
 		
 		try {
 			MessageContext replyMessageContext = 
-					TransmitTool.sendRequestMessageForNIOByBlock(getUserFriendInfoListModel, lockModel);
+					TransmitTool.sendRequestMessageForNIOByBlock(getUserFriendInfoListModel, lockModel).getMessageContext();
 			
 			if (replyMessageContext != null) {
 				List<UserFriendsInformation> userFriendsInformationList = 
@@ -276,6 +282,7 @@ public class MainWindow extends Window{
 	 * @param getUserFriendImageList 
 	 * @param friendsListTreeMap 
 	 */
+	@SuppressWarnings("unused")
 	private void setFriendsGroupListTree(List<GetRequest> getUserFriendInfoRequestList
 			, List<Integer> getUserFriendImageList, Map<Integer, FriendsListTree> friendsListTreeMap
 			,long currentTime) {
@@ -305,6 +312,7 @@ public class MainWindow extends Window{
 	}
 
 	
+	@SuppressWarnings("unused")
 	private void setFriendsGroupListImageTree(List<Integer> getUserFriendImageList
 			, Map<Integer, FriendsListTree> friendsListTreeMap) {
 		
@@ -338,6 +346,12 @@ public class MainWindow extends Window{
 
 		JPanel jpanel_UserImage = getJpanelImage(this._iconBytes);
 		jpanel_UserImage.setBounds(10, 10, 80, 80);
+		jpanel_UserImage.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				new UpdateInformationWindow();
+			}
+		});
 		
 		//用户昵称
 		Label nickNameLabel = new Label("nickName:  " + this._nickName);
@@ -476,7 +490,7 @@ public class MainWindow extends Window{
 	 */
 	private void initMainWindow() {
 		initUserInformation();
-		System.out.println(",W:" + _screenWidht + ",h:" + _screenHeight);
+//		System.out.println(",W:" + _screenWidht + ",h:" + _screenHeight);
 		
 		//参数为所占比例的分子
 		this.set_width(240);
@@ -492,50 +506,9 @@ public class MainWindow extends Window{
 
 		this.setJPanelBackGroundImage(
 				"./resources/image/backGround_mainWindow-2.png");
-		System.out.println(",TW:" + this._width + ",Th:" + this._height);
+//		System.out.println(",TW:" + this._width + ",Th:" + this._height);
 	}
 	
-	
-	/**
-	 * 初始化用户相关信息
-	 */
-	private void initUserInformation() {
-		
-		User user = getUserInfo();
-		
-		//初始化用户状态
-		switch (user.getUserState()) {
-			case "0":				
-				this._loginState = "OnLine";
-				break;
-			case "1":				
-				this._loginState = "Invisibilit";
-				break;
-			case "2":				
-				this._loginState = "OutLogin";
-				break;
-			default:
-				break;
-		}
-		
-		//初始化用户性别
-		switch (user.getGender().intValue()) {
-			case 0:
-				this._gender = "man";
-				break;
-			case 1:
-				this._gender = "woman";
-				break;
-			default:
-				break;
-		}
-		
-		this._id = user.getId();
-		this._nickName = user.getUserNick();
-		this._path = user.getUserImagepath();//绝对路径
-		this._personLabel = user.getPersonLabel();
-		this._findSum = user.getFiendSum();
-	}
 
 	/**
 	 * singleton model, 创建主窗口对象
