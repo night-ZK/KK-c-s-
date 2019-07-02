@@ -167,6 +167,8 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			if (messageWindow == null) {
 				//登录成功, 销毁登录窗口
 				clientLogin.dispose();
+				ClientLogin.set_clientLogin(null);
+				_pas = "";
 			} else{
 				if (_componentName.equals("textfield0")) {
 					clientLogin.getPasText().setText(ClientLogin.get_tipText_Pas());

@@ -12,7 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import listener.CloseListener;
+import listener.TopButtonListener;
 import listener.FieldListener;
 
 public class ClientLogin extends Window{
@@ -90,8 +90,9 @@ public class ClientLogin extends Window{
 		
 		
 		JButton close_JButton = getCloseJButton();
+		JButton min_JButton = getMinJButton();
 		
-		JLabel move_Lable = getMoveJLabel(close_JButton.getWidth());
+		JLabel move_Lable = getMoveJLabel(close_JButton.getWidth() + min_JButton.getWidth());
 		
 		JLabel userLabel = new JLabel();
 		JLabel pasLabel = new JLabel();
@@ -140,7 +141,7 @@ public class ClientLogin extends Window{
 			}
 		});
 		
-		closeButton.addMouseListener(new CloseListener(this));
+		closeButton.addMouseListener(new TopButtonListener(this));
 		
 		JPanel backGroundJPanel = new JPanel();
 		Color color = new Color(240,255,240);
@@ -148,6 +149,7 @@ public class ClientLogin extends Window{
 		backGroundJPanel.setBounds(0, 0, _width, _height);
 		
 		container_JPanel.add(close_JButton);
+		container_JPanel.add(min_JButton);
 		container_JPanel.add(move_Lable);
 		
 		container_JPanel.add(userLabel);
@@ -195,6 +197,15 @@ public class ClientLogin extends Window{
 		}
 		return _clientLogin;
 	}
+	
+	public synchronized static void createClientLogin(String userName){
+		createClientLogin().userText.setText(userName);
+	}
+	
+	public static void set_clientLogin(ClientLogin _clientLogin) {
+		ClientLogin._clientLogin = _clientLogin;
+	}
+	
 	
 	public static void main(String[] args) {
 		ClientLogin.createClientLogin();

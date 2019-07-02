@@ -13,16 +13,17 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 import frame.customComponent.ChatMessageTextJPanel;
 import listener.UpdateFieldListener;
-import message.MessageContext;
+import message.MessageHead;
 import message.MessageModel;
 import model.UpdateInformation;
+import tablebeans.User;
 import threadmanagement.LockModel;
 import tools.TransmitTool;
 import transmit.MessageManagement;
-import transmit.nio.SocketClientNIO;
 
 public class UpdateInformationWindow extends Window{
 
@@ -53,7 +54,7 @@ public class UpdateInformationWindow extends Window{
 	JButton submitButton;
 	
 	JButton clenButton;
-
+	
 	public UpdateInformationWindow() {
 		initUserInformation();
 		this.setSize(400, 300);
@@ -201,38 +202,63 @@ public class UpdateInformationWindow extends Window{
 		});
 		
 		
-		clenButton.addMouseListener(new MouseAdapter() {
+		submitButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				byte[] iconByte = null;
-				if(newPath != null && !newPath.equals(path) && userIcon != null) 
-					iconByte = TransmitTool.getImageBytesByImage(userIcon.getImage());
+//				if(newPath != null && !newPath.equals(path) && userIcon != null) 
+//					iconByte = TransmitTool.getImageBytesByImage(userIcon.getImage());
+					iconByte = TransmitTool.getImageBytesByPath(path);
+					
+				int gender = manRB.isSelected() ? 0 : 1;
 				
-				int gender = manRB.isSelected() ? 1 : 0;
-				
+				User userInfo = new User();
+				userInfo.setUserNick(isOldText(nickNameLabel) ? "" : nickNameLabel.getText());
+				userInfo.setUserState(isOldText(stateLabel) ? "" : stateLabel.getText());
+				userInfo.setGender(gender);
+				userInfo.setPersonLabel(isOldText(personLabel) ? "" : personLabel.getText());
+				userInfo.setId(Window.getSaveUserID());
 				UpdateInformation updateInformation =
-						new UpdateInformation(iconByte
-								, nickNameLabel.getText()
-								, stateLabel.getText()
-								, gender
-								, personLabel.getText()
-								, Window.getSaveUserID().intValue());
+						new UpdateInformation(iconByte, userInfo);
 				
 				MessageModel updateUserInfoModel = MessageManagement.getUpdateUserInfoMessageModel(updateInformation);
 				LockModel lockModel = new LockModel(0, "updateUserInformation request");
-				
+				MessageModel replyModel = null;
 				try {
-					MessageContext replyMessageContext = 
-							TransmitTool.sendRequestMessageForNIOByBlock(updateUserInfoModel, lockModel).getMessageContext();
-//					SocketClientNIO.createSocketClient().sendReuqest(updateUserInfoModel);
+					replyModel = 
+							TransmitTool.sendRequestMessageForNIOByBlock(updateUserInfoModel, lockModel);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+				
+				if (replyModel == null) {
+					new MessageWindow("Error", "502: Server Error", JRootPane.ERROR_DIALOG);
+					return;
+				}
+				updateThen(replyModel);
 				
 			}
 		});
 		
 	}
-
 	
+	public static boolean isOldText(JTextComponent jtf) {
+		return jtf.getText().equals(jtf.getName());
+	}
+	
+	public void updateThen(MessageModel replyModel) {
+		MessageHead messageHead = replyModel.getMessageHead();
+//		MessageContext messageContext = replyModel.getMessageContext();
+		boolean isUpdateSuccess = messageHead.getReplyDescribe().equals("1");
+		if (isUpdateSuccess) {
+			ClientLogin.createClientLogin(Window.getSaveUserName());
+			MainWindow.createMainWindow().dispose();
+			MainWindow.set_mainWindow(null);
+			this.dispose();
+			new MessageWindow("tip", "update success..", JRootPane.PLAIN_DIALOG);
+			
+		}else {			
+			new MessageWindow("Error", "update failed..", JRootPane.ERROR_DIALOG);
+		}
+	}
 }

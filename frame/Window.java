@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import listener.CloseListener;
+import listener.TopButtonListener;
 import listener.FieldListener;
 import tablebeans.User;
 
@@ -28,6 +28,10 @@ public class Window extends JFrame{
 	protected static int _screenHeight;
 	protected static ImageIcon _closeJButton_Ago;
 	protected static ImageIcon _closeJButton_After;
+	protected static ImageIcon _default_Icon;
+	protected static ImageIcon _main_Icon;
+	protected static ImageIcon _minJButton_Ago;
+	protected static ImageIcon _minJButton_After;
 	
 	private static User _saveUser;
 	
@@ -56,20 +60,35 @@ public class Window extends JFrame{
 		_screenHeight = screenSize.height;	
 		_closeJButton_Ago = new ImageIcon("./resources/image/close_button-1.png");
 		_closeJButton_After = new ImageIcon("./resources/image/close_button-2.png");
-		_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
+		_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		_default_Icon = new ImageIcon("./resources/icon/ZK-RGB.png");
+		_main_Icon = new ImageIcon("./resources/icon/ZK-Main.png");
+		_minJButton_Ago = new ImageIcon("./resources/image/min_ago.png");
+		_minJButton_After = new ImageIcon("./resources/image/min_after.png");
 	}
 	
 	protected Window(User user){
+		this();
 		_saveUser = user;
+		this.setIconImage(_main_Icon.getImage());
 		initUserInformation();
 	}
 
 	protected Window(){
+		this.setIconImage(_default_Icon.getImage());
 	}
 	
 	protected void saveImage(byte[] iconBytes) {
 
 		File iFile = new File("./resources/icon/" + this._id + ".png");
+		if(!iFile.exists())
+			try {
+				iFile.getParentFile().mkdirs();
+				iFile.createNewFile();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		try (FileImageOutputStream fio 
 				= new FileImageOutputStream(iFile)){
 			
@@ -131,7 +150,7 @@ public class Window extends JFrame{
 	protected JButton getCloseJButton(){
 		
 		JButton jButton = new JButton(_closeJButton_Ago);
-		jButton.setBounds(this._width - 31, 1, 30, 30);
+		jButton.setBounds(this._width - 31, 0, 30, 30);
 		
 		//除边框
 		jButton.setBorder(null);
@@ -142,7 +161,31 @@ public class Window extends JFrame{
 		jButton.setFocusPainted(false);//焦点框
 		jButton.setIconTextGap(0);//图片文字间隔量设置为0
 //		jButton.setMargin(new Insets(0, 0, 0, 0));
-		jButton.addMouseListener(new CloseListener(this, jButton, _closeJButton_Ago, _closeJButton_After));
+		jButton.setName("close");
+		jButton.addMouseListener(new TopButtonListener(this, jButton, _closeJButton_Ago, _closeJButton_After));
+		return jButton;
+	}
+	
+	/**
+	 * 获得最小化按钮
+	 * @return
+	 */
+	protected JButton getMinJButton(){
+		
+		JButton jButton = new JButton(_minJButton_Ago);
+		jButton.setBounds(this._width - 60, 1, 30, 30);
+		
+		//除边框
+		jButton.setBorder(null);
+		//除默认背景填充
+		jButton.setContentAreaFilled(false);
+		
+//		jButton.setBorderPainted(false);//不打印边框
+		jButton.setFocusPainted(false);//焦点框
+		jButton.setIconTextGap(0);//图片文字间隔量设置为0
+//		jButton.setMargin(new Insets(0, 0, 0, 0));
+		jButton.setName("min");
+		jButton.addMouseListener(new TopButtonListener(this, jButton, _minJButton_Ago, _minJButton_After));
 		return jButton;
 	}
 	

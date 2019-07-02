@@ -61,10 +61,11 @@ public class MainWindow extends Window{
 		container_JPanel.setBorder(BorderFactory.createLineBorder(new Color(156, 156, 156), 2, true));
 		
 		//关闭按钮
-		JButton jButton = getCloseJButton();
+		JButton close_JButton = getCloseJButton();
+		JButton min_JButton = getMinJButton();
 	
 		//绑定移动事件的的JLable
-		JLabel moveJLable = getMoveJLabel(jButton.getWidth());
+		JLabel moveJLable = getMoveJLabel(close_JButton.getWidth() + min_JButton.getWidth());
 
 		//欢迎JLable
 		JLabel jLabel = new JLabel("welcome to use this software..");
@@ -90,7 +91,8 @@ public class MainWindow extends Window{
 		//初始化信息管理界面
 		initInformationManagementJPanel(jpanel_InformationManagement);
 		
-		container_JPanel.add(jButton);
+		container_JPanel.add(close_JButton);
+		container_JPanel.add(min_JButton);
 		container_JPanel.add(jLabel);
 		container_JPanel.add(moveJLable);
 		
@@ -525,5 +527,19 @@ public class MainWindow extends Window{
 			_mainWindow = new MainWindow(user, iconBytes);
 		}
 		return _mainWindow;
+	}
+	
+	/**
+	 * singleton model, 获得主窗口对象
+	 * @param username 用户名
+	 * @param password 密码
+	 * @return
+	 */
+	public synchronized static MainWindow createMainWindow(){
+		return _mainWindow;
+	}
+	
+	public static void set_mainWindow(MainWindow _mainWindow) {
+		MainWindow._mainWindow = _mainWindow;
 	}
 }

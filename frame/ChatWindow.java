@@ -59,6 +59,7 @@ public class ChatWindow extends Window{
 	JPanel container_JPanel;
 	
 	JButton close_JButton;
+	JButton min_JButton;
 	JLabel move_JLabel;
 	JLabel chatObject_JLabel;
 	
@@ -114,8 +115,8 @@ public class ChatWindow extends Window{
 	 * @param friendUserInfo 好友的用户信息
 	 * @param _index 存放在List中的下标, 用于标识该类对象
 	 */
-	private ChatWindow(UserFriendsInformation friendUserInfo) {
-		initCharWindow();
+	private ChatWindow(UserFriendsInformation friendUserInfo, ImageIcon icon) {
+		initCharWindow(icon);
 		//记录聊天对象id, 用于标识窗口对象
 		_index = friendUserInfo.getId().intValue();
 		
@@ -314,12 +315,14 @@ public class ChatWindow extends Window{
 		container_JPanel = (JPanel)this.getContentPane();
 		
 		close_JButton = getCloseJButton();
-		move_JLabel = getMoveJLabel(close_JButton.getWidth());
+		min_JButton = getMinJButton();
+		move_JLabel = getMoveJLabel(close_JButton.getWidth() + min_JButton.getWidth());
 		chatObject_JLabel = new JLabel("chatting with " 
 				+ userNick + ".. ");
 		chatObject_JLabel.setBounds(10, 10, 200, 15);
 
 		container_JPanel.add(close_JButton);
+		container_JPanel.add(min_JButton);
 		container_JPanel.add(move_JLabel);
 		container_JPanel.add(chatObject_JLabel);
 	}
@@ -432,7 +435,7 @@ public class ChatWindow extends Window{
 			UserFriendsInformation ufi = friendsListTree.get_userFriendInfo();
 			MessageHead newsHead = newsModel.getMessageHead();
 //			ChatModel chatModel = new ChatModel(chatMessages.getMessage(), newsHead.getReplyTime().toString());
-			ChatWindow chatWindow = createChatWindow(ufi);
+			ChatWindow chatWindow = createChatWindow(ufi, friendsListTree.get_userImageIcon());
 			Date sendDate = new Date(newsHead.getRequestTime());
 			
 			String date = _dateFormat.format(sendDate);
@@ -512,7 +515,7 @@ public class ChatWindow extends Window{
 	/**
 	 * 初始化聊天窗口
 	 */
-	private void initCharWindow() {
+	private void initCharWindow(ImageIcon icon) {
 		this._width(480);
 		this._height(500);
 		this.setSize(_width, _height);
@@ -522,6 +525,7 @@ public class ChatWindow extends Window{
 		this.setLocation((int)_x, (int)_y);
 		this.setUndecorated(true);
 		this.setLayout(null);
+		this.setIconImage(icon.getImage());
 	}
 	
 	/**
@@ -530,7 +534,7 @@ public class ChatWindow extends Window{
 	 * @param friendUserInfo
 	 * @return
 	 */
-	public static ChatWindow createChatWindow(UserFriendsInformation friendsInfo) {
+	public static ChatWindow createChatWindow(UserFriendsInformation friendsInfo, ImageIcon icon) {
 		if (ObjectTool.isNull(friendsInfo.getId())) {
 			throw new IllegalArgumentException("argument is null ..");
 		}
@@ -544,7 +548,7 @@ public class ChatWindow extends Window{
 			}
 		}
 		
-		return new ChatWindow(friendsInfo);
+		return new ChatWindow(friendsInfo, icon);
 	}
 	
 	/**

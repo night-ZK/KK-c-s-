@@ -5,6 +5,8 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.text.JTextComponent;
 
+import frame.UpdateInformationWindow;
+
 public class UpdateFieldListener extends FocusAdapter{
 
 //	private String defaultText;
@@ -17,7 +19,7 @@ public class UpdateFieldListener extends FocusAdapter{
 	public void focusGained(FocusEvent e) {
 		JTextComponent tffu = (JTextComponent)e.getComponent();
 		
-		if(tffu.getText().equals(tffu.getName())) tffu.setText("");
+		if(UpdateInformationWindow.isOldText(tffu)) tffu.setText("");
 	}
 	
 	@Override

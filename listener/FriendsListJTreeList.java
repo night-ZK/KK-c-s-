@@ -41,7 +41,8 @@ public class FriendsListJTreeList implements MouseListener{
 					
 					if (!ObjectTool.isNull(friendsListTree.get_userFriendInfo())) {
 						ChatWindow.createChatWindow(
-								friendsListTree.get_userFriendInfo());											
+								friendsListTree.get_userFriendInfo()
+								, friendsListTree.get_userImageIcon());											
 					}
 				}
 				

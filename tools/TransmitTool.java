@@ -73,7 +73,7 @@ public class TransmitTool {
 	 */
 	public static ByteBuffer sendRequestForNIOByRule(byte[] requestModelByteArrays) {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(requestModelByteArrays.length + 4);
-		
+//		System.out.println("length: " + requestModelByteArrays.length);
 		byteBuffer.put((byte)(requestModelByteArrays.length >> 24));
 		byteBuffer.put((byte)(requestModelByteArrays.length >> 16));
 		byteBuffer.put((byte)(requestModelByteArrays.length >> 8));
@@ -396,6 +396,6 @@ public class TransmitTool {
 				e.printStackTrace();
 			}
 		}
-		return  imageByte;
+		return imageByte;
 	}
 }
