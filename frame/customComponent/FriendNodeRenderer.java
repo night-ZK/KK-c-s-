@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -13,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 
-import listener.FriendsListJTreeList;
+import tools.ImageTools;
 
 /**
  * 好友节点类
@@ -65,13 +63,15 @@ public class FriendNodeRenderer extends JLabel implements TreeCellRenderer{
 						.getUserNick();
 			}
 			
-			setIcon(friendIcon);
-			
 			if (!friendsListTree.get_userFriendInfo()
 					.getUserState().equals("0")) {
 				
-				setEnabled(false);
+//				BufferedImage bufferedImage = TransmitTool.imgAdjustContrast(friendIcon.getImage(), 50);
+//				BufferedImage bufferedImage = TransmitTool.createBlackWhiteImage(friendIcon.getImage());
+				friendIcon = ImageTools.toBlackWhite(friendIcon.getImage());
 			}
+
+			setIcon(friendIcon);
 			
 			setText(userNickAndpersonlabel);
 			setIconTextGap(10);

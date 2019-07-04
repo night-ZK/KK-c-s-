@@ -1,10 +1,7 @@
 package tools;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,8 +11,6 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageInputStream;
 import javax.swing.ImageIcon;
 
 import customexception.RequestParameterExcetion;
@@ -134,11 +129,22 @@ public class TransmitTool {
 		socketChannel.read(byteBuffer);
 		byteBuffer.flip();
 		int length = byteBuffer.getInt();
+		System.out.println("length(byteBuffer.getInt()): " + length );
 		byteBuffer = ByteBuffer.allocate(length);
-		socketChannel.read(byteBuffer);
+		int readLengthSum = 0;
+		ByteBuffer readByteBuffer;
+		while(readLengthSum < length){
+			readByteBuffer = ByteBuffer.allocate(length - readLengthSum);
+			int readLength = socketChannel.read(readByteBuffer);
+			readByteBuffer.flip();
+			byte[] bytes = new byte[readLength];
+			readByteBuffer.get(bytes);
+			byteBuffer.put(bytes);
+			readLengthSum += readLength;
+		}
 		byteBuffer.flip();
 		
-		return byteBuffer.array();	
+		return byteBuffer.array();
 	}
 	
 	/**
@@ -342,60 +348,5 @@ public class TransmitTool {
 		}
 		
 	}
-	
-	public static byte[] getImageBytesByPath(String path){
-		byte[] imageByte = null;
-		FileImageInputStream fileImageInputStream = null;
-		ByteArrayOutputStream byteArrayOutputStream = null;
-		try {
-			fileImageInputStream = new FileImageInputStream(new File(path));
-			byteArrayOutputStream = new ByteArrayOutputStream();
-			byte[] bufByte = new byte[1024];
-			int imageByteLength = -1;
-
-			while ((imageByteLength = fileImageInputStream.read(bufByte)) != -1) {
-
-				byteArrayOutputStream.write(bufByte, 0, imageByteLength);
-			}
-
-			imageByte = byteArrayOutputStream.toByteArray();
-
-		}catch (IOException e){
-			e.printStackTrace();
-		}finally {
-			try {
-				if (!ObjectTool.isNull(byteArrayOutputStream)) byteArrayOutputStream.close();
-				if (!ObjectTool.isNull(fileImageInputStream)) fileImageInputStream.close();
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
-		}
-		return  imageByte;
-	}
-	
-	public static byte[] getImageBytesByImage(Image image){
-		byte[] imageByte = null;
-		ByteArrayOutputStream bos = null;
-		BufferedImage bi = null;
-		try {
-			
-			bos = new ByteArrayOutputStream();
-			bi = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
-			ImageIO.write(bi, "png", bos);
-			
-			imageByte = bos.toByteArray();
-					
-		}catch (IOException e){
-			e.printStackTrace();
-		}finally {
-			try {
-				if (!ObjectTool.isNull(bos)) bos.close();
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
-		}
-		return imageByte;
-	}
+	    
 }

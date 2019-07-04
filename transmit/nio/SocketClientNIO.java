@@ -129,6 +129,7 @@ public class SocketClientNIO extends Thread{
 						
 						try {
 							String responseLine = new String(byteArrays, "UTF-8");
+							System.out.println("responseLine: " + responseLine);
 							if (ObjectTool.isNull(responseLine))
 								return;
 							
@@ -249,8 +250,22 @@ public class SocketClientNIO extends Thread{
 				throw new ResponseLineNotAbleExcetion("imageByteLength is not Integer..");
 			
 			System.out.println("imageLength: " + imageByteLength);
-			ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(imageByteLength));
-			socketChannel.read(buffer);
+			int imageSize = Integer.parseInt(imageByteLength);
+			ByteBuffer buffer = ByteBuffer.allocate(imageSize);
+//			int readLength = socketChannel.read(buffer);
+//			System.out.println("imagereadLength: " + readLength);
+			int readLengthSum = 0;
+			ByteBuffer readByteBuffer;
+			while(readLengthSum < imageSize){
+				readByteBuffer = ByteBuffer.allocate(imageSize - readLengthSum);
+				int readLength = socketChannel.read(readByteBuffer);
+				readByteBuffer.flip();
+				byte[] bytes = new byte[readLength];
+				readByteBuffer.get(bytes);
+				buffer.put(bytes);
+				readLengthSum += readLength;
+			}
+			
 			buffer.flip();
 			byte[] imageByte = buffer.array();
 //			File iFile = new File("G:/image/" + imageMapKey + ".png");

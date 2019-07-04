@@ -86,14 +86,12 @@ public class Window extends JFrame{
 				iFile.getParentFile().mkdirs();
 				iFile.createNewFile();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		try (FileImageOutputStream fio 
 				= new FileImageOutputStream(iFile)){
 			
-			fio.write(iconBytes,0,iconBytes.length);
-//			fio.close();
+			fio.write(iconBytes, 0, iconBytes.length);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -150,7 +148,7 @@ public class Window extends JFrame{
 	protected JButton getCloseJButton(){
 		
 		JButton jButton = new JButton(_closeJButton_Ago);
-		jButton.setBounds(this._width - 31, 0, 30, 30);
+		jButton.setBounds(this._width - 31, 1, 30, 30);
 		
 		//³ý±ß¿ò
 		jButton.setBorder(null);
@@ -236,7 +234,7 @@ public class Window extends JFrame{
 		JPanel jpanelImage = new JPanel(){
 			private static final long serialVersionUID = 1L;
 			@Override
-			protected void paintComponent(java.awt.Graphics arg0) {
+			protected void paintComponent(Graphics arg0) {
 				super.paintComponent(arg0);
 				arg0.drawImage(brakground.getImage(), 0, 0, getWidth(), getHeight(), brakground.getImageObserver());
 			}

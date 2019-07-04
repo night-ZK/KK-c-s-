@@ -29,8 +29,8 @@ public class FriendsListJTreeList implements MouseListener{
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		System.out.println("click..");
-		//点击次数为2
-		if ($clicks == 2) {
+		
+		if (e.getClickCount() == 2) {
 			//事件源属于JTree
 			if (e.getSource() instanceof JTree) {
 				JTree jTree = (JTree)e.getSource();
@@ -47,34 +47,54 @@ public class FriendsListJTreeList implements MouseListener{
 				}
 				
 			}
-			$open = true;
 		}
 		
-		final Timer clickTimer = new Timer();
-		clickTimer.schedule(new TimerTask() {
-			int num = 0;
-			@Override
-			public void run() {
-				num++;
-				$clicks++;
-				if ($open) {
-					$clicks = 1; 
-					$open = false;
-					this.cancel();
-					//关闭定时器线程
-					clickTimer.cancel();
-				}
-				if (num == 2) {
-					$clicks = 1; 
-					$open = false;
-					this.cancel();
-					//关闭定时器线程
-					clickTimer.cancel();
-				}
-			}
-		}, new Date(), 500);
-		//建议gc回收无用变量引用
-		System.gc();
+		//点击次数为2
+//		if ($clicks == 2) {
+//			//事件源属于JTree
+//			if (e.getSource() instanceof JTree) {
+//				JTree jTree = (JTree)e.getSource();
+//				TreePath treePath = jTree.getPathForLocation(e.getX(), e.getY());
+//				//触发组件属于FriendListTree
+//				if (treePath.getLastPathComponent() instanceof FriendsListTree) {
+//					FriendsListTree friendsListTree = (FriendsListTree)treePath.getLastPathComponent();
+//					
+//					if (!ObjectTool.isNull(friendsListTree.get_userFriendInfo())) {
+//						ChatWindow.createChatWindow(
+//								friendsListTree.get_userFriendInfo()
+//								, friendsListTree.get_userImageIcon());											
+//					}
+//				}
+//				
+//			}
+//			$open = true;
+//		}
+//		
+//		final Timer clickTimer = new Timer();
+//		clickTimer.schedule(new TimerTask() {
+//			int num = 0;
+//			@Override
+//			public void run() {
+//				num++;
+//				$clicks++;
+//				if ($open) {
+//					$clicks = 1; 
+//					$open = false;
+//					this.cancel();
+//					//关闭定时器线程
+//					clickTimer.cancel();
+//				}
+//				if (num == 2) {
+//					$clicks = 1; 
+//					$open = false;
+//					this.cancel();
+//					//关闭定时器线程
+//					clickTimer.cancel();
+//				}
+//			}
+//		}, new Date(), 500);
+//		//建议gc回收无用变量引用
+//		System.gc();
 	}
 
 	@Override

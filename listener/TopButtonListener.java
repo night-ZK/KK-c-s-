@@ -155,7 +155,7 @@ public class TopButtonListener implements MouseListener{
 				 }				 
 			 }
 			 ThreadConsole.useThreadPool().shutdown();
-			 System.exit(1000);
+			 System.exit(0);
 		}
 	}
 	
