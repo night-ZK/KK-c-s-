@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.JTextComponent;
 
 import frame.customComponent.ChatMessageTextJPanel;
@@ -35,33 +36,32 @@ public class UpdateInformationWindow extends Window{
 	String path;
 	String newPath;
 	ImageIcon userIcon;
-	
+	FileNameExtensionFilter fnef; 
 	
 	JPanel jpanel_UserImage;
 	//用户昵称
 	JTextField nickNameLabel;
-	
 	//用户状态
 	JTextField stateLabel;
-	
 	//性别
 	ButtonGroup genderGroup;
 	JRadioButton manRB;
-	JRadioButton womanRB;
-	
+	JRadioButton womanRB;	
 	//个性签名
 	ChatMessageTextJPanel personLabel;
 			
 	JButton chooseImageFileButton;
-	
 	JButton submitButton;
-	
 	JButton clenButton;
-	
+
+	File fileChooserPathDir;
+		
 	public UpdateInformationWindow() {
 		
 //		UIManager.setLookAndFeel();
 		initUserInformation();
+		fnef = new FileNameExtensionFilter("*.png", "png");
+		
 		this.setSize(400, 300);
 		JPanel jPanel = (JPanel)this.getContentPane();
 		jPanel.setLayout(null);
@@ -75,7 +75,9 @@ public class UpdateInformationWindow extends Window{
 	private void initUserInformationJPanel(JPanel jpanel_UserInformation) {
 
 		path = "./resources/icon/" + this._id + ".png";
-		userIcon = new ImageIcon(path);
+		userIcon = new ImageIcon(MainWindow.createMainWindow().get_iconBytes());
+//		ImageTools.saveImage(ImageTools.getImageBytesByImage(userIcon.getImage())
+//				, "G:\\image\\"+System.currentTimeMillis()+".png");
 		jpanel_UserImage = getJpanelImage(userIcon);
 		jpanel_UserImage.setBounds(10, 10, 80, 80);
 		
@@ -94,14 +96,6 @@ public class UpdateInformationWindow extends Window{
 				, 16 + nickNameLabel.getY() + nickNameLabel.getHeight()
 				, getWidth() - jpanel_UserImage.getWidth() - 50
 				, 16);
-		
-		//性别
-//		genderLabel = new JTextField("gender:  " + this._gender);
-//		genderLabel.setName(genderLabel.getText());
-//		genderLabel.setBounds(20 + jpanel_UserImage.getWidth()
-//				, 16 + stateLabel.getY() + stateLabel.getHeight()
-//				, getWidth() - jpanel_UserImage.getWidth() - 50
-//				, 16);
 		
 		manRB = new JRadioButton("Man");
 		int width = (getWidth() - jpanel_UserImage.getWidth() - 50)/3;
@@ -190,6 +184,7 @@ public class UpdateInformationWindow extends Window{
 		jpanel_UserInformation.add(submitButton);
 		jpanel_UserInformation.add(chooseImageFileButton);
 		jpanel_UserInformation.add(clenButton);
+		
 	}
 
 	private void bindExent() {
@@ -245,22 +240,25 @@ public class UpdateInformationWindow extends Window{
 				personLabel.setText(personLabel.getName());
 			}
 		});
-
-		chooseImageFileButton.addMouseListener(new MouseAdapter() {
+		
+		MouseAdapter chooseImage = new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				JFileChooser jFileChooser = new JFileChooser();
+				if (fileChooserPathDir != null) {
+					jFileChooser.setCurrentDirectory(fileChooserPathDir);
+				}
 				jFileChooser.setDialogTitle("open");
-				jFileChooser.setApproveButtonText("选择");
-				int value = jFileChooser.showSaveDialog(UpdateInformationWindow.this);
+				jFileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				jFileChooser.setFileFilter(fnef);
+				
+				int value = jFileChooser.showOpenDialog(UpdateInformationWindow.this);
 				if (value == JFileChooser.APPROVE_OPTION) {
 					File selectFile = jFileChooser.getSelectedFile();
-//					String fileName = selectFile.getName();
+					fileChooserPathDir = selectFile.getParentFile();
 					String absolutePath = selectFile.getAbsolutePath();
 					try {
 						userIcon = new ImageIcon(absolutePath);
-//						ImageTools.saveImage(ImageTools.getImageBytesByImage(userIcon.getImage())
-//								, "G:\\image\\t.png");
 						UpdateInformationWindow.this.remove(jpanel_UserImage);
 						jpanel_UserImage = getJpanelImage(userIcon);
 						jpanel_UserImage.setBounds(10, 10, 80, 80);
@@ -271,14 +269,17 @@ public class UpdateInformationWindow extends Window{
 //								, userIcon.getImageObserver());
 //						jpanel_UserImage.repaint();
 						UpdateInformationWindow.this.repaint();
-//						System.out.println("absolutePath: " + absolutePath);
 					} catch (Exception e2) {
-						e2.printStackTrace();
+//						e2.printStackTrace();
 						new MessageWindow("error", "select file extension error..", JRootPane.ERROR_DIALOG);
 					}
 				}
 			}
-		});
+		};
+		
+		jpanel_UserImage.addMouseListener(chooseImage);
+		
+		chooseImageFileButton.addMouseListener(chooseImage);
 	}
 	
 	public static boolean isOldText(JTextComponent jtf) {

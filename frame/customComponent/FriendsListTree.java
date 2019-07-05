@@ -79,6 +79,15 @@ public class FriendsListTree implements TreeNode{
 		friendsNode.parent = this;
 	}
 	
+	public void add(int index, FriendsListTree friendsNode) {
+		if (children == null) {
+			children = new ArrayList<TreeNode>();
+		}
+		children.add(index, friendsNode);
+		//
+		friendsNode.parent = this;
+	}
+	
 	public boolean isroot() {
 		return getParent() == null;
 	}
@@ -118,6 +127,11 @@ public class FriendsListTree implements TreeNode{
 		}
 		return children.indexOf(node);
 	}
+	
+	public void srotByFriendState() {
+//		this.get
+	}
+	
 
 	/**
 	 * 判断参数是否属于子节点
@@ -150,5 +164,4 @@ public class FriendsListTree implements TreeNode{
 	public Enumeration<?> children() {
 		return null;
 	}
-	
 }

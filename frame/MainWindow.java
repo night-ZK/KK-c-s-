@@ -2,6 +2,7 @@ package frame;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Insets;
 import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -116,20 +117,25 @@ public class MainWindow extends Window{
 		jpanel_InformationManagement.setLayout(null);
 		
 		//添加好友按钮
-		JButton jbutton_AddFriend = getSystemConfigButton(0);
-		jbutton_AddFriend.setText("addfriend");
+		JButton jbutton_AddFriend = getSystemConfigButton(0, "addfriend");
+//		jbutton_AddFriend.setText("addfriend");
 		
 		//查找好友按钮
-		JButton jbutton_FindFriend = getSystemConfigButton(1);
-		jbutton_FindFriend.setText("findfriend");
+		JButton jbutton_FindFriend = getSystemConfigButton(1, "findfriend");
+//		jbutton_FindFriend.setText("findfriend");
 		
 		//显示个人信息按钮
-		JButton jbutton_UserInfo = getSystemConfigButton(2);
-		jbutton_UserInfo.setText("userinfo");
+		JButton jbutton_UserInfo = getSystemConfigButton(2, "userinfo");
+//		jbutton_UserInfo.setText("userinfo");
 		
 		//配置个人信息按钮
-		JButton jbutton_InfoConfig = getSystemConfigButton(3);
-		jbutton_InfoConfig.setText("infoconfig");
+		JButton jbutton_InfoConfig = getSystemConfigButton(3, "infoconfig");
+		jbutton_InfoConfig.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+		});
 		
 		jpanel_InformationManagement.add(jbutton_AddFriend);
 		jpanel_InformationManagement.add(jbutton_FindFriend);
@@ -197,6 +203,7 @@ public class MainWindow extends Window{
 					friendsNode.set_userImageIcon(imageIcon);
 					friendsListTreeMap.put(friendID, friendsNode);
 				}
+				
 				setGroupList(group_Myfrends, friendsListTreeMap);
 			}
 			
@@ -231,6 +238,7 @@ public class MainWindow extends Window{
 //		};
 //		getUserFriendInfoListRequest.sendRequest(true).then();		
 		
+		group_Myfrends.srotByFriendState();
 		friendsListTree_RootNode.add(group_Myfrends);
 		
 		friendsListTree_RootNode.add(group_Stranger);
@@ -276,6 +284,35 @@ public class MainWindow extends Window{
 		for (FriendsListTree friendsNode : friendsListTreeMap.values()) {
 			group_Myfrends.add(friendsNode);
 		}
+	}
+	
+	/**
+	 * 设置分组好友list
+	 * @param group_Myfrends
+	 * @param friendsListTreeMap
+	 */
+	private void setGroupListBySort(FriendsListTree group_Myfrends
+			, Map<Integer, FriendsListTree> friendsListTreeMap
+			, int index) {
+		Iterator<FriendsListTree> iterable = friendsListTreeMap.values().iterator();
+		while (iterable.hasNext()) {
+			FriendsListTree friendsNode = iterable.next();
+			if(friendsNode.get_userFriendInfo().getUserState().equals("0")) {				
+				group_Myfrends.add(index++, friendsNode);
+				iterable.remove();
+			}
+		}
+		
+		iterable = friendsListTreeMap.values().iterator();
+		while (iterable.hasNext()) {
+			FriendsListTree friendsNode = iterable.next();
+			group_Myfrends.add(index++, friendsNode);
+			iterable.remove();
+		}
+		
+//		for (FriendsListTree friendsNode : friendsListTreeMap.values()) {
+//			group_Myfrends.add(friendsNode);
+//		}
 	}
 
 	/**
@@ -414,6 +451,28 @@ public class MainWindow extends Window{
 		divisionLabel.setText(divisionText.toString());
 		return divisionLabel;
 	}
+	
+	/**
+	 * 获得设置系统配置的JButton
+	 * @param index 自身所在位置下标
+	 * @return
+	 */
+	protected JButton getSystemConfigButton(int index, String desc) {
+		JButton jButtons_SystemConfig = new JButton();
+		int jbutton_SystemConfig_Width = (_width - (10 * (4 + 1))) / 4;//数量是4，间距是10
+//		int jbutton_SystemConfig_Y = 40 / 2 - 30 / 2;
+		jButtons_SystemConfig.setBounds(
+				10 * (index + 1) + jbutton_SystemConfig_Width * index
+				, 5, jbutton_SystemConfig_Width, 30);
+		
+		jButtons_SystemConfig.setText(desc);
+		jButtons_SystemConfig.setToolTipText(desc);
+		jButtons_SystemConfig.setFocusPainted(false);//焦点框
+		jButtons_SystemConfig.setIconTextGap(0);//图片文字间隔量设置为0
+		jButtons_SystemConfig.setMargin(new Insets(0, 0, 0, 0));
+		
+		return jButtons_SystemConfig;
+	}
 
 	/**
 	 * 获得设置系统配置的JButton
@@ -427,6 +486,10 @@ public class MainWindow extends Window{
 		jButtons_SystemConfig.setBounds(
 				10 * (index + 1) + jbutton_SystemConfig_Width * index
 				, 5, jbutton_SystemConfig_Width, 30);
+		
+		jButtons_SystemConfig.setFocusPainted(false);//焦点框
+		jButtons_SystemConfig.setIconTextGap(0);//图片文字间隔量设置为0
+		jButtons_SystemConfig.setMargin(new Insets(0, 0, 0, 0));
 		
 		return jButtons_SystemConfig;
 	}
@@ -529,6 +592,10 @@ public class MainWindow extends Window{
 		return _mainWindow;
 	}
 	
+	public byte[] get_iconBytes() {
+		return _iconBytes;
+	}
+
 	/**
 	 * singleton model, 获得主窗口对象
 	 * @param username 用户名
