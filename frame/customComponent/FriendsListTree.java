@@ -128,8 +128,8 @@ public class FriendsListTree implements TreeNode{
 		return children.indexOf(node);
 	}
 	
-	public void srotByFriendState() {
-//		this.get
+	public boolean srotRuleByState() {
+		return this.get_userFriendInfo().getUserState().equals("0");
 	}
 	
 

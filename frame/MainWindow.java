@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -204,7 +205,8 @@ public class MainWindow extends Window{
 					friendsListTreeMap.put(friendID, friendsNode);
 				}
 				
-				setGroupList(group_Myfrends, friendsListTreeMap);
+				setGroupListBySort(group_Myfrends, copyMap(friendsListTreeMap), 0);
+//				setGroupList(group_Myfrends, friendsListTreeMap);
 			}
 			
 		} catch (IOException e) {
@@ -238,7 +240,8 @@ public class MainWindow extends Window{
 //		};
 //		getUserFriendInfoListRequest.sendRequest(true).then();		
 		
-		group_Myfrends.srotByFriendState();
+//		group_Myfrends.srotByFriendState();
+		
 		friendsListTree_RootNode.add(group_Myfrends);
 		
 		friendsListTree_RootNode.add(group_Stranger);
@@ -275,16 +278,6 @@ public class MainWindow extends Window{
 		jpanel_FriendsList.add(jpanel_Friend);
 	}
 
-	/**
-	 * 设置分组好友list
-	 * @param group_Myfrends
-	 * @param friendsListTreeMap
-	 */
-	private void setGroupList(FriendsListTree group_Myfrends, Map<Integer, FriendsListTree> friendsListTreeMap) {
-		for (FriendsListTree friendsNode : friendsListTreeMap.values()) {
-			group_Myfrends.add(friendsNode);
-		}
-	}
 	
 	/**
 	 * 设置分组好友list
@@ -294,6 +287,7 @@ public class MainWindow extends Window{
 	private void setGroupListBySort(FriendsListTree group_Myfrends
 			, Map<Integer, FriendsListTree> friendsListTreeMap
 			, int index) {
+		
 		Iterator<FriendsListTree> iterable = friendsListTreeMap.values().iterator();
 		while (iterable.hasNext()) {
 			FriendsListTree friendsNode = iterable.next();
@@ -309,10 +303,17 @@ public class MainWindow extends Window{
 			group_Myfrends.add(index++, friendsNode);
 			iterable.remove();
 		}
+	}
+	
+
+	public Map<Integer, FriendsListTree> copyMap(Map<Integer, FriendsListTree> friendsListTreeMap) {
+		Map<Integer, FriendsListTree> replyMap = 
+				new HashMap<>();
+		for (Entry<Integer, FriendsListTree> friendsListTree : friendsListTreeMap.entrySet()) {
+			replyMap.put(friendsListTree.getKey(), friendsListTree.getValue());
+		}
+		return replyMap;
 		
-//		for (FriendsListTree friendsNode : friendsListTreeMap.values()) {
-//			group_Myfrends.add(friendsNode);
-//		}
 	}
 
 	/**

@@ -31,13 +31,11 @@ public class SocketClientNIO extends Thread{
 	private static int port;
 	
 	//保存接收的数据
-	public static Map<String, MessageModel> receiveMap = 
-			new HashMap<String, MessageModel>();
+	public static Map<String, MessageModel> receiveMap;
 	
 	//保存接收的数据
 	//key = uid, value = userImage
-	public static Map<String, ImageIcon> receiveImageMap = 
-			new HashMap<String, ImageIcon>();
+	public static Map<String, ImageIcon> receiveImageMap;
 	
 	private static SocketClientNIO socketClientNIO;
 	static {
@@ -46,6 +44,9 @@ public class SocketClientNIO extends Thread{
 		host = element.elementText("host-address");
 		port = Integer.parseInt(element.elementText("port"));
 		socketClientNIO = new SocketClientNIO();
+		
+		receiveMap = new HashMap<String, MessageModel>();
+		receiveImageMap = new HashMap<String, ImageIcon>();
 	}
 	
 	Selector selector;

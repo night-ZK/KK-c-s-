@@ -165,10 +165,7 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			MessageWindow messageWindow = loginMainWindow();
 			ClientLogin clientLogin = ClientLogin.createClientLogin();
 			if (messageWindow == null) {
-				//登录成功, 销毁登录窗口
-				clientLogin.dispose();
-				ClientLogin.set_clientLogin(null);
-				_pas = "";
+				loginSuccess(clientLogin);
 			} else{
 				if (_componentName.equals("textfield0")) {
 					clientLogin.getPasText().setText(ClientLogin.get_tipText_Pas());
@@ -180,6 +177,14 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 			}
 		}
 	}
+	
+	public static void loginSuccess(ClientLogin clientLogin) {
+		//登录成功, 销毁登录窗口
+		clientLogin.dispose();
+		ClientLogin.set_clientLogin(null);
+		_pas = "";
+	}
+	
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		char keyChar = arg0.getKeyChar();

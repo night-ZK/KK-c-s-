@@ -1,5 +1,7 @@
+/.idea/
 /customexception/
 /frame/
+/lib/
 /list/
 /listener/
 /message/
@@ -13,6 +15,3 @@
 /threadmanagement/
 /tools/
 /transmit/
-/.settings/
-/lib/
-/KK-c-s-.iml

@@ -148,7 +148,7 @@ public class TopButtonListener implements MouseListener{
 		}else {
 			 if(socketClientNIO.getSocketChannel() != null && socketClientNIO.getSocketChannel().isOpen()) {
 				 try {
-					 MessageModel closeModel = MessageManagement.getCloseMessageModel();
+					 MessageModel closeModel = MessageManagement.getCloseMessageModel(Window.getSaveUserID().intValue());
 					 socketClientNIO.sendReuqest(closeModel);
 				 } catch (IOException e) {
 					 e.printStackTrace();

@@ -101,12 +101,12 @@ public class MessageManagement {
 		return new MessageModel(messageHead, null);
 	}
 	
-	public static MessageModel getCloseMessageModel() {
+	public static MessageModel getCloseMessageModel(int userId) {
 		MessageHead messageHead = new MessageHead();
 		messageHead.setType(7);
 		messageHead.setRequestDataType(String.class);
 		
-		String describe = "/close";
+		String describe = "/" + userId;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
 		messageHead.setRequestNO(Request.getRequestNo());

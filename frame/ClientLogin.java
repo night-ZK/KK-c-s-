@@ -137,7 +137,10 @@ public class ClientLogin extends Window{
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				FieldListener.loginMainWindow();
+				MessageWindow messageWindow = FieldListener.loginMainWindow();
+				if (messageWindow == null) {
+					FieldListener.loginSuccess(ClientLogin.createClientLogin());
+				}
 			}
 		});
 		

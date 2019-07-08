@@ -104,8 +104,9 @@ public class Window extends JFrame{
 		
 		User user = getUserInfo();
 		
+		String state = user.getUserState().replace("zk", "");
 		//初始化用户状态
-		switch (user.getUserState()) {
+		switch (state) {
 			case "0":				
 				this._loginState = "OnLine";
 				break;
@@ -116,7 +117,7 @@ public class Window extends JFrame{
 				this._loginState = "OutLogin";
 				break;
 			default:
-				this._loginState = user.getUserState();
+				this._loginState = state;
 				break;
 		}
 		
