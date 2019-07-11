@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.plaf.basic.BasicTreeUI;
@@ -471,6 +472,12 @@ public class MainWindow extends Window{
 		jButtons_SystemConfig.setFocusPainted(false);//焦点框
 		jButtons_SystemConfig.setIconTextGap(0);//图片文字间隔量设置为0
 		jButtons_SystemConfig.setMargin(new Insets(0, 0, 0, 0));
+		jButtons_SystemConfig.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				new MessageWindow("@_@`", "Coming soon..", JRootPane.FRAME);
+			}
+		});
 		
 		return jButtons_SystemConfig;
 	}

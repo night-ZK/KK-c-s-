@@ -18,6 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
@@ -279,14 +280,25 @@ public class ChatWindow extends Window{
 		chatTools_JPanel.setBackground(toolsPanelColor);
 		chatTools_JPanel.setLayout(null);
 		//表情
-		image_JButton = new JButton(new ImageIcon("./resources/image/image_JButton.png"));
+		image_JButton = getToolsJButton("./resources/image/image_JButton.png");
 		image_JButton.setBounds(5, 0, 30, 30);
 		//文件
-		file_JButton = new JButton(new ImageIcon("./resources/image/file_JButton.png"));
+		file_JButton = getToolsJButton("./resources/image/file_JButton.png");
 		file_JButton.setBounds(image_JButton.getX() 
 				+ image_JButton.getWidth() + 5, 0, 30, 30);
 		chatTools_JPanel.add(image_JButton);
 		chatTools_JPanel.add(file_JButton);
+	}
+
+	private JButton getToolsJButton(String imagePath) {
+		JButton jButton = new JButton(new ImageIcon(imagePath));
+		jButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				new MessageWindow("@_@`", "Coming soon..", JRootPane.FRAME);
+			}
+		});
+		return jButton;
 	}
 
 	private void initChatMessagePanel() {
@@ -334,14 +346,14 @@ public class ChatWindow extends Window{
 		tools_JPanel.setBackground(toolsPanelColor);
 		tools_JPanel.setLayout(null);
 		//视频按钮
-		video_JButton = new JButton(new ImageIcon("./resources/image/video_JButton.png"));
+		video_JButton = getToolsJButton("./resources/image/video_JButton.png");
 		video_JButton.setBounds(5, 0, 30, 30);
 		//语音
-		voice_JButton = new JButton(new ImageIcon("./resources/image/voice_JButton.png"));
+		voice_JButton = getToolsJButton("./resources/image/voice_JButton.png");
 		voice_JButton.setBounds(video_JButton.getX() 
 				+ video_JButton.getWidth() + 5, 0, 30, 30);
 		//看片
-		watchMovie_JButton = new JButton(new ImageIcon("./resources/image/watchMV_JButton.png"));
+		watchMovie_JButton = getToolsJButton("./resources/image/watchMV_JButton.png");
 		watchMovie_JButton.setBounds(voice_JButton.getX() 
 				+ voice_JButton.getWidth() + 5, 0, 30, 30);
 		

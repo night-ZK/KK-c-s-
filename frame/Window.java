@@ -198,6 +198,29 @@ public class Window extends JFrame{
 		moveJLable.setBounds(retainWidth, 0, this._width - 2*retainWidth, 30);
 		moveJLable.setName("move");
 		moveJLable.addMouseListener(new FieldListener(this, moveJLable.getName()));
+//		moveJLable.addMouseListener(new MouseAdapter() {
+//			Point dropPoint = new Point();
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				dropPoint.x = e.getX();
+//				dropPoint.y = e.getY();
+////				System.out.println(Window.this.getLocation());
+//			}
+//		});
+//		moveJLable.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseMoved(MouseEvent e) {
+//				System.out.println(Window.this.getLocation());
+//			}
+//			@Override
+//			public void mouseClicked(MouseEvent e) {
+//				System.out.println(Window.this.getLocation());
+//			}
+//			@Override
+//			public void mouseDragged(MouseEvent e) {
+//				System.out.println(Window.this.getLocation());
+//			}
+//		});
 		return moveJLable;
 	}
 	

@@ -3,7 +3,6 @@ package threadmanagement;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import message.MessageModel;
 
 /**
  * 客户端线程管理类

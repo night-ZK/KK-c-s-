@@ -5,7 +5,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
@@ -16,8 +19,12 @@ import javax.swing.ImageIcon;
 import customexception.RequestParameterExcetion;
 import message.MessageHead;
 import message.MessageModel;
+import model.HandlerModel;
 import threadmanagement.LockModel;
 import threadmanagement.ThreadConsole;
+import transmit.Controller.Controller;
+import transmit.Controller.KSChatController;
+import transmit.Controller.Annotation.HandlerAnnotation.Handler;
 import transmit.getter.Receive;
 import transmit.nio.SocketClientNIO;
 
@@ -347,6 +354,29 @@ public class TransmitTool {
 			socketClientNIO.sendReuqest(requestMessageModel);
 		}
 		
+	}
+
+	public static void handlByHandler(String responseType
+			, String[] responseLineArrays
+			, SocketChannel socketChannel) throws IllegalAccessException 
+											, IllegalArgumentException
+											, InvocationTargetException
+											, InstantiationException
+											, NoSuchMethodException
+											, SecurityException {
+		Class<? extends Controller> cls = KSChatController.class;
+		Method[] methods = cls.getDeclaredMethods();
+		for (Method method : methods) {
+			Handler handler = method.getAnnotation(Handler.class);
+			if (handler.responseType().equals(responseType.trim())) {
+//				System.out.println("Class: " + String[].class + ",String.c: " + String.class);
+				Constructor<? extends Controller> constructor = cls.getConstructor(HandlerModel.class);
+				HandlerModel handlerModel = new HandlerModel();
+				handlerModel.setResponseLineParameter(responseLineArrays);
+				method.invoke(constructor.newInstance(handlerModel), socketChannel);
+				return;
+			}
+		}
 	}
 	    
 }

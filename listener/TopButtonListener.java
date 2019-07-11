@@ -89,7 +89,7 @@ public class TopButtonListener implements MouseListener{
 			win.setVisible(false);
 			
 			PopupMenu popupMenu = new PopupMenu();
-			TrayIcon trayIcon = new TrayIcon(win.getIconImage(), "chat..", popupMenu);
+			TrayIcon trayIcon = new TrayIcon(win.getIconImage(), "chat[ID:"+ Window.getSaveUserID() + "]" , popupMenu);
 			trayIcon.setImageAutoSize(true);
 			trayIcon.addMouseListener(new MouseAdapter() {
 				@Override
