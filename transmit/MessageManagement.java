@@ -101,7 +101,7 @@ public class MessageManagement {
 		return new MessageModel(messageHead, null);
 	}
 	
-	public static MessageModel getCloseMessageModel(int userId) {
+	public static MessageModel getCloseMessageModel(int userId, List<Integer> friendsId) {
 		MessageHead messageHead = new MessageHead();
 		messageHead.setType(7);
 		messageHead.setRequestDataType(String.class);
@@ -110,7 +110,9 @@ public class MessageManagement {
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
 		messageHead.setRequestNO(Request.getRequestNo());
-		return new MessageModel(messageHead, null);
+		MessageContext messageContext = new MessageContext();
+		messageContext.setObject(friendsId);
+		return new MessageModel(messageHead, messageContext);
 	}
 	
 	public static MessageModel getUpdateUserInfoMessageModel(UpdateInformation updateInformation) {

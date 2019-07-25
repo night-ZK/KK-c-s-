@@ -9,6 +9,8 @@ import javax.swing.ImageIcon;
 import customexception.ResponseLineNotAbleExcetion;
 import customexception.ServerSendChatMessageException;
 import frame.ChatWindow;
+import frame.MainWindow;
+import message.MessageHead;
 import message.MessageModel;
 import model.HandlerModel;
 import tools.ObjectTool;
@@ -26,8 +28,25 @@ public class KSChatController implements Controller{
     @Handler(responseType = "MessageModel")
     public void messageModelHandler(SocketChannel socketChannel) throws ClassNotFoundException, IOException{
     	MessageModel receiveModel = (MessageModel)TransmitTool.channelSteamToObjectForNIO(socketChannel);
-//		MessageHead messageHead = receiveModel.getMessageHead();
+		MessageHead messageHead = receiveModel.getMessageHead();
 		
+    	if (messageHead.getType() == 9) {
+    		String[] ds = messageHead.getReplyDescribe().split(":");
+    		String onOrOff = ds[0].equals("signIn") ? "0" : "1";
+    		String friendId = ds[1];
+    		MainWindow.createMainWindow().friendOnOrOffline(Integer.parseInt(friendId), onOrOff);
+    		return;
+    	}else if(messageHead.getType() == 1) {
+//    		MessageWindow messageWindow = FieldListener.loginAfter(receiveModel);
+//    		ClientLogin clientLogin = ClientLogin.createClientLogin();
+//			if (messageWindow == null) {
+//				FieldListener.loginSuccess(clientLogin);
+//			} else{
+//				FieldListener.loginfaild(clientLogin);
+//			}
+//			return;
+    	}
+
 		String requestMapKey = TransmitTool.getRequestMapKey(receiveModel);
 		
 		synchronized(SocketClientNIO.receiveMap) {		
@@ -112,4 +131,5 @@ public class KSChatController implements Controller{
 			e.printStackTrace();
 		}
     }
+
 }

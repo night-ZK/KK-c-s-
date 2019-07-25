@@ -197,6 +197,7 @@ public class ClientLogin extends Window{
 				if (messageWindow == null) {
 					FieldListener.loginSuccess(ClientLogin.createClientLogin());
 				}
+//				FieldListener.loginMainWindowForWait();
 			}
 		});
 		

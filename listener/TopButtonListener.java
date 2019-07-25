@@ -11,6 +11,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -117,7 +119,8 @@ public class TopButtonListener implements MouseListener{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					_tray.remove(trayIcon);
-					System.exit(0);
+//					System.exit(0);
+					close(_win);
 				}
 			});
 			
@@ -146,9 +149,14 @@ public class TopButtonListener implements MouseListener{
 			Number index_Key = ((ChatWindow) win).get_index();
 			((ChatWindow)win).removeChatFriendsList(index_Key);
 		}else {
-			 if(socketClientNIO.getSocketChannel() != null && socketClientNIO.getSocketChannel().isOpen()) {
+			 if(socketClientNIO.getSocketChannel() != null && socketClientNIO.getSocketChannel().isOpen()
+					 && Window.getSaveUserID() != null) {
 				 try {
-					 MessageModel closeModel = MessageManagement.getCloseMessageModel(Window.getSaveUserID().intValue());
+					 
+					 Set<Integer> friendsIdS = MainWindow.getFriendsListTreeMap().keySet();
+					 //Set，list没有implement 序列化接口Serializable
+					 ArrayList<Integer> friendsId = new ArrayList<>(friendsIdS);
+					 MessageModel closeModel = MessageManagement.getCloseMessageModel(Window.getSaveUserID().intValue(), friendsId);
 					 socketClientNIO.sendReuqest(closeModel);
 				 } catch (IOException e) {
 					 e.printStackTrace();

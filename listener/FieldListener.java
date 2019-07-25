@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import javax.swing.JRootPane;
 import frame.ClientLogin;
+import frame.LoginView;
 import frame.MainWindow;
 import frame.MessageWindow;
 import frame.Window;
@@ -21,6 +22,7 @@ import message.MessageContext;
 import message.MessageModel;
 import tablebeans.User;
 import threadmanagement.LockModel;
+import threadmanagement.ThreadConsole;
 import tools.ObjectTool;
 import tools.TransmitTool;
 import transmit.MessageManagement;
@@ -162,6 +164,8 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 				_user = _evenLis.getText();
 			}
 			
+//			loginMainWindowForWait();
+			
 			MessageWindow messageWindow = loginMainWindow();
 			ClientLogin clientLogin = ClientLogin.createClientLogin();
 			if (messageWindow == null) {
@@ -183,6 +187,13 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 		clientLogin.dispose();
 		ClientLogin.set_clientLogin(null);
 		_pas = "";
+	}
+	
+	public static void loginfaild(ClientLogin clientLogin) {
+		clientLogin.getPasText().setText(ClientLogin.get_tipText_Pas());
+		_pas = "";
+		clientLogin.getUserText().setText(ClientLogin.get_tipText_User());
+		_user = "";
 	}
 	
 	@Override
@@ -211,64 +222,26 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 		}
 		
 		MessageModel messageModel = null;
-		MessageContext messageContext = null;
 
 		MessageModel requestMessageModel = MessageManagement.loginMessageModel(_user, _pas);
 		LockModel lockModel = new LockModel(0, "login request");
 		
 //		showLoginWait(lockModel);
+
+//		LoginView loginView = LoginView.createLoginView();
+//		Thread loginViewThread = new Thread(loginView);
+//		loginViewThread.start();
 		
 		try {
 			messageModel = TransmitTool.sendRequestMessageForNIOByBlock(requestMessageModel, lockModel);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		if (messageModel == null) {
-			if(SocketClientNIO.createSocketClient().getSocketChannel() == null 
-					|| !SocketClientNIO.createSocketClient().getSocketChannel().isOpen())
-				return new MessageWindow("login fail", "502: Unconnected Server..", JRootPane.ERROR_DIALOG);
-			return new MessageWindow("login fail", "502: login outTime..", JRootPane.ERROR_DIALOG);
-		}
-		messageContext = messageModel.getMessageContext();
-		if (messageContext == null) {
-			return new MessageWindow("login faild", "403: username or password error..", JRootPane.ERROR_DIALOG);
-		}
-		
-		if (messageContext.getObject() instanceof ArrayList<?>) {
-			ArrayList<?> loginContext = (ArrayList<?>)messageContext.getObject();
+//		catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 
-			if (loginContext.get(0) instanceof User) {
-				
-				User loginUser = (User) loginContext.get(0);
-				if (ObjectTool.isNull(loginUser.getId())) {
-					
-					return new MessageWindow("login faild", "403: username or password error..", JRootPane.ERROR_DIALOG);
-				}
-				
-				if (loginContext.get(1) instanceof byte[]) {
-					byte[] iconBytes = (byte[]) loginContext.get(1);
-					if (ObjectTool.isNull(iconBytes)) {
-						System.err.println("server no find icon error..");
-						//TODO 加载默认icon
-						
-					}
-					
-					MainWindow.createMainWindow(loginUser, iconBytes);
-				}else {
-					
-					return new MessageWindow("login faild", "500: login icon data type error..", JRootPane.ERROR_DIALOG);
-				}
-				
-			}else {
-				return new MessageWindow("login faild", "500: login user data type error..", JRootPane.ERROR_DIALOG);
-			}
-						
-		}else {
-			return new MessageWindow("login faild", "500: data type error..", JRootPane.ERROR_DIALOG);
-		}
-
-		return null;
+		return loginAfter(messageModel);
 	
 //		loginForBIO();
 	}
@@ -375,5 +348,83 @@ public class FieldListener implements MouseListener, FocusListener, KeyListener 
 		runRoun.start();
 
 	}
+
 	
+	public static MessageWindow loginAfter(MessageModel messageModel) {
+		
+		LoginView.createLoginView().die();
+		if (messageModel == null) {
+			if(SocketClientNIO.createSocketClient().getSocketChannel() == null 
+					|| !SocketClientNIO.createSocketClient().getSocketChannel().isOpen())
+				return new MessageWindow("login fail", "502: Unconnected Server..", JRootPane.ERROR_DIALOG);
+			return new MessageWindow("login fail", "502: login outTime..", JRootPane.ERROR_DIALOG);
+		}
+		MessageContext messageContext = messageModel.getMessageContext();
+		if (messageContext == null) {
+			return new MessageWindow("login faild", "403: username or password error..", JRootPane.ERROR_DIALOG);
+		}
+		
+		if (messageContext.getObject() instanceof ArrayList<?>) {
+			ArrayList<?> loginContext = (ArrayList<?>)messageContext.getObject();
+
+			if (loginContext.get(0) instanceof User) {
+				
+				User loginUser = (User) loginContext.get(0);
+				if (ObjectTool.isNull(loginUser.getId())) {
+					
+					return new MessageWindow("login faild", "403: username or password error..", JRootPane.ERROR_DIALOG);
+				}
+				
+				if (loginContext.get(1) instanceof byte[]) {
+					byte[] iconBytes = (byte[]) loginContext.get(1);
+					if (ObjectTool.isNull(iconBytes)) {
+						System.err.println("server no find icon error..");
+						//TODO 加载默认icon
+						
+					}
+					
+					MainWindow.createMainWindow(loginUser, iconBytes);
+				}else {
+					
+					return new MessageWindow("login faild", "500: login icon data type error..", JRootPane.ERROR_DIALOG);
+				}
+				
+			}else {
+				return new MessageWindow("login faild", "500: login user data type error..", JRootPane.ERROR_DIALOG);
+			}
+						
+		}else {
+			return new MessageWindow("login faild", "500: data type error..", JRootPane.ERROR_DIALOG);
+		}
+
+		return null;
+	}
+
+	
+	/**
+	 * 登陆到MainWindow窗口
+	 * 
+	 */
+	public static void loginMainWindowForWait() {
+		
+		if (ObjectTool.isNull(_user) || ObjectTool.isNull(_pas)) {
+			new MessageWindow("tip", "username or passworld is empty", JRootPane.ERROR_DIALOG);
+			return;
+		}
+
+		MessageModel requestMessageModel = MessageManagement.loginMessageModel(_user, _pas);
+		Runnable runnable = ()->{
+			
+			try {
+				TransmitTool.sendMessageForNIO(requestMessageModel);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		};
+		LoginView loginView = LoginView.createLoginView();
+		ThreadConsole.useThreadPool().execute(runnable);
+		ThreadConsole.useThreadPool().execute(loginView);
+
+	}
 }

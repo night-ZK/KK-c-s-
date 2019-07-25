@@ -28,7 +28,7 @@ public class FriendsListJTreeList implements MouseListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println("click..");
+//		System.out.println("click..");
 		
 		if (e.getClickCount() == 2) {
 			//事件源属于JTree

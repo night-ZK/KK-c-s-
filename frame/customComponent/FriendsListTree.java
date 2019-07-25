@@ -88,6 +88,10 @@ public class FriendsListTree implements TreeNode{
 		friendsNode.parent = this;
 	}
 	
+	public void clean() {
+		children = null;
+	}
+	
 	public boolean isroot() {
 		return getParent() == null;
 	}
@@ -164,4 +168,5 @@ public class FriendsListTree implements TreeNode{
 	public Enumeration<?> children() {
 		return null;
 	}
+		
 }

@@ -334,8 +334,12 @@ public class TransmitTool {
 		return TransmitTool.getReplyImageForNIO(imageKey);
 	}
 	
-	
-	public static void sendChatMessageForNIO(MessageModel requestMessageModel) throws IOException {
+	/**
+	 * ²»×èÈû
+	 * @param requestMessageModel
+	 * @throws IOException
+	 */
+	public static void sendMessageForNIO(MessageModel requestMessageModel) throws IOException {
 
 		SocketClientNIO socketClientNIO = SocketClientNIO.createSocketClient();
 		if(!socketClientNIO.isAlive()) {			

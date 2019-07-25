@@ -24,6 +24,7 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.plaf.basic.BasicTreeUI;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import frame.Window;
@@ -47,9 +48,21 @@ public class MainWindow extends Window{
 	
 	private static MainWindow _mainWindow = null;
 
-	static Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
+	private static Map<Integer, FriendsListTree> friendsListTreeMap = new HashMap<>();
 	
 	private byte[] _iconBytes;
+	
+	JScrollPane friendJScrollPane;
+	FriendsListTree friendsListTree_RootNode;
+	JTree groupListTreeRoot;
+	FriendsListTree group_Myfrends;
+	
+	FriendsListTree group_Stranger;
+	
+	public static Map<Integer, FriendsListTree> getFriendsListTreeMap() {
+		return friendsListTreeMap;
+	}
+
 	private MainWindow(User user, byte[] iconBytes){
 		super(user);
 
@@ -166,14 +179,14 @@ public class MainWindow extends Window{
 				, jpanel_FriendsList.getHeight() - 10);
 		jpanel_Friend.setLayout(new BorderLayout(0, 0));
 		
-		JScrollPane friendJScrollPane = new JScrollPane(); 
+		friendJScrollPane = new JScrollPane(); 
 		
-		FriendsListTree friendsListTree_RootNode = new FriendsListTree();
+		friendsListTree_RootNode = new FriendsListTree();
 		
-		FriendsListTree group_Myfrends = new FriendsListTree();
+		group_Myfrends = new FriendsListTree();
 		group_Myfrends.set_groupText("myFriends");
 		
-		FriendsListTree group_Stranger = new FriendsListTree();
+		group_Stranger = new FriendsListTree();
 		group_Stranger.set_groupText("stranger");
 		
 		
@@ -247,7 +260,7 @@ public class MainWindow extends Window{
 		
 		friendsListTree_RootNode.add(group_Stranger);
 		
-		JTree groupListTreeRoot = new JTree(friendsListTree_RootNode);
+		groupListTreeRoot = new JTree(friendsListTree_RootNode);
 		groupListTreeRoot.setRootVisible(false);
 		groupListTreeRoot.putClientProperty("JTree.lineStyle"
 				, "Horizontal");
@@ -617,4 +630,36 @@ public class MainWindow extends Window{
 	public static void set_mainWindow(MainWindow _mainWindow) {
 		MainWindow._mainWindow = _mainWindow;
 	}
+
+
+//	public void friendOnline(int friendId) {
+//		if(friendsListTreeMap.containsKey(friendId)) {
+//			FriendsListTree friendsListTree = friendsListTreeMap.get(friendId);
+//			friendsListTree.get_userFriendInfo().setUserState("0");
+//			group_Myfrends.clean();
+//			setGroupListBySort(group_Myfrends, copyMap(friendsListTreeMap), 0);
+////			groupListTreeRoot.updateUI();
+////			friendsListTree_RootNode.clean();
+////			friendsListTree_RootNode.add(group_Myfrends);
+////			friendsListTree_RootNode.add(group_Stranger);
+//			groupListTreeRoot.setModel(new DefaultTreeModel(friendsListTree_RootNode, false));
+//			friendJScrollPane.updateUI();
+//		}
+//	}
+	
+	public void friendOnOrOffline(int friendId, String onOrOff) {
+		if(friendsListTreeMap.containsKey(friendId)) {
+			FriendsListTree friendsListTree = friendsListTreeMap.get(friendId);
+			friendsListTree.get_userFriendInfo().setUserState(onOrOff);
+			group_Myfrends.clean();
+			setGroupListBySort(group_Myfrends, copyMap(friendsListTreeMap), 0);
+//			groupListTreeRoot.updateUI();
+//			friendsListTree_RootNode.clean();
+//			friendsListTree_RootNode.add(group_Myfrends);
+//			friendsListTree_RootNode.add(group_Stranger);
+			groupListTreeRoot.setModel(new DefaultTreeModel(friendsListTree_RootNode, false));
+			friendJScrollPane.updateUI();
+		}
+	}
+	
 }

@@ -320,6 +320,9 @@ public class Window extends JFrame{
 	 * @return ID
 	 */
 	public static Number getSaveUserID() {
+		if (_saveUser == null) {
+			return null;
+		}
 		return _saveUser.getId();
 	}
 

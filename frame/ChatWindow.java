@@ -181,7 +181,7 @@ public class ChatWindow extends Window{
 					chatMessage.setMessage(textPane_Message);					
 					MessageModel chatMessageModel = MessageManagement.chatMessageModel(chatMessage);
 					try {
-						TransmitTool.sendChatMessageForNIO(chatMessageModel);
+						TransmitTool.sendMessageForNIO(chatMessageModel);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -373,7 +373,7 @@ public class ChatWindow extends Window{
 			chatMessage.setMessage(textPane_Message);					
 			MessageModel chatMessageModel = MessageManagement.chatMessageModel(chatMessage);
 			try {
-				TransmitTool.sendChatMessageForNIO(chatMessageModel);
+				TransmitTool.sendMessageForNIO(chatMessageModel);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -441,7 +441,7 @@ public class ChatWindow extends Window{
 		if(ObjectTool.isNull(friendID))
 				throw new ServerSendChatMessageException("server charmessage illegal..");
 		
-		FriendsListTree friendsListTree = MainWindow.friendsListTreeMap.get(friendID);
+		FriendsListTree friendsListTree = MainWindow.getFriendsListTreeMap().get(friendID);
 		if (!ObjectTool.isNull(friendsListTree)) {
 			//发送消息者在好友列表中
 			UserFriendsInformation ufi = friendsListTree.get_userFriendInfo();
