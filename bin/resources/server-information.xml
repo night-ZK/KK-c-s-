@@ -9,4 +9,9 @@
 		<port></port>
 	</server>
 	
+	<server id="003">
+		<host-address></host-address>
+		<port>8898</port>
+	</server>
+	
 </root>

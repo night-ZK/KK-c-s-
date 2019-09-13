@@ -1,13 +1,10 @@
-/.idea/
 /customexception/
 /frame/
-/lib/
 /list/
 /listener/
 /message/
 /model/
 /parsefile/
-/resources/
 /row/
 /tablebeans/
 /tablejson/
@@ -15,3 +12,4 @@
 /threadmanagement/
 /tools/
 /transmit/
+/resources/

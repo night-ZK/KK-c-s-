@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
@@ -129,7 +130,7 @@ public class TransmitTool {
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 */
-	public static byte[] channelSteamToByteArraysForNIO(SocketChannel socketChannel) throws IOException {
+	public static byte[] channelSteamToByteArraysForNIO(SocketChannel socketChannel) throws BufferUnderflowException,IOException {
 		//读取缓冲区
 		ByteBuffer byteBuffer = ByteBuffer.allocate(4);
 		//从通道中读数据到缓冲区

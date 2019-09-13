@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import message.ErrorMessage;
 import message.MessageContext;
@@ -28,6 +29,8 @@ public abstract class Request extends Sender{
 			new HashMap<String, Runnable>(); 
 	//«Î«Û≤…∑¨∫≈
 	protected static Integer requestNo = 0;
+	
+	AtomicInteger requestNO_Atomic = new AtomicInteger(0);
 	
 	protected MessageContext replyMessageContext = null;
 	

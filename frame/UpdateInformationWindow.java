@@ -28,6 +28,7 @@ import threadmanagement.LockModel;
 import tools.ImageTools;
 import tools.TransmitTool;
 import transmit.MessageManagement;
+import transmit.nio.SocketClientNIO;
 
 public class UpdateInformationWindow extends Window{
 
@@ -293,6 +294,7 @@ public class UpdateInformationWindow extends Window{
 			ClientLogin.createClientLogin(Window.getSaveUserName());
 			MainWindow.createMainWindow().dispose();
 			MainWindow.set_mainWindow(null);
+			SocketClientNIO.createSocketClient().destroy();
 			this.dispose();
 			new MessageWindow("tip", "update success..", JRootPane.PLAIN_DIALOG);
 			

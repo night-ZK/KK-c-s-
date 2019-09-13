@@ -8,8 +8,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.TextField;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -18,11 +21,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.dom4j.Element;
+
 import listener.TopButtonListener;
 import model.PointModel;
+import parsefile.ParseXML;
+import transmit.nio.SocketClientNIO;
 import listener.FieldListener;
 
 public class ClientLogin extends Window{
@@ -44,6 +52,7 @@ public class ClientLogin extends Window{
 	private static String _tipText_Pas;
 	static boolean open;
 	private static Object _objectLock;
+	private static String _serverID;
 	
 	private TextField userText;
 	private TextField pasText;
@@ -68,6 +77,8 @@ public class ClientLogin extends Window{
 		 _tipText_Pas = "please enter password..";
 		 
 		 _objectLock = "login";
+		 
+		 _serverID= "001";
 	}
 	
 	
@@ -203,6 +214,31 @@ public class ClientLogin extends Window{
 		
 		closeButton.addMouseListener(new TopButtonListener(this));
 		
+		JComboBox<String> jComboBox = new JComboBox<>();
+		List<Element> elements = ParseXML.getXMLElementList(null, "server");
+		for (Element element : elements) {
+			jComboBox.addItem(element.attributeValue("id"));
+		}
+//		jComboBox.addItem("001");
+//		jComboBox.addItem("002");
+		jComboBox.setBounds(_width - 60, _height - 40, 50, 20);
+		jComboBox.addItemListener(new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+                    _serverID = e.getItem().toString();
+                    System.out.println("_serverID: "+_serverID);
+                    try {
+						SocketClientNIO.createSocketClient().resetServerInfo(_serverID);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                }
+			}
+		});
+		
 		JPanel backGroundJPanel = new JPanel();
 		backGroundJPanel.setBackground(backColor);
 		backGroundJPanel.setBounds(0, 0, _width, _height);
@@ -219,6 +255,8 @@ public class ClientLogin extends Window{
 
 		container_JPanel.add(loginButton);
 		container_JPanel.add(closeButton);
+		
+		container_JPanel.add(jComboBox);
 		
 		container_JPanel.setOpaque(false);
 		
@@ -311,6 +349,14 @@ public class ClientLogin extends Window{
 //			g2d.drawLine(point.x, point.y, nextPoint.x, nextPoint.y);
 //		}
 		
+	}
+
+	public static String get_serverID() {
+		return _serverID;
+	}
+
+	public static void set_serverID(String _serverID) {
+		ClientLogin._serverID = _serverID;
 	}
 
 	private void clientLoginInFo(){

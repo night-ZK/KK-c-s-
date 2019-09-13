@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import org.dom4j.Element;
 
 import customexception.ResponseLineNotAbleExcetion;
+import frame.ClientLogin;
 import message.MessageModel;
 import parsefile.ParseXML;
 import tools.ObjectTool;
@@ -23,7 +24,7 @@ import tools.TransmitTool;
 public class SocketClientNIO extends Thread{
 	
 	private static ParseXML parseXML;
-	private static String serverID = "001";
+//	private static String serverID = "001";
 	private static String host;
 	private static int port;
 	
@@ -34,20 +35,43 @@ public class SocketClientNIO extends Thread{
 	//key = uid, value = userImage
 	public static Map<String, ImageIcon> receiveImageMap;
 	
-	private static SocketClientNIO socketClientNIO;
+//	static class SocketInstance{		
+//		private static SocketClientNIO socketClientNIO = new SocketClientNIO();;
+//	}
+	
+	private volatile static SocketClientNIO socketClientNIO;
+	
+//	public enum SocketInstance{
+//		socketClientNIO;
+//	}
 	static {
 		parseXML = ParseXML.createParseXML();
-		Element element = parseXML.getServerXMLElement(serverID);
+		Element element = parseXML.getServerXMLElement(ClientLogin.get_serverID());
 		host = element.elementText("host-address");
 		port = Integer.parseInt(element.elementText("port"));
-		socketClientNIO = new SocketClientNIO();
 		
 		receiveMap = new HashMap<String, MessageModel>();
 		receiveImageMap = new HashMap<String, ImageIcon>();
 	}
 	
+	
 	Selector selector;
 	private SocketChannel socketChannel;
+	SelectionKey selectionKey;
+	
+	public void resetServerInfo(String serverID) throws IOException {
+		Element element = parseXML.getServerXMLElement(serverID);
+		host = element.elementText("host-address");
+		port = Integer.parseInt(element.elementText("port"));
+		
+		if (!ObjectTool.isNull(selectionKey)) selectionKey.cancel();
+		SocketChannel socketChannel = SocketChannel.open();
+		socketChannel.configureBlocking(false);
+		socketChannel.connect(new InetSocketAddress(host, port));
+		
+		selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT);
+	}
+	
 	private SocketClientNIO() {
 		try {
 			
@@ -56,7 +80,7 @@ public class SocketClientNIO extends Thread{
 			socketChannel.configureBlocking(false);
 			socketChannel.connect(new InetSocketAddress(host, port));
 			
-			socketChannel.register(selector, SelectionKey.OP_CONNECT);
+			selectionKey = socketChannel.register(selector, SelectionKey.OP_CONNECT);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -65,9 +89,32 @@ public class SocketClientNIO extends Thread{
 	}
 	
 	public static SocketClientNIO createSocketClient() {
+//		return SocketClientNIO.SocketInstance.socketClientNIO;
+		//dcl
+//		if (socketClientNIO == null) {
+//			synchronized (SocketClientNIO.class) {
+//				if (socketClientNIO == null) {
+//					socketClientNIO = new SocketClientNIO();
+//				}
+//			}
+//		}
+		
+		synchronized (SocketClientNIO.class) {
+			if (socketClientNIO == null) {
+				socketClientNIO = new SocketClientNIO();
+			}
+		}
 		return socketClientNIO;
 	}
 	
+	public void destroy() {
+		try {
+			selector.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		socketClientNIO = null;
+	}
 	
 	public SocketChannel getSocketChannel() {
 		return socketChannel;
@@ -212,6 +259,7 @@ public class SocketClientNIO extends Thread{
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
+			socketClientNIO = null;
 		}finally {
 //			try {
 //				socketChannel.close();

@@ -2,11 +2,20 @@ package tools;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import message.MessageInterface;
 
 public class SenderTools extends TransmitTool{
 
 	private OutputStream os;
+	private static AtomicInteger requestNo;
+	static {
+		requestNo = new AtomicInteger(0);
+	}
+	public static Integer getRequestNo() {
+		return requestNo.addAndGet(1);
+	}
 	
 	public SenderTools(OutputStream os) {
 		this.os = os;

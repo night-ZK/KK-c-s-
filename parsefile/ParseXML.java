@@ -10,7 +10,12 @@ import org.dom4j.io.SAXReader;
 
 public class ParseXML {
 	
-	private static ParseXML parseXML = new ParseXML();
+	private static ParseXML parseXML;
+	private static File serverXML;
+	static {
+		 parseXML = new ParseXML();
+		 serverXML = new File("./resources/server-information.xml");
+	}
 	
 	private ParseXML() {
 		
@@ -53,15 +58,15 @@ public class ParseXML {
 	public Element getServerXMLElement(String serverID) {
 		SAXReader reader = new SAXReader();
 		try {
-			File dbXML = new File("./resources/server-information.xml");
-			Document document = reader.read(dbXML);
+			File serverXML = new File("./resources/server-information.xml");
+			Document document = reader.read(serverXML);
 			Element root = document.getRootElement();
 			@SuppressWarnings("unchecked")
-			List<Element> dbElements = root.elements("server");
-			for (Element dbelement : dbElements) {
+			List<Element> serverElements = root.elements("server");
+			for (Element serverelement : serverElements) {
 				
-				if (dbelement.attributeValue("id").equals(serverID)) {
-					return dbelement;
+				if (serverelement.attributeValue("id").equals(serverID)) {
+					return serverelement;
 				}
 			}
 		} catch (DocumentException e) {
@@ -73,15 +78,16 @@ public class ParseXML {
 	@SuppressWarnings("unchecked")
 	/**
 	 * 获得需要解析的XML文件root节点下的所需节点list
+	 * 默认server
 	 * @param parseFile 解析的XML文件 
 	 * @param childNodeName 所需节点名
 	 * @return 包含该文件中root节点下的所有所需节点的list
 	 */
-	public List<Element> getXMLElementList(File parseFile, String childNodeName) {
+	public static List<Element> getXMLElementList(File parseFile, String childNodeName) {
 		SAXReader reader = new SAXReader();
 		try {
-			File file_XML = parseFile;
-			Document document = reader.read(file_XML);
+			if(parseFile == null || !parseFile.exists()) parseFile = serverXML;
+			Document document = reader.read(parseFile);
 			Element root = document.getRootElement();
 			return root.elements(childNodeName);
 		} catch (DocumentException e) {

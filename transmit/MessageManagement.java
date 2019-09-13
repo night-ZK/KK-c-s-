@@ -10,7 +10,7 @@ import message.MessageModel;
 import model.UpdateInformation;
 import tablebeans.User;
 import tablejson.UserFriendsInformation;
-import transmit.sender.Request;
+import tools.SenderTools;
 
 public class MessageManagement {
 
@@ -29,7 +29,7 @@ public class MessageManagement {
 		String describe = "/login?userName=" + userName + "&" + "password=" + password;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		
 		return new MessageModel(messageHead, null);
 		
@@ -48,7 +48,7 @@ public class MessageManagement {
 		String describe = "/getFriendsID?userID=" + userID + "&group=" + group;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
 
@@ -60,7 +60,7 @@ public class MessageManagement {
 		String describe = "/getUserFriendInfo?userID=" + friendID;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
 
@@ -72,7 +72,7 @@ public class MessageManagement {
 		String describe = "/getUserFriendImage?userID=" + friendID;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
 	
@@ -84,7 +84,7 @@ public class MessageManagement {
 		String describe = "/sendChatMessage";
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		messageHead.setHasMessageContext(true);
 		return new MessageModel(messageHead, chatMessage);
 	}
@@ -97,7 +97,7 @@ public class MessageManagement {
 		String describe = "/getFriendsInfoList?userID=" + userID + "&group=" + group;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		return new MessageModel(messageHead, null);
 	}
 	
@@ -109,7 +109,7 @@ public class MessageManagement {
 		String describe = "/" + userId;
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		MessageContext messageContext = new MessageContext();
 		messageContext.setObject(friendsId);
 		return new MessageModel(messageHead, messageContext);
@@ -123,7 +123,7 @@ public class MessageManagement {
 		String describe = "/updateUserInfo";
 		messageHead.setRequestDescribe(describe);
 		messageHead.setRequestTime(System.currentTimeMillis());
-		messageHead.setRequestNO(Request.getRequestNo());
+		messageHead.setRequestNO(SenderTools.getRequestNo());
 		MessageContext messageContext = new MessageContext();
 		messageContext.setObject(updateInformation);
 		return new MessageModel(messageHead, messageContext);
